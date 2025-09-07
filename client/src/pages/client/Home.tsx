@@ -1,6 +1,8 @@
+import NewsletterModal from "../../components/NewsLettetModal"
+
 const Home = () => {
   return (
-    <div>Home</div>
+    <div><NewsletterModal /></div>
   )
 }
 

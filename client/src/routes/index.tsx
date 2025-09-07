@@ -1,6 +1,6 @@
-// import { type RouteObject } from "react-router-dom";
+import { type RouteObject } from "react-router-dom";
 
-// // Layouts
+// Layouts
 // import Layout from "../layout/Layout";
 // import AuthLayout from "../layout/auth/AuthLayout";
 
@@ -14,40 +14,40 @@
 // import ResetPassword from "../pages/auth/ResetPassword";
 // import AuthCallback from "../pages/auth/AuthCallabck";
 
-// const routes: RouteObject[] = [
-//     {
-//         path: "/",
-//         element: <Layout />,
-//         children: [
-//             { index: true, element: <Home /> },
-//         ],
-//     },
-//     {
-//         path: "/auth",
-//         element: <AuthLayout />,
-//         children: [
-//             {
-//                 path: "login",
-//                 element: <Login />,
-//             },
-//             {
-//                 path: "register",
-//                 element: <Register />,
-//             },
-//             {
-//                 path: "forgot-password",
-//                 element: <ForgotPassword />,
-//             },
-//             {
-//                 path: "reset-password/:token",
-//                 element: <ResetPassword />,
-//             },
-//             {
-//                 path: "success/:token",
-//                 element: <AuthCallback />,
-//             },
-//         ],
-//     },
-// ];
+const routes: RouteObject[] = [
+    // {
+    //     path: "/",
+    //     element: <Layout />,
+    //     children: [
+    //         { index: true, element: <Home /> },
+    //     ],
+    // },
+    // {
+    //     path: "/auth",
+    //     element: <AuthLayout />,
+    //     children: [
+    //         {
+    //             path: "login",
+    //             element: <Login />,
+    //         },
+    //         {
+    //             path: "register",
+    //             element: <Register />,
+    //         },
+    //         {
+    //             path: "forgot-password",
+    //             element: <ForgotPassword />,
+    //         },
+    //         {
+    //             path: "reset-password/:token",
+    //             element: <ResetPassword />,
+    //         },
+    //         {
+    //             path: "success/:token",
+    //             element: <AuthCallback />,
+    //         },
+    //     ],
+    // },
+];
 
-// export default routes;
+export default routes;

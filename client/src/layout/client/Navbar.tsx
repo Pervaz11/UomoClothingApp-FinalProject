@@ -1,14 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from "../../assets/logo.webp"
-import { FaBell, FaUserPlus } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { LuShoppingBasket } from 'react-icons/lu';
+import NotificationDropdown from '../../components/NotificationDropdown';
 
 
 
 const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const [notifications, setNotifications] = useState<string[]>([
+
+    ]);
+
+    useEffect(() => {
+        const handler = (e: any) => {
+            const message = e?.detail ?? "New notification";
+            setNotifications(prev => [message, ...prev]);
+        };
+        window.addEventListener('new-notification', handler);
+        return () => window.removeEventListener('new-notification', handler);
+    }, []);
 
     return (
         <nav
@@ -51,10 +65,7 @@ const Navbar: React.FC = () => {
                     type="button"
                     className="relative p-2 rounded-full hover:bg-gray-200 transition"
                 >
-                    <FaBell className="text-2xl text-gray-700" />
-                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                        3
-                    </span>
+                    <NotificationDropdown notifications={notifications} />
                 </button>
 
                 <Link
@@ -112,18 +123,14 @@ const Navbar: React.FC = () => {
                     </li>
                 </ul>
                 {/* Mobile Actions */}
-                {/* Mobile Actions */}
                 <div className="flex flex-col gap-2 border-t border-gray-200 px-4 py-3">
                     {/* Notifications */}
                     <button
                         type="button"
                         className="relative flex items-center justify-center w-full rounded-md border border-slate-300 py-2 text-slate-700 font-semibold hover:bg-slate-100 transition"
                     >
-                        <FaBell className="mr-2 text-lg" />
-                        Notifications
-                        <span className="absolute top-1 right-3 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                            3
-                        </span>
+                        <NotificationDropdown notifications={notifications} />
+                        <h2>Notification</h2>
                     </button>
 
                     {/* Login */}
@@ -159,3 +166,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+

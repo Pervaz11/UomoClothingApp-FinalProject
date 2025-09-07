@@ -16,6 +16,12 @@ const NewsletterModal = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log("Submitted email:", email);
+
+        // NEW: notification olaraq "Thanks for subscribe!" göndəririk (modalda göstərmirik)
+        window.dispatchEvent(new CustomEvent('new-notification', {
+            detail: "Thanks for subscribe!"
+        }));
+
         setIsOpen(false);
     };
 

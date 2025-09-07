@@ -1,8 +1,15 @@
+import CustomSlider from "../../components/HeroSlider"
 import NewsletterModal from "../../components/NewsLettetModal"
 
 const Home = () => {
   return (
-    <div><NewsletterModal /></div>
+    <>
+      <section><NewsletterModal /></section>
+      {/* Hero Slider */}
+      <section>
+        <CustomSlider />
+      </section>
+    </>
   )
 }
 

@@ -1,4 +1,6 @@
 import { type RouteObject } from "react-router-dom";
+import Home from "../pages/client/Home";
+import Layout from "../layout/client/Layout";
 
 // Layouts
 // import Layout from "../layout/Layout";
@@ -15,13 +17,13 @@ import { type RouteObject } from "react-router-dom";
 // import AuthCallback from "../pages/auth/AuthCallabck";
 
 const routes: RouteObject[] = [
-    // {
-    //     path: "/",
-    //     element: <Layout />,
-    //     children: [
-    //         { index: true, element: <Home /> },
-    //     ],
-    // },
+    {
+        path: "/",
+        element: <Layout />,
+        children: [
+            { index: true, element: <Home /> },
+        ],
+    },
     // {
     //     path: "/auth",
     //     element: <AuthLayout />,

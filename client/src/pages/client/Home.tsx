@@ -7,6 +7,7 @@ import gridImg3 from "../../assets/collection_grid_3.jpg"
 import springDress from "../../assets/deal_timer_bg.jpg"
 import Products from "../../components/Products"
 import CountdownTimer from "../../components/TimeUnit"
+import TwoCards from "../../components/TwoCards"
 
 const Home = () => {
   return (
@@ -91,7 +92,7 @@ const Home = () => {
           </span>
         </Link>
       </section>
-      <section className="w-full my-20">
+      <section className="sm:m-8 m-5">
         <div
           className="relative bg-center bg-no-repeat bg-cover overflow-hidden
       w-full h-[500px] xs:h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px]
@@ -119,6 +120,9 @@ const Home = () => {
             <CountdownTimer />
           </div>
         </div>
+      </section>
+      <section>
+        <TwoCards />
       </section>
 
     </>

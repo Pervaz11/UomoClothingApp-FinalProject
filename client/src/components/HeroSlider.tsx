@@ -37,7 +37,7 @@ const CustomSlider: React.FC = () => {
 
 
     return (
-        <div className="relative w-full h-screen overflow-hidden bg-cover bg-[#F5E6E0] bg-center" style={{ backgroundImage: `url(${patern})` }}>
+        <div className="relative w-full h-170 overflow-hidden bg-cover bg-[#F5E6E0] bg-center" style={{ backgroundImage: `url(${patern})` }}>
             <AnimatePresence mode="wait">
                 <motion.div
                     key={slides[current].id}

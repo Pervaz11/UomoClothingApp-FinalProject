@@ -61,12 +61,8 @@ const Navbar: React.FC = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-3">
-                <button
-                    type="button"
-                    className="relative p-2 rounded-full hover:bg-gray-200 transition"
-                >
-                    <NotificationDropdown notifications={notifications} />
-                </button>
+                <NotificationDropdown notifications={notifications} />
+
 
                 <Link
                     to="/auth/login"
@@ -125,13 +121,11 @@ const Navbar: React.FC = () => {
                 {/* Mobile Actions */}
                 <div className="flex flex-col gap-2 border-t border-gray-200 px-4 py-3">
                     {/* Notifications */}
-                    <button
-                        type="button"
-                        className="relative flex items-center justify-center w-full rounded-md border border-slate-300 py-2 text-slate-700 font-semibold hover:bg-slate-100 transition"
-                    >
+                    <div className="relative flex items-center justify-center w-full rounded-md border border-slate-300 py-2 text-slate-700 font-semibold hover:bg-slate-100 transition">
                         <NotificationDropdown notifications={notifications} />
                         <h2>Notification</h2>
-                    </button>
+                    </div>
+
 
                     {/* Login */}
                     <Link

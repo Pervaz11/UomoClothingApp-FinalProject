@@ -121,7 +121,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section>
+      <section className="p-7">
         <TwoCards />
       </section>
 

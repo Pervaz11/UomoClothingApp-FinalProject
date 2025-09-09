@@ -55,7 +55,6 @@ export default function Footer() {
                         <div className="flex items-center gap-2">
                             <div className="h-6 w-6 rounded-full bg-red-600" />
                             <span className="text-2xl font-black tracking-wider">UQMO</span>
-                            {/* deliberately a bit different brand dot for a modern look */}
                         </div>
 
                         <ul className="mt-6 space-y-3 text-sm">
@@ -155,8 +154,9 @@ export default function Footer() {
                                 Secure payments
                             </p>
                             <div className="mt-3 flex flex-wrap items-center gap-4 opacity-90">
-                                {/* simple SVG badges for cards */}
-                                <span className="pay-badge">Discover</span>
+                                <span className="pay-badge">
+                                    Discover
+                                </span>
                                 <span className="pay-badge">Mastercard</span>
                                 <span className="pay-badge">PayPal</span>
                                 <span className="pay-badge">Skrill</span>

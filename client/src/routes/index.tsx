@@ -1,55 +1,57 @@
-import { type RouteObject } from "react-router-dom";
-import Home from "../pages/client/Home";
+import { Contact } from "lucide-react";
 import Layout from "../layout/client/Layout";
+import About from "../pages/client/About";
+import Home from "../pages/client/Home";
+import NotFound from "../pages/shared/NotFound";
 
-// Layouts
-// import Layout from "../layout/Layout";
-// import AuthLayout from "../layout/auth/AuthLayout";
-
-// // Client Pages
-// import Home from "../pages/client/Home";
-
-// // Auth Pages
-// import Login from "../pages/auth/Login";
-// import Register from "../pages/auth/Register";
-// import ForgotPassword from "../pages/auth/ForgotPassword";
-// import ResetPassword from "../pages/auth/ResetPassword";
-// import AuthCallback from "../pages/auth/AuthCallabck";
-
-const routes: RouteObject[] = [
+const ROUTES = [
+    // client
     {
         path: "/",
         element: <Layout />,
         children: [
-            { index: true, element: <Home /> },
+            {
+                index: true,
+                element: <Home />,
+            },
+            {
+                path: "about",
+                element: <About />,
+            },
+            {
+                path: "contact",
+                element: <Contact />,
+            },
         ],
     },
+    // admin
     // {
-    //     path: "/auth",
-    //     element: <AuthLayout />,
+    //     element: (
+    //         <AdminRoute>
+    //             <AdminLayout />
+    //         </AdminRoute>
+    //     ),
+    //     path: "/admin/",
     //     children: [
     //         {
-    //             path: "login",
-    //             element: <Login />,
+    //             index: true,
+    //             element: <Dashboard />,
     //         },
     //         {
-    //             path: "register",
-    //             element: <Register />,
+    //             path: "adminProfile",
+    //             element: <AdminProfile />,
     //         },
     //         {
-    //             path: "forgot-password",
-    //             element: <ForgotPassword />,
-    //         },
-    //         {
-    //             path: "reset-password/:token",
-    //             element: <ResetPassword />,
-    //         },
-    //         {
-    //             path: "success/:token",
-    //             element: <AuthCallback />,
+    //             path: "tourlist",
+    //             element: <AdminTourList />,
     //         },
     //     ],
     // },
+    // not found
+    {
+        path: "*",
+        element: <NotFound />,
+    },
 ];
 
-export default routes;
+export default ROUTES;

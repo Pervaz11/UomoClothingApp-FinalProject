@@ -101,7 +101,7 @@ const Navbar: React.FC = () => {
 
             {/* Mobile Dropdown */}
             <div
-                className={`absolute top-16 left-0 w-full bg-white shadow-md md:hidden transition-all duration-500 overflow-hidden ${isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+                className={`absolute z-999 top-16 left-0 w-full bg-white shadow-md md:hidden transition-all duration-500 overflow-hidden ${isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
                     }`}
             >
                 <ul className="flex flex-col gap-1 px-4 py-4">

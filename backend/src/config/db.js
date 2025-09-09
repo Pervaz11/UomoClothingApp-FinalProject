@@ -1,16 +1,19 @@
-import { PORT, DB_URL, DB_PASSWORD } from "./config";
-import { connect } from "mongoose";
+import mongoose from 'mongoose';
+import { DB_PASSWORD, DB_URL, PORT } from '../config/config';
 
-const connectToDB = (app) => {
-    connect(DB_URL.replace("<db_password>", DB_PASSWORD))
+const connectToDB = () => {
+    const dbURI = DB_URL.replace('<db_password>', encodeURIComponent(DB_PASSWORD));
+
+    mongoose.connect(dbURI)
         .then(() => {
-            console.log("🚀 mongodb connected successfully!");
+            console.log('✅ MongoDB connected successfully');
+            // Burada `app` obyekti yaratmaq və onu dinləmək lazımdır.
             app.listen(PORT, () => {
-                console.log(`server running on port: ${PORT}`);
+                console.log(`🚀 Server is running at http://localhost:${PORT}`);
             });
         })
         .catch((err) => {
-            console.warn("❌ db connection failed: ", err.message);
+            console.error('❌ Mongo connection error:', err);
         });
 };
 

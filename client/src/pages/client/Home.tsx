@@ -8,6 +8,7 @@ import springDress from "../../assets/deal_timer_bg.jpg"
 import Products from "../../components/Products"
 import CountdownTimer from "../../components/TimeUnit"
 import TwoCards from "../../components/TwoCards"
+import Posters from "../../components/Posters"
 
 const Home = () => {
   return (
@@ -124,7 +125,9 @@ const Home = () => {
       <section className="p-7">
         <TwoCards />
       </section>
-
+      <section className="p-7">
+        <Posters />
+      </section>
     </>
   )
 }

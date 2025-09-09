@@ -9,6 +9,7 @@ import Products from "../../components/Products"
 import CountdownTimer from "../../components/TimeUnit"
 import TwoCards from "../../components/TwoCards"
 import Posters from "../../components/Posters"
+import Services from "../../components/Services"
 
 const Home = () => {
   return (
@@ -127,6 +128,9 @@ const Home = () => {
       </section>
       <section className="p-7">
         <Posters />
+      </section>
+      <section className="p-10">
+        <Services />
       </section>
     </>
   )

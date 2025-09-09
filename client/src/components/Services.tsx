@@ -4,6 +4,10 @@ import { SiAdguard } from "react-icons/si";
 const Services = () => {
     return (
         <section className="py-20 bg-white">
+            <h1 className="text-center text-4xl font-medium mb-12">
+                @UOMO
+            </h1>
+
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
 
                 {/* Delivery */}

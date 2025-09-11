@@ -1,7 +1,8 @@
-import { Contact } from "lucide-react";
 import Layout from "../layout/client/Layout";
 import About from "../pages/client/About";
+import ContactUs from "../pages/client/Contact";
 import Home from "../pages/client/Home";
+import Shop from "../pages/client/Shop";
 import NotFound from "../pages/shared/NotFound";
 
 const ROUTES = [
@@ -20,7 +21,11 @@ const ROUTES = [
             },
             {
                 path: "contact",
-                element: <Contact />,
+                element: <ContactUs />,
+            },
+            {
+                path: "shop",
+                element: <Shop />,
             },
         ],
     },

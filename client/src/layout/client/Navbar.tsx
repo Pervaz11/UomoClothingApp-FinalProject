@@ -46,16 +46,24 @@ const Navbar: React.FC = () => {
             {/* Desktop Links */}
             <ul className='hidden md:flex gap-4 font-medium uppercase text-sm tracking-wide'>
                 <li>
-                    <Link to="/" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">Home</Link>
+                    <Link to="/" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
+                        Home
+                    </Link>
                 </li>
                 <li>
-                    <Link to="/Apartments" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-10">Apartments</Link>
+                    <Link to="/Shop" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-10">
+                        Shop
+                    </Link>
                 </li>
                 <li>
-                    <Link to="/About" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">About</Link>
+                    <Link to="/About" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
+                        About
+                    </Link>
                 </li>
                 <li>
-                    <Link to="/Contact" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-9">Contact</Link>
+                    <Link to="/Contact" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-9">
+                        Contact
+                    </Link>
                 </li>
             </ul>
 
@@ -109,7 +117,7 @@ const Navbar: React.FC = () => {
                         <Link to="/" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Home</Link>
                     </li>
                     <li>
-                        <Link to="/Apartments" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Apartments</Link>
+                        <Link to="/Apartments" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Shop</Link>
                     </li>
                     <li>
                         <Link to="/About" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">About</Link>

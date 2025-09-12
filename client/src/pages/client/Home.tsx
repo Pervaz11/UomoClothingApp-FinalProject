@@ -14,7 +14,9 @@ import Services from "../../components/Services"
 const Home = () => {
   return (
     <>
-      <section><NewsletterModal /></section>
+      <section>
+        <NewsletterModal />
+      </section>
       {/* Hero Slider */}
       <section>
         <CustomSlider />

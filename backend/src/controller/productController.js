@@ -1,9 +1,11 @@
 import Product from '../models/productModel.js';
+import { applyDiscount } from '../service/applyDiscount.js';
 
 const parseIntOrDefault = (value, defaultValue) =>
     isNaN(parseInt(value)) ? defaultValue : parseInt(value);
 
 // GET /products
+
 export const getProducts = async (req, res, next) => {
     try {
         const {
@@ -14,43 +16,48 @@ export const getProducts = async (req, res, next) => {
             limit = '10',
         } = req.query;
 
-        const pageNumber = parseIntOrDefault(page, 1);
-        const pageSize = parseIntOrDefault(limit, 10);
+        const pageNumber = parseInt(page) || 1;
+        const pageSize = parseInt(limit) || 10;
         const sortOrder = order === 'desc' ? -1 : 1;
 
         const filter = {};
-
-        if (search.trim()) {
-            filter.name = { $regex: search.trim(), $options: 'i' };
-        }
+        if (search.trim()) filter.name = { $regex: search.trim(), $options: 'i' };
 
         const total = await Product.countDocuments(filter);
+
         const products = await Product.find(filter)
             .sort({ [sortBy]: sortOrder })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize);
 
+        // discount apply
+        const productsWithDiscount = products.map(p => ({
+            ...p.toObject(),
+            discountedPrice: applyDiscount(p),
+        }));
+
         res.status(200).json({
-            products,
+            products: productsWithDiscount,
             total,
             page: pageNumber,
-            pageSize: products.length,
+            pageSize: productsWithDiscount.length,
         });
     } catch (error) {
         next(error);
     }
 };
 
+
 // GET /products/:id
 export const getProductById = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
-        if (!product) {
-            res.status(404).json({ message: 'Product not found' });
-            return;
-        }
+        if (!product) return res.status(404).json({ message: 'Product not found' });
 
-        res.status(200).json(product);
+        res.status(200).json({
+            ...product.toObject(),
+            discountedPrice: applyDiscount(product),
+        });
     } catch (error) {
         next(error);
     }

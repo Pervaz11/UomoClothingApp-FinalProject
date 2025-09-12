@@ -54,7 +54,7 @@ export default function Footer() {
                     <div className="md:col-span-4">
                         <div className="flex items-center gap-2">
                             <div className="h-6 w-6 rounded-full bg-red-600" />
-                            <span className="text-2xl font-black tracking-wider">UQMO</span>
+                            <span className="text-2xl font-black tracking-wider">U<s className="text-red-600">O</s>MO</span>
                         </div>
 
                         <ul className="mt-6 space-y-3 text-sm">

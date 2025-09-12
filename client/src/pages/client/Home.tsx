@@ -10,6 +10,7 @@ import CountdownTimer from "../../components/TimeUnit"
 import TwoCards from "../../components/TwoCards"
 import Posters from "../../components/Posters"
 import Services from "../../components/Services"
+import Accessories from "../../components/Accessory"
 
 const Home = () => {
   return (
@@ -17,7 +18,6 @@ const Home = () => {
       <section>
         <NewsletterModal />
       </section>
-      {/* Hero Slider */}
       <section>
         <CustomSlider />
       </section>
@@ -127,6 +127,9 @@ const Home = () => {
       </section>
       <section className="p-7">
         <TwoCards />
+      </section>
+      <section>
+        <Accessories />
       </section>
       <section className="p-7">
         <Posters />

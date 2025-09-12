@@ -53,16 +53,29 @@ const Products = () => {
         if (!Array.isArray(products)) return [];
 
         switch (activeTab) {
-            case 1:
-                return products.filter(p => p.labels?.includes("New Arrival"));
-            case 2:
-                return products.filter(p => p.labels?.includes("Best Seller"));
-            case 3:
-                return products.filter(p => p.labels?.includes("Top Rated"));
+            case 1: // New Arrivals
+                return products.filter(
+                    (p) =>
+                        p.labels?.includes("New Arrival") ||
+                        (p.discount && p.discount.type === "percentage" && p.discount.value >= 20)
+                );
+            case 2: // Best Seller
+                return products.filter(
+                    (p) =>
+                        p.labels?.includes("Best Seller") ||
+                        (p.discount && p.discount.type === "fixed" && p.discount.value >= 10)
+                );
+            case 3: // Top Rated
+                return products.filter(
+                    (p) =>
+                        p.labels?.includes("Top Rated") ||
+                        (p.discount && new Date(p.discount.expiresAt || "").getTime() > Date.now())
+                );
             default:
                 return products;
         }
     };
+
 
     const renderCards = () => {
         const filtered = getFilteredProducts().slice(0, 4);
@@ -72,11 +85,11 @@ const Products = () => {
                 {filtered.map((item) => (
                     <ListCard
                         key={item._id}
-                        title={item.name}          // ✅ title əvəzinə name
+                        title={item.name}
                         price={item.price}
-                        images={item.images}       // ✅ image əvəzinə images
+                        images={item.images}
                         labels={item.labels}
-                        discount={item.discount}   // ✅ discount da ötürülür
+                        discount={item.discount}
                     />
                 ))}
             </div>

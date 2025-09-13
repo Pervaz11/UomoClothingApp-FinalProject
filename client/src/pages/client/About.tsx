@@ -78,6 +78,9 @@ const About = () => {
         <div>
           <Services />
         </div>
+        <div>
+          <PartnersSlider />
+        </div>
       </section>
     </>
   );

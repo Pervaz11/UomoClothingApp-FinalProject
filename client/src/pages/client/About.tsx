@@ -75,6 +75,9 @@ const About = () => {
             </p>
           </div>
         </div>
+        <div>
+          <Services />
+        </div>
       </section>
     </>
   );

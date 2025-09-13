@@ -1,18 +1,32 @@
+"use client";
 import { useRef, useEffect, useState } from "react";
+import axios from "axios";
 
-const partners = [
-    "https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fbrands%2Fbrand1.png&w=256&q=75",
-    "https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fbrands%2Fbrand3.png&w=384&q=75",
-    "https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fbrands%2Fbrand2.png&w=256&q=75",
-    "https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fbrands%2Fbrand4.png&w=256&q=75",
-    "https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fbrands%2Fbrand5.png&w=256&q=75",
-];
+type Partner = {
+    _id: string;
+    name: string;
+    image: string;
+};
 
 const PartnersSlider = () => {
     const sliderRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const [partners, setPartners] = useState<Partner[]>([]);
+
+    // Fetch partners from backend
+    useEffect(() => {
+        const fetchPartners = async () => {
+            try {
+                const res = await axios.get("http://localhost:3000/partners");
+                setPartners(res.data.partners || res.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchPartners();
+    }, []);
 
     // Auto scroll effect
     useEffect(() => {
@@ -35,10 +49,8 @@ const PartnersSlider = () => {
         setStartX(e.pageX - sliderRef.current.offsetLeft);
         setScrollLeft(sliderRef.current.scrollLeft);
     };
-
     const handleMouseLeave = () => setIsDragging(false);
     const handleMouseUp = () => setIsDragging(false);
-
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!isDragging || !sliderRef.current) return;
         e.preventDefault();
@@ -58,14 +70,14 @@ const PartnersSlider = () => {
                 onMouseUp={handleMouseUp}
                 onMouseMove={handleMouseMove}
             >
-                {[...partners, ...partners].map((logo, idx) => (
+                {[...partners, ...partners].map((partner, idx) => (
                     <div
                         key={idx}
-                        className="flex-shrink-0 w-28 md:w-36 lg:w-40 flex items-center justify-center grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition"
+                        className="flex-shrink-0 w-29 md:w-36 lg:w-40 flex items-center justify-center grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition"
                     >
                         <img
-                            src={logo}
-                            alt="partner logo"
+                            src={partner.image}
+                            alt={partner.name}
                             className="h-10 md:h-12 object-contain"
                         />
                     </div>

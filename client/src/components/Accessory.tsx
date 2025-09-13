@@ -63,15 +63,15 @@ const Accessories: React.FC = () => {
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-5 relative">
             <h2 className="text-2xl font-bold mb-4">Limited Edition</h2>
 
-            <div className="flex justify-between gap-4">
+            {/* ✅ Responsive Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {accessories.slice(0, 4).map((item) => (
-                    <div key={item._id} className="w-[23%]">
-                        <AccessoryCard
-                            title={item.name}
-                            price={item.price}
-                            images={item.images}
-                        />
-                    </div>
+                    <AccessoryCard
+                        key={item._id}
+                        title={item.name}
+                        price={item.price}
+                        images={item.images}
+                    />
                 ))}
             </div>
 

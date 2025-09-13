@@ -94,7 +94,7 @@ const Products = () => {
     const renderCards = () => {
         if (tabLoading) {
             return (
-                <div className="grid grid-cols-4 gap-4 mt-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
                     {Array.from({ length: itemsPerSlide }).map((_, i) => (
                         <div
                             key={i}
@@ -119,18 +119,17 @@ const Products = () => {
                         return (
                             <div
                                 key={slideIndex}
-                                className="flex w-full justify-between gap-4 flex-shrink-0 px-2"
+                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 flex-shrink-0 w-full px-2"
                             >
                                 {slideItems.map((item) => (
-                                    <div key={item._id} className="w-[23%]">
-                                        <ListCard
-                                            title={item.name}
-                                            price={item.price}
-                                            images={item.images}
-                                            labels={item.labels}
-                                            discount={item.discount}
-                                        />
-                                    </div>
+                                    <ListCard
+                                        key={item._id}
+                                        title={item.name}
+                                        price={item.price}
+                                        images={item.images}
+                                        labels={item.labels}
+                                        discount={item.discount}
+                                    />
                                 ))}
                             </div>
                         );

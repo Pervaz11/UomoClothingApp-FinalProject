@@ -25,7 +25,6 @@ const Products = () => {
     const tabs = ["All", "New Arrivals", "Best Seller", "Top Rated"];
     const itemsPerSlide = 4;
 
-    // Fetch products
     useEffect(() => {
         setLoading(true);
         axios
@@ -42,7 +41,6 @@ const Products = () => {
             .finally(() => setLoading(false));
     }, []);
 
-    // Tab click with lazy loading
     const handleTabClick = (index: number) => {
         if (index === activeTab) return;
         setActiveTab(index);
@@ -54,7 +52,6 @@ const Products = () => {
         }, 500); // 500ms skeleton effect
     };
 
-    // Filter products by tab
     const getFilteredProducts = () => {
         switch (activeTab) {
             case 1:
@@ -136,7 +133,6 @@ const Products = () => {
                     })}
                 </div>
 
-                {/* Prev / Next Buttons */}
                 <button
                     onClick={prevSlide}
                     className="absolute top-1/2 left-2 -translate-y-1/2 bg-white/70 hover:bg-white shadow-md rounded-full p-2 flex items-center justify-center transition-all duration-300 opacity-70 hover:opacity-100"
@@ -171,7 +167,6 @@ const Products = () => {
                     </svg>
                 </button>
 
-                {/* Pagination Dots */}
                 <div className="flex justify-center gap-2 mt-4">
                     {Array.from({ length: totalSlides }).map((_, i) => (
                         <button

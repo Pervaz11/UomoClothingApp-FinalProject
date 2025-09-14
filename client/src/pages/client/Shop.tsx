@@ -8,8 +8,9 @@ const Shop: React.FC = () => {
     const [tab, setTab] = useState<"accessory" | "product">("accessory");
     const [sortOption, setSortOption] = useState<string>("default");
 
+    // Pagination states
     const [page, setPage] = useState<number>(1);
-    const totalPages = 5;
+    const totalPages = 5; // 🔥 hələlik test üçün statikdir, sonra backend-dən gələcək
 
     const handlePrev = () => {
         if (page > 1) setPage(page - 1);
@@ -21,7 +22,6 @@ const Shop: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Hero */}
             <section className="relative bg-[url('https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fshop%2Fshop_banner_character1.png&w=3840&q=75')] bg-cover bg-center py-16">
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="relative max-w-7xl mx-auto px-6 text-center p-20 text-white">
@@ -35,7 +35,6 @@ const Shop: React.FC = () => {
             </section>
 
             <div className="max-w-7xl mx-auto px-6 my-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-
                 <div className="inline-flex rounded-full bg-gray-200 p-1">
                     <button
                         onClick={() => setTab("accessory")}
@@ -93,7 +92,18 @@ const Shop: React.FC = () => {
                     </motion.div>
                 </AnimatePresence>
             </div>
-
+            <div className="m-10">
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        onPrev={handlePrev}
+                        onNext={handleNext}
+                        onPageClick={(num) => setPage(num)}
+                    />
+                )}
+            </div>
         </div>
     );
 };

@@ -31,7 +31,6 @@ const AccessoryList: React.FC<{ pagination?: boolean; sortOption: string; page: 
             .finally(() => setLoading(false));
     }, []);
 
-    // sort
     const sortedAccessories = [...accessories].sort((a, b) => {
         if (sortOption === "az") return a.name.localeCompare(b.name);
         if (sortOption === "za") return b.name.localeCompare(a.name);
@@ -40,7 +39,6 @@ const AccessoryList: React.FC<{ pagination?: boolean; sortOption: string; page: 
         return 0;
     });
 
-    const totalPages = Math.ceil(sortedAccessories.length / ITEMS_PER_PAGE);
     const paginatedAccessories = pagination
         ? sortedAccessories.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
         : sortedAccessories;

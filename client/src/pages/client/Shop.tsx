@@ -3,14 +3,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import AccessoryList from "../../components/AccesoryList";
 import ShopList from "../../components/ShopList";
 import Pagination from "../../components/Pagination";
+import CustomSelect from "../../components/SelectionFilter";
+import FilterButton from "../../components/ShopFilter";
 
 const Shop: React.FC = () => {
     const [tab, setTab] = useState<"accessory" | "product">("accessory");
     const [sortOption, setSortOption] = useState<string>("default");
 
-    // Pagination states
     const [page, setPage] = useState<number>(1);
-    const totalPages = 5; // 🔥 hələlik test üçün statikdir, sonra backend-dən gələcək
+    const totalPages = 5;
 
     const handlePrev = () => {
         if (page > 1) setPage(page - 1);
@@ -56,22 +57,9 @@ const Shop: React.FC = () => {
                     </button>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition">
-                        Filter
-                    </button>
-
-                    <select
-                        value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                    >
-                        <option value="default">Default Sorting</option>
-                        <option value="az">A - Z</option>
-                        <option value="za">Z - A</option>
-                        <option value="low-high">Price: Low to High</option>
-                        <option value="high-low">Price: High to Low</option>
-                    </select>
+                <div className="flex items-center">
+                    <FilterButton />
+                    <CustomSelect sortOption={sortOption} setSortOption={setSortOption} />
                 </div>
             </div>
 

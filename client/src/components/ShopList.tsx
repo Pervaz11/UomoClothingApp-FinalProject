@@ -46,7 +46,6 @@ const ShopList: React.FC<{ pagination?: boolean; sortOption: string; page: numbe
         return 0;
     });
 
-    const totalPages = Math.ceil(sortedProducts.length / ITEMS_PER_PAGE);
     const paginatedProducts = pagination
         ? sortedProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
         : sortedProducts;

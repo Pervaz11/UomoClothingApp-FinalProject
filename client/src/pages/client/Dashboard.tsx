@@ -1,8 +1,113 @@
- 
-const Dashboard = () => {
-  return (
-    <div>Dashboard</div>
-  )
-}
+import { useState, lazy, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default Dashboard
+// Lazy load components
+const Profile = lazy(() => import("./Profile"));
+const Orders = lazy(() => import("./Orders"));
+const Addresses = lazy(() => import("./Addresses"));
+const AccountDetails = lazy(() => import("./AccountDetails"));
+const Wishlist = lazy(() => import("./WishList"));
+
+export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [tabLoading, setTabLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleTabClick = (tab: string) => {
+    if (tab === activeTab) return;
+    setTabLoading(true);
+
+    setTimeout(() => {
+      setActiveTab(tab);
+      setTabLoading(false);
+    }, 500); // spinner effekti üçün 500ms gecikmə
+  };
+
+  const handleLogout = () => {
+    navigate("/");
+  };
+
+  const renderComponent = () => {
+    switch (activeTab) {
+      case "orders":
+        return <Orders />;
+      case "addresses":
+        return <Addresses />;
+      case "account":
+        return <AccountDetails />;
+      case "wishlist":
+        return <Wishlist />;
+      default:
+        return <Profile />;
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <aside className="w-64 border-r">
+        <h2 className="text-2xl font-bold px-6 py-4">MY ACCOUNT</h2>
+        <nav className="flex flex-col space-y-4 px-6">
+          <button
+            className={`text-left text-red-600 font-bold hover:text-black transition relative px-4 py-2  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all hover:scale-110 duration-500 before:duration-300 hover:before:w-7 ${activeTab === "dashboard" ? "text-red-600 font-bold" : ""
+              }`}
+            onClick={() => handleTabClick("dashboard")}
+          >
+            DASHBOARD
+          </button>
+          <button
+            className={`text-left hover:scale-110 duration-500 text-red-600 font-bold hover:text-black transition relative px-4 py-2 dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7 ${activeTab === "orders" ? "text-red-600 font-bold" : ""
+              }`}
+            onClick={() => handleTabClick("orders")}
+          >
+            ORDERS
+          </button>
+          <button
+            className={`text-left hover:scale-110 duration-500 text-red-600 font-bold hover:text-black transition relative px-4 py-2 dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7 ${activeTab === "addresses" ? "text-red-600 font-bold" : ""
+              }`}
+            onClick={() => handleTabClick("addresses")}
+          >
+            ADDRESSES
+          </button>
+          <button
+            className={`text-left hover:scale-110 duration-500 text-red-600 font-bold hover:text-black transition relative px-4 py-2 dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7 ${activeTab === "account" ? "text-red-600 font-bold" : ""
+              }`}
+            onClick={() => handleTabClick("account")}
+          >
+            ACCOUNT DETAILS
+          </button>
+          <button
+            className={`text-left text-red-600 font-bold hover:text-black transition relative px-4 py-2 hover:scale-110 duration-500  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7 ${activeTab === "wishlist" ? "text-red-600 font-bold" : ""
+              }`}
+            onClick={() => handleTabClick("wishlist")}
+          >
+            WISHLIST
+          </button>
+          <button onClick={handleLogout}
+            className="text-left flex gap-3 text-red-600 font-bold hover:text-black transition relative px-4 py-2 hover:scale-110 duration-500  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
+            LOGOUT
+          </button>
+        </nav>
+      </aside>
+
+      {/* Content */}
+      <main className="flex-1 p-6">
+        {tabLoading ? (
+          <div className="flex justify-center items-center mt-14">
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <Suspense
+            fallback={
+              <div className="flex justify-center items-center mt-14">
+                <div className="w-10 h-10 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+              </div>
+            }
+          >
+            {renderComponent()}
+          </Suspense>
+        )}
+      </main>
+    </div>
+  );
+}

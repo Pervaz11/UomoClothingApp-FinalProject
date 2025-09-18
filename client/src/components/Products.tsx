@@ -49,7 +49,7 @@ const Products = () => {
 
         setTimeout(() => {
             setTabLoading(false);
-        }, 500); // 500ms skeleton effect
+        }, 500); // 500ms 
     };
 
     const getFilteredProducts = () => {
@@ -173,8 +173,8 @@ const Products = () => {
                             key={i}
                             onClick={() => setCurrentIndex(i)}
                             className={`w-3 h-3 rounded-full transition-all duration-300 ${currentIndex === i
-                                    ? "bg-black scale-125"
-                                    : "bg-gray-300 hover:scale-110"
+                                ? "bg-black scale-125"
+                                : "bg-gray-300 hover:scale-110"
                                 }`}
                         />
                     ))}

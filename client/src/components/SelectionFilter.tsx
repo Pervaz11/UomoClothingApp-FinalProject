@@ -21,7 +21,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ sortOption, setSortOption }
         <div className="relative w-60 z-50">
             <button
                 onClick={() => setOpen(!open)}
-                className="w-full border-b px-4 py-2 text-sm text-left flex justify-between items-center hover:border-blue-400 transition-colors duration-300"
+                className="w-full border-b px-4 py-2 text-sm text-left flex justify-between items-center hover:bg-gray-100 transition-colors duration-300"
             >
                 {options.find((o) => o.value === sortOption)?.label}
                 <span className={`transform transition-transform ${open ? "rotate-180" : ""}`}>

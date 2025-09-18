@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
 
 
                 <Link
-                    to="/auth/login"
+                    to="/login"
                     className="inline-flex uppercase items-center gap-2 rounded-md border border-slate-700 py-1.5 px-4 text-slate-700 font-semibold hover:bg-slate-800 hover:text-white transition"
                 >
                     <FaUserPlus className="text-lg" />

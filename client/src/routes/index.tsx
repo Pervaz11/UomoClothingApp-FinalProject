@@ -1,58 +1,37 @@
 import Layout from "../layout/client/Layout";
 import About from "../pages/client/About";
+import AccountDetails from "../pages/client/AccountDetails";
+import Adresses from "../pages/client/Addresses";
 import ContactUs from "../pages/client/Contact";
+import Dashboard from "../pages/client/Dashboard";
 import Home from "../pages/client/Home";
+import Orders from "../pages/client/Orders";
+import Register from "../pages/client/Register";
 import Shop from "../pages/client/Shop";
+import WishList from "../pages/client/WishList";
+import Login from "../pages/shared/Login";
 import NotFound from "../pages/shared/NotFound";
+import Profile from "../pages/client/Profile";
 
 const ROUTES = [
-    // client
     {
         path: "/",
         element: <Layout />,
         children: [
-            {
-                index: true,
-                element: <Home />,
-            },
-            {
-                path: "about",
-                element: <About />,
-            },
-            {
-                path: "contact",
-                element: <ContactUs />,
-            },
-            {
-                path: "shop",
-                element: <Shop />,
-            },
+            { index: true, element: <Home /> },
+            { path: "about", element: <About /> },
+            { path: "contact", element: <ContactUs /> },
+            { path: "shop", element: <Shop /> },
+            { path: "register", element: <Register /> },
+            { path: "login", element: <Login /> },
+            { path: "profil", element: <Profile /> },
+            { path: "dashboard", element: <Dashboard /> },
+            { path: "wishlist", element: <WishList /> },
+            { path: "orders", element: <Orders /> },
+            { path: "addresses", element: <Adresses /> },
+            { path: "account", element: <AccountDetails /> },
         ],
     },
-    // admin
-    // {
-    //     element: (
-    //         <AdminRoute>
-    //             <AdminLayout />
-    //         </AdminRoute>
-    //     ),
-    //     path: "/admin/",
-    //     children: [
-    //         {
-    //             index: true,
-    //             element: <Dashboard />,
-    //         },
-    //         {
-    //             path: "adminProfile",
-    //             element: <AdminProfile />,
-    //         },
-    //         {
-    //             path: "tourlist",
-    //             element: <AdminTourList />,
-    //         },
-    //     ],
-    // },
-    // not found
     {
         path: "*",
         element: <NotFound />,

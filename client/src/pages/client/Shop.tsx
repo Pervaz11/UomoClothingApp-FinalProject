@@ -24,16 +24,18 @@ const Shop: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <section className="relative bg-[url('https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fshop%2Fshop_banner_character1.png&w=3840&q=75')] bg-cover bg-center py-16">
-                <div className="absolute inset-0 bg-black/30" />
-                <div className="relative max-w-7xl mx-auto px-6 text-center p-20 text-white">
+                <div className="absolute inset-0 bg-amber-200/40 mix-blend-multiply" />
+
+                <div className="relative max-w-7xl mx-auto px-6 text-center p-20 text-black">
                     <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
                         Discover Our {tab === "accessory" ? "Accessories" : "Clothes"}
                     </h1>
-                    <p className="text-lg text-gray-200">
+                    <p className="text-lg text-gray-900">
                         Elevate your style with premium quality and modern design.
                     </p>
                 </div>
             </section>
+
 
             <div className="max-w-7xl mx-auto px-6 my-10 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="inline-flex rounded-full bg-gray-200 p-1">

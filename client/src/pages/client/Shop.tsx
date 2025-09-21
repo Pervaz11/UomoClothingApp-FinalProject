@@ -59,7 +59,7 @@ const Shop: React.FC = () => {
                     </button>
                 </div>
 
-                <div className="flex items-center">
+                <div className="md:flex items-center">
                     <FilterButton />
                     <CustomSelect sortOption={sortOption} setSortOption={setSortOption} />
                 </div>

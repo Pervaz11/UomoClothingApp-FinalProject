@@ -7,7 +7,6 @@ const NewsletterModal = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState("");
 
-    // Sayt açılan kimi modal açılması
     useEffect(() => {
         const timer = setTimeout(() => setIsOpen(true), 500);
         return () => clearTimeout(timer);
@@ -17,7 +16,6 @@ const NewsletterModal = () => {
         e.preventDefault();
         console.log("Submitted email:", email);
 
-        // NEW: notification olaraq "Thanks for subscribe!" göndəririk (modalda göstərmirik)
         window.dispatchEvent(new CustomEvent('new-notification', {
             detail: "Thanks for subscribe!"
         }));
@@ -68,19 +66,19 @@ const NewsletterModal = () => {
                                 much more!
                             </p>
 
-                            <form onSubmit={handleSubmit} className="flex gap-2">
+                            <form onSubmit={handleSubmit} className=" gap-2">
                                 <input
                                     type="email"
                                     required
                                     placeholder="Your email address"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="flex-1 border border-gray-300 rounded-md px-4 py-2 
+                                    className="flex-1 border w-full border-gray-300 rounded-md px-4 py-2 
                                                focus:outline-none focus:ring-2 focus:ring-slate-400"
                                 />
                                 <button
                                     type="submit"
-                                    className="bg-gray-900 text-white px-4 py-2 rounded-md 
+                                    className="bg-gray-900 my-2 w-full text-white px-4 py-2 rounded-md 
                                                hover:bg-gray-700 transition"
                                 >
                                     Submit

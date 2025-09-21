@@ -117,7 +117,7 @@ const Navbar: React.FC = () => {
                         <Link to="/" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Home</Link>
                     </li>
                     <li>
-                        <Link to="/Apartments" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Shop</Link>
+                        <Link to="/shop" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Shop</Link>
                     </li>
                     <li>
                         <Link to="/About" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">About</Link>

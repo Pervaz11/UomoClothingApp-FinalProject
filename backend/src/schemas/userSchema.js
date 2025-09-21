@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+
 const userSchema = new Schema(
     {
         username: { type: String, required: true, unique: true, trim: true },
@@ -9,7 +10,10 @@ const userSchema = new Schema(
             trim: true,
             lowercase: true,
         },
-        password: { type: String, required: function () { return this.provider === 'local'; } },
+        password: {
+            type: String,
+            required: function () { return this.provider === "local"; }
+        },
         fullName: { type: String, required: true },
         phoneNumber: { type: String, trim: true, default: "" },
         profileImage: {
@@ -17,10 +21,7 @@ const userSchema = new Schema(
             default:
                 "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg",
         },
-        public_id: {
-            type: String,
-            default: "",
-        },
+        public_id: { type: String, default: "" },
         role: {
             type: String,
             enum: ["client", "admin", "courier", "superAdmin"],
@@ -31,8 +32,6 @@ const userSchema = new Schema(
         lastLogin: { type: Date, default: null },
         loginAttempts: { type: Number, default: 0 },
         lockUntil: { type: Date, default: null },
-
-
         provider: {
             type: String,
             enum: ["local", "google", "github"],
@@ -41,6 +40,13 @@ const userSchema = new Schema(
         googleId: { type: String, default: null },
         hasVendorRequest: { type: Boolean, default: false },
         emailVerified: { type: Boolean, default: false },
+
+        wishlist: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Product"
+            }
+        ]
     },
     { timestamps: true, versionKey: false }
 );

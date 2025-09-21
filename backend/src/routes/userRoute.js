@@ -22,13 +22,12 @@ const upload = uploadMiddleware("userImages");
 import passport from "passport";
 
 // Google OAuth routes
-router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/auth/google/", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 router.get(
     "/auth/google/callback",
     passport.authenticate("google", { failureRedirect: "http://localhost:5173/login", session: true }),
-    (req, res) => {
-        // Uğurlu login sonrası frontend-ə redirect
+    (_req, res) => {
         res.redirect("http://localhost:5173");
     }
 );

@@ -1,5 +1,6 @@
 import React from "react";
 import { Heart } from "lucide-react";
+import { useWishlist } from "../context/WishlistContext";
 
 type Discount = {
     type: "percentage" | "fixed";
@@ -13,6 +14,7 @@ type Image = {
 };
 
 type ListCardProps = {
+    id: string;
     title: string;
     price: number;
     images: Image[];
@@ -20,7 +22,14 @@ type ListCardProps = {
     discount?: Discount;
 };
 
-const ListCard: React.FC<ListCardProps> = ({ title, price, images, labels, discount }) => {
+const ListCard: React.FC<ListCardProps> = ({
+    id,
+    title,
+    price,
+    images,
+    labels,
+    discount,
+}) => {
     const now = new Date();
     const isDiscountActive =
         discount &&
@@ -34,11 +43,20 @@ const ListCard: React.FC<ListCardProps> = ({ title, price, images, labels, disco
                 ? Math.max(0, price - discount.value)
                 : price;
 
+    const { toggleWishlist, isInWishlist } = useWishlist();
+    const inWishlist = isInWishlist(id);
+
     return (
         <div className="relative group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
             {/* Favorite icon */}
-            <button className="absolute top-2 right-2 z-10 p-1 bg-white rounded-full shadow hover:scale-110 transition">
-                <Heart className="w-4 h-4 text-gray-500" />
+            <button
+                onClick={() => toggleWishlist(id)}
+                className="absolute top-2 right-2 z-10 p-1 bg-white rounded-full shadow hover:scale-110 transition"
+            >
+                <Heart
+                    className={`w-4 h-4 ${inWishlist ? "text-red-500 fill-red-500" : "text-gray-500"
+                        }`}
+                />
             </button>
 
             {/* Image */}
@@ -72,11 +90,14 @@ const ListCard: React.FC<ListCardProps> = ({ title, price, images, labels, disco
                 <p className="text-xs text-gray-500 mb-1">Dresses</p>
                 <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
 
-                {/* Price + Discount */}
                 <div className="mt-1 flex items-center gap-2">
-                    <p className="text-sm text-gray-900 font-semibold">${finalPrice.toFixed(2)}</p>
+                    <p className="text-sm text-gray-900 font-semibold">
+                        ${finalPrice.toFixed(2)}
+                    </p>
                     {isDiscountActive && (
-                        <p className="text-xs text-gray-500 line-through">${price.toFixed(2)}</p>
+                        <p className="text-xs text-gray-500 line-through">
+                            ${price.toFixed(2)}
+                        </p>
                     )}
                 </div>
 

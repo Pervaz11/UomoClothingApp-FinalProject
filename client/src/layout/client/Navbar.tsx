@@ -81,13 +81,13 @@ const Navbar: React.FC = () => {
                 </Link>
 
                 <Link
-                    to={"/"}
+                    to={"/wishlist"}
                     className="p-1 rounded-full hover:bg-gray-200 transition"
                 >
                     <IoMdHeartEmpty className="text-3xl text-gray-700" />
                 </Link>
                 <Link
-                    to={"/"}
+                    to={"/adToCart"}
                     className="rounded-full hover:bg-gray-200 transition"
                 >
                     <LuShoppingBasket className="text-3xl text-gray-700" />

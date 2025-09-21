@@ -125,8 +125,7 @@ const Products = () => {
                                         price={item.price}
                                         images={item.images}
                                         labels={item.labels}
-                                        discount={item.discount}
-                                    />
+                                        discount={item.discount} id={""}                                    />
                                 ))}
                             </div>
                         );

@@ -1,3 +1,4 @@
+// Client
 import Layout from "../layout/client/Layout";
 import About from "../pages/client/About";
 import AccountDetails from "../pages/client/AccountDetails";
@@ -13,7 +14,12 @@ import Login from "../pages/shared/Login";
 import NotFound from "../pages/shared/NotFound";
 import Profile from "../pages/client/Profile";
 
+// Admin
+import AdminLayout from "../layout/admin/Layout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+
 const ROUTES = [
+    // Client
     {
         path: "/",
         element: <Layout />,
@@ -32,10 +38,17 @@ const ROUTES = [
             { path: "account", element: <AccountDetails /> },
         ],
     },
+
+    // Admin
     {
-        path: "*",
-        element: <NotFound />,
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+            { index: true, element: <AdminDashboard /> },
+        ],
     },
+
+    { path: "*", element: <NotFound /> },
 ];
 
 export default ROUTES;

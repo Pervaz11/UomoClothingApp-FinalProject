@@ -20,7 +20,7 @@ export default function Dashboard() {
     setTimeout(() => {
       setActiveTab(tab);
       setTabLoading(false);
-    }, 500); // spinner effekti üçün 500ms gecikmə
+    }, 500); 
   };
 
   const handleLogout = () => {

@@ -5,11 +5,16 @@ const parseIntOrDefault = (value, defaultValue) =>
     isNaN(parseInt(value)) ? defaultValue : parseInt(value);
 
 // GET /products
-
 export const getProducts = async (req, res, next) => {
     try {
         const {
             search = '',
+            category,
+            brand,
+            color,
+            size,
+            priceMin,
+            priceMax,
             sortBy = 'price',
             order = 'asc',
             page = '1',
@@ -21,7 +26,15 @@ export const getProducts = async (req, res, next) => {
         const sortOrder = order === 'desc' ? -1 : 1;
 
         const filter = {};
+
         if (search.trim()) filter.name = { $regex: search.trim(), $options: 'i' };
+        if (category) filter.categories = category;
+        if (brand) filter.brand = brand;
+        if (color) filter.colors = { $elemMatch: { hex: color } }; // color hex ilə
+        if (size) filter.sizes = size;
+        if (priceMin || priceMax) filter.price = {};
+        if (priceMin) filter.price.$gte = parseFloat(priceMin);
+        if (priceMax) filter.price.$lte = parseFloat(priceMax);
 
         const total = await Product.countDocuments(filter);
 
@@ -30,7 +43,6 @@ export const getProducts = async (req, res, next) => {
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize);
 
-        // discount apply
         const productsWithDiscount = products.map(p => ({
             ...p.toObject(),
             discountedPrice: applyDiscount(p),
@@ -46,6 +58,7 @@ export const getProducts = async (req, res, next) => {
         next(error);
     }
 };
+
 
 
 // GET /products/:id

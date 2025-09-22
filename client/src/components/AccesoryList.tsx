@@ -55,7 +55,13 @@ const AccessoryList: React.FC<{ pagination?: boolean; sortOption: string; page: 
         <div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {paginatedAccessories.map((item) => (
-                    <AccessoryCard key={item._id} title={item.name} price={item.price} images={item.images} />
+                    <AccessoryCard
+                        key={item._id}
+                        id={item._id}
+                        title={item.name}
+                        price={item.price}
+                        images={item.images}
+                    />
                 ))}
             </div>
         </div>

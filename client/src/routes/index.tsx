@@ -13,11 +13,12 @@ import WishList from "../pages/client/WishList";
 import Login from "../pages/shared/Login";
 import NotFound from "../pages/shared/NotFound";
 import Profile from "../pages/client/Profile";
+import Details from "../pages/client/Details";
 
 // Admin
 import AdminLayout from "../layout/admin/Layout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import Details from "../pages/client/Details";
+
 
 const ROUTES = [
     // Client
@@ -37,7 +38,7 @@ const ROUTES = [
             { path: "orders", element: <Orders /> },
             { path: "addresses", element: <Adresses /> },
             { path: "account", element: <AccountDetails /> },
-            { path: "details", element: <Details /> },
+            { path: "details/:id", element: <Details /> },
         ],
     },
 
@@ -45,9 +46,7 @@ const ROUTES = [
     {
         path: "/admin",
         element: <AdminLayout />,
-        children: [
-            { index: true, element: <AdminDashboard /> },
-        ],
+        children: [{ index: true, element: <AdminDashboard /> }],
     },
 
     { path: "*", element: <NotFound /> },

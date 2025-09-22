@@ -49,7 +49,7 @@ const Products = () => {
 
         setTimeout(() => {
             setTabLoading(false);
-        }, 500); // 500ms 
+        }, 500);
     };
 
     const getFilteredProducts = () => {
@@ -121,11 +121,13 @@ const Products = () => {
                                 {slideItems.map((item) => (
                                     <ListCard
                                         key={item._id}
+                                        id={item._id} // ✅ Düzgün id verildi
                                         title={item.name}
                                         price={item.price}
                                         images={item.images}
                                         labels={item.labels}
-                                        discount={item.discount} id={""}                                    />
+                                        discount={item.discount}
+                                    />
                                 ))}
                             </div>
                         );

@@ -37,7 +37,6 @@ const ShopList: React.FC<{ pagination?: boolean; sortOption: string; page: numbe
             .finally(() => setLoading(false));
     }, []);
 
-    // sort
     const sortedProducts = [...products].sort((a, b) => {
         if (sortOption === "az") return a.name.localeCompare(b.name);
         if (sortOption === "za") return b.name.localeCompare(a.name);
@@ -64,11 +63,13 @@ const ShopList: React.FC<{ pagination?: boolean; sortOption: string; page: numbe
                 {paginatedProducts.map((item) => (
                     <ListCard
                         key={item._id}
+                        id={item._id}
                         title={item.name}
                         price={item.price}
                         images={item.images}
                         labels={item.labels}
-                        discount={item.discount} id={""} />
+                        discount={item.discount}
+                    />
                 ))}
             </div>
         </div>

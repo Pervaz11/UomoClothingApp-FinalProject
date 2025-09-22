@@ -10,6 +10,8 @@ import productRouter from "./src/routes/productRoute.js";
 import accessoryRouter from "./src/routes/accessoryRoute.js";
 import partnersRouter from "./src/routes/partnersRouter.js";
 import userRouter from "./src/routes/userRoute.js";
+import chatRouter from "./src/routes/chatRoute.js";
+
 import "./src/config/passport.js";
 
 const app = express();
@@ -58,5 +60,6 @@ app.use("/products", productRouter);
 app.use("/accessory", accessoryRouter);
 app.use("/partners", partnersRouter);
 app.use("/auth", userRouter);
+app.use("/chat", chatRouter);
 
 export default app;

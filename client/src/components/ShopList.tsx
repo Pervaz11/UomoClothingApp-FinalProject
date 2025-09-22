@@ -68,8 +68,7 @@ const ShopList: React.FC<{ pagination?: boolean; sortOption: string; page: numbe
                         price={item.price}
                         images={item.images}
                         labels={item.labels}
-                        discount={item.discount}
-                    />
+                        discount={item.discount} id={""} />
                 ))}
             </div>
         </div>

@@ -17,6 +17,7 @@ import Profile from "../pages/client/Profile";
 // Admin
 import AdminLayout from "../layout/admin/Layout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import Details from "../pages/client/Details";
 
 const ROUTES = [
     // Client
@@ -36,6 +37,7 @@ const ROUTES = [
             { path: "orders", element: <Orders /> },
             { path: "addresses", element: <Adresses /> },
             { path: "account", element: <AccountDetails /> },
+            { path: "details", element: <Details /> },
         ],
     },
 

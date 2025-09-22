@@ -18,6 +18,7 @@ import Details from "../pages/client/Details";
 // Admin
 import AdminLayout from "../layout/admin/Layout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import AccessoryDetails from "../pages/client/AccesoryDetails";
 
 
 const ROUTES = [
@@ -39,6 +40,7 @@ const ROUTES = [
             { path: "addresses", element: <Adresses /> },
             { path: "account", element: <AccountDetails /> },
             { path: "details/:id", element: <Details /> },
+            { path: "details/accessory/:id", element: <AccessoryDetails /> },
         ],
     },
 

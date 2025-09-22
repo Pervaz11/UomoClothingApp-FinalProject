@@ -1,6 +1,7 @@
 import { useState, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Share2 } from "lucide-react";
+import LightGallery from "lightgallery/react";
 import "lightgallery/css/lightgallery.css";
 import "lightgallery/css/lg-zoom.css";
 import "lightgallery/css/lg-thumbnail.css";
@@ -56,32 +57,42 @@ const ProductDetails = () => {
 
     return (
         <div className="max-w-6xl mx-auto p-6 space-y-12">
-            {/* Product Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div>
+                    <LightGallery speed={500} plugins={[]}>
+                        <a href={images[0]}>
+                            <motion.img
+                                src={images[0]}
+                                alt="Main Product"
+                                className="rounded-2xl shadow-md w-full object-cover mb-4"
+                                whileHover={{ scale: 1.02 }}
+                                transition={{ duration: 0.3 }}
+                            />
+                        </a>
 
-                    <div className="grid grid-cols-4 gap-3">
-                        {visibleThumbnails.map((img, i) => (
-                            <motion.a href={img} key={i} whileHover={{ scale: 1.05 }}>
-                                <div className="relative">
-                                    <img
-                                        src={img}
-                                        alt={`Thumbnail ${i}`}
-                                        className="rounded-lg cursor-pointer border hover:border-black transition"
-                                    />
-                                    {i === visibleThumbnails.length - 1 && hiddenCount > 0 && (
-                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg text-white text-sm font-medium">
-                                            +{hiddenCount} more
-                                        </div>
-                                    )}
-                                </div>
-                            </motion.a>
-                        ))}
+                        <div className="grid grid-cols-4 gap-3">
+                            {visibleThumbnails.map((img, i) => (
+                                <motion.a href={img} key={i} whileHover={{ scale: 1.05 }}>
+                                    <div className="relative">
+                                        <img
+                                            src={img}
+                                            alt={`Thumbnail ${i}`}
+                                            className="rounded-lg cursor-pointer border hover:border-black transition"
+                                        />
+                                        {i === visibleThumbnails.length - 1 && hiddenCount > 0 && (
+                                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg text-white text-sm font-medium">
+                                                +{hiddenCount} more
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.a>
+                            ))}
 
-                        {images.slice(4).map((img, i) => (
-                            <a href={img} key={`hidden-${i}`} className="hidden" />
-                        ))}
-                    </div>
+                            {images.slice(4).map((img, i) => (
+                                <a href={img} key={`hidden-${i}`} className="hidden" />
+                            ))}
+                        </div>
+                    </LightGallery>
                 </div>
 
                 <motion.div
@@ -165,6 +176,7 @@ const ProductDetails = () => {
 
             {/* Tabs Section */}
             <div className="space-y-6">
+                {/* Tab Buttons */}
                 <div className="flex gap-6 relative">
                     {tabs.map((tab) => (
                         <button

@@ -24,12 +24,17 @@ const navItems = [
     { section: "Ecommerce" },
     { label: "Orders", to: "/admin/orders", icon: <FiShoppingCart /> },
     { label: "Payments", to: "/admin/payments", icon: <FiCreditCard /> },
+
+    // 🔹 Yeni əlavə olunan Partners linki
+    { label: "Partners", to: "/admin/partners", icon: <FiUsers /> },
+
     { section: "Information Management" },
     { label: "Reports", to: "/admin/reports", icon: <FiBarChart2 /> },
     { section: "Apps" },
     { label: "Messages", to: "/admin/messages", icon: <FiMessageSquare />, badge: 16 },
     { label: "Calendar", to: "/admin/calendar", icon: <FiCalendar /> },
 ];
+
 
 const AdminSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);

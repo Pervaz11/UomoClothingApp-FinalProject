@@ -1,7 +1,6 @@
 import React from "react";
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useWishlist } from "../context/WishlistContext";
 
 type Discount = {
     type: "percentage" | "fixed";
@@ -44,19 +43,14 @@ const ListCard: React.FC<ListCardProps> = ({
                 ? Math.max(0, price - discount.value)
                 : price;
 
-    const { toggleWishlist, isInWishlist } = useWishlist();
-    const inWishlist = isInWishlist(id);
 
     return (
         <div className="relative group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
             {/* Wishlist */}
             <button
-                onClick={() => toggleWishlist(id)}
                 className="absolute top-2 right-2 z-10 p-1 bg-white rounded-full shadow hover:scale-110 transition"
             >
-                <Heart
-                    className={`w-4 h-4 ${inWishlist ? "text-red-500 fill-red-500" : "text-gray-500"}`}
-                />
+                <Heart />
             </button>
 
             {/* Image */}

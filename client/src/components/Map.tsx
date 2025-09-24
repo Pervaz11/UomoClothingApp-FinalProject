@@ -16,7 +16,7 @@ const Map = () => {
     useEffect(() => {
         async function fetchBranches() {
             try {
-                const res = await fetch("http://localhost:3000/location"); // backend endpoint
+                const res = await fetch("http://localhost:3000/location");
                 const data = await res.json();
                 setBranches(data);
             } catch (err) {

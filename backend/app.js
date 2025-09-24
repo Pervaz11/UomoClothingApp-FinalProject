@@ -12,6 +12,7 @@ import partnersRouter from "./src/routes/partnersRouter.js";
 import userRouter from "./src/routes/userRoute.js";
 import chatRouter from "./src/routes/chatRoute.js";
 import locationRouter from "./src/routes/locationRoute.js";
+import statsRouter from "./src/routes/statsRoute.js";
 import "./src/config/passport.js";
 
 const app = express();
@@ -59,8 +60,9 @@ app.get("/", (_req, res) => res.send("API is running..."));
 app.use("/products", productRouter);
 app.use("/accessory", accessoryRouter);
 app.use("/partners", partnersRouter);
+app.use("/location", locationRouter);
 app.use("/auth", userRouter);
 app.use("/chat", chatRouter);
-app.use("/location", locationRouter);
+app.use("/stats", statsRouter);
 
 export default app;

@@ -16,42 +16,15 @@ import {
   Radar,
 } from "recharts";
 
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import AdminMap from "../../components/admin/AdminMap";
+import KpiRow from "../../components/admin/KpiRow";
 
-type Branch = {
-  _id: string;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-};
 
 export default function UomoDashboard() {
-  const [branches, setBranches] = useState<Branch[]>([]);
 
-  useEffect(() => {
-    async function fetchBranches() {
-      try {
-        const res = await fetch("http://localhost:3000/location");
-        const data = await res.json();
-        setBranches(data);
-      } catch (err) {
-        console.error("Error fetching branches:", err);
-      }
-    }
-    fetchBranches();
-  }, []);
-
-  const kpis = [
-    { id: 1, title: "Monthly Gross Sales", value: "$18,925", delta: "+8%" },
-    { id: 2, title: "Net Margin", value: "36%", delta: "+1.4%" },
-    { id: 3, title: "Active Customers", value: "8,925", delta: "+3%" },
-    { id: 4, title: "Stores Online", value: "2", delta: "0" },
-  ];
 
   const salesByDay = [
     { name: "Mon", Online: 400, InStore: 600 },
@@ -100,33 +73,8 @@ export default function UomoDashboard() {
 
       <main className="max-w-7xl mx-auto grid gap-6">
         {/* KPI row */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {kpis.map((k, i) => (
-            <motion.div
-              key={k.id}
-              className="bg-gray-800 p-4 rounded-2xl shadow-md border border-gray-700 hover:shadow-lg hover:-translate-y-1 transition transform"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-xs uppercase text-gray-400">
-                    {k.title}
-                  </div>
-                  <div className="mt-2 text-2xl font-bold text-white">
-                    {k.value}
-                  </div>
-                </div>
-                <div className="text-sm text-green-400 font-medium">
-                  {k.delta}
-                </div>
-              </div>
-              <div className="mt-3 text-xs text-gray-500">
-                View trends, compare with last month
-              </div>
-            </motion.div>
-          ))}
+        <section className="">
+          <KpiRow />
         </section>
 
         {/* Charts + Map grid */}
@@ -159,42 +107,11 @@ export default function UomoDashboard() {
             </div>
           </motion.div>
 
-          <motion.div
-            className="bg-gray-800 p-4 rounded-2xl shadow-md border border-gray-700 hover:shadow-lg transition"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-white">
-                Branches & Revenue
-              </h2>
-              <div className="text-xs text-gray-400">Live locations</div>
-            </div>
+          <AdminMap />
 
-            <div className="w-full h-64 rounded-lg overflow-hidden">
-              <MapContainer
-                center={[48.0, 10.0]}
-                zoom={3}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                {branches.map((b) => (
-                  <Marker key={b._id} position={[b.latitude, b.longitude]}>
-                    <Popup>
-                      <div className="text-sm text-gray-800">
-                        <div className="font-semibold">{b.name}</div>
-                        <div className="text-xs text-gray-600">{b.address}</div>
-                      </div>
-                    </Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
-            </div>
-          </motion.div>
         </section>
 
-        {/* Area + Radar charts */}
+        {/*Radar charts */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <motion.div
             className="bg-gray-800 p-4 rounded-2xl shadow-md border border-gray-700 col-span-2 hover:shadow-lg transition"

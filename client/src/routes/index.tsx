@@ -19,6 +19,7 @@ import Details from "../pages/client/Details";
 import AdminLayout from "../layout/admin/Layout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AccessoryDetails from "../pages/client/AccesoryDetails";
+import Users from "../components/admin/Users";
 
 
 const ROUTES = [
@@ -48,7 +49,12 @@ const ROUTES = [
     {
         path: "/admin",
         element: <AdminLayout />,
-        children: [{ index: true, element: <AdminDashboard /> }],
+        children: [
+            { index: true, element: <AdminDashboard /> },
+            { path: "users", element: <Users /> },
+        ],
+
+
     },
 
     { path: "*", element: <NotFound /> },

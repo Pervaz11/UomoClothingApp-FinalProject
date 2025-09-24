@@ -50,7 +50,7 @@ const AdminSidebar = () => {
         <>
             {!isDesktop && (
                 <button
-                    className="fixed top-5 left-5 z-50 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-red-700 transition"
+                    className="fixed top-5 z-99 left-5 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-red-700 transition"
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}

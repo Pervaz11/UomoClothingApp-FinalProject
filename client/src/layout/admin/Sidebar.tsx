@@ -35,7 +35,6 @@ const navItems = [
     { label: "Calendar", to: "/admin/calendar", icon: <FiCalendar /> },
 ];
 
-
 const AdminSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
@@ -59,7 +58,7 @@ const AdminSidebar = () => {
 
             {!isDesktop && isOpen && (
                 <div
-                    className="fixed inset-0 bg-opacity-50 z-30"
+                    className="fixed min-h-screen inset-0 bg-opacity-50 z-30"
                     onClick={() => setIsOpen(false)}
                 />
             )}
@@ -71,8 +70,9 @@ const AdminSidebar = () => {
                     opacity: isDesktop || isOpen ? 1 : 0,
                 }}
                 transition={{ type: "spring", stiffness: 80, damping: 20 }}
-                className="fixed md:static w-64 bg-gray-900 text-gray-200 flex flex-col shadow-xl min-h-screen z-40"
+                className="fixed md:static w-64 bg-gray-900 text-gray-200 flex flex-col shadow-xl top-0 bottom-0 z-40"
             >
+
                 {/* Logo */}
                 <div className="uppercase text-3xl py-5 flex justify-center border-b border-gray-700">
                     <NavLink to="/">

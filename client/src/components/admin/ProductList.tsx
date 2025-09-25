@@ -20,8 +20,8 @@ export default function ProductList({ products, view }: Props) {
     return (
         <div
             className={`grid gap-6 ${view === "grid"
-                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                    : "grid-cols-1"
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                : "grid-cols-1"
                 }`}
         >
             {products.map((p) => {

@@ -20,7 +20,7 @@ import AdminLayout from "../layout/admin/Layout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AccessoryDetails from "../pages/client/AccesoryDetails";
 import Users from "../components/admin/Users";
-import ProductManagement from "../components/admin/ProductManagament";
+import Products from "../pages/admin/ProductManagament";
 
 
 const ROUTES = [
@@ -53,7 +53,8 @@ const ROUTES = [
         children: [
             { index: true, element: <AdminDashboard /> },
             { path: "users", element: <Users /> },
-            { path: "products", element: <ProductManagement /> },        ],
+            { path: "products", element: <Products /> }
+        ],
 
     },
 

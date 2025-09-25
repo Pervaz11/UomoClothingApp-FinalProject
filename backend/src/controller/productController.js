@@ -30,7 +30,7 @@ export const getProducts = async (req, res, next) => {
         if (search.trim()) filter.name = { $regex: search.trim(), $options: 'i' };
         if (category) filter.categories = category;
         if (brand) filter.brand = brand;
-        if (color) filter.colors = { $elemMatch: { hex: color } }; // color hex ilə
+        if (color) filter.colors = { $elemMatch: { hex: color } };
         if (size) filter.sizes = size;
         if (priceMin || priceMax) filter.price = {};
         if (priceMin) filter.price.$gte = parseFloat(priceMin);

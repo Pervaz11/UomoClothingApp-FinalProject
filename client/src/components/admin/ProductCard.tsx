@@ -41,18 +41,18 @@ export default function ProductCard({ product, view }: Props) {
                 </span>
             </div>
 
-            {/* Məlumat */}
+            {/* Info */}
             <div className={view === "list" ? "flex-1 flex flex-col gap-2" : "mt-3"}>
-                {/* Ad */}
+                {/* Name */}
                 <h3 className="text-lg font-semibold text-gray-200">{product.name}</h3>
 
-                {/* Tarix */}
+                {/* Calendar */}
                 <p className="text-sm text-gray-500 flex items-center gap-1">
                     <CalendarDays className="w-4 h-4 text-indigo-500" />
                     Added: {new Date(product.createdAt).toLocaleDateString()}
                 </p>
 
-                {/* Qiymət */}
+                {/* Price */}
                 <p className="text-lg font-bold text-indigo-600">${product.price}</p>
 
                 {/* Rating */}
@@ -61,8 +61,8 @@ export default function ProductCard({ product, view }: Props) {
                         <FaStar
                             key={i}
                             className={`transition-colors duration-300 ${i < Math.round(product.rating)
-                                    ? "text-yellow-400"
-                                    : "text-gray-300 group-hover:text-yellow-200"
+                                ? "text-yellow-400"
+                                : "text-gray-300 group-hover:text-yellow-200"
                                 }`}
                         />
                     ))}
@@ -73,8 +73,8 @@ export default function ProductCard({ product, view }: Props) {
                 {product.stock !== undefined && (
                     <span
                         className={`inline-block mt-1 text-xs px-3 py-1 rounded-full font-medium ${product.stock > 0
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
                             }`}
                     >
                         {product.stock > 0

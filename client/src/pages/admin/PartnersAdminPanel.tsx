@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import EditPartnerModal from "../../components/admin/EditPatnersModal";
 import { FaRegEdit } from "react-icons/fa";
 import { IoEarth } from "react-icons/io5";
+import { CiMail } from "react-icons/ci";
 
 
 type Partner = {
@@ -60,7 +61,7 @@ export default function Partners() {
             <input
                 type="text"
                 placeholder="Search by name, email or country..."
-                className="mb-4 w-full md:w-1/2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mb-4 w-full border-none md:w-1/2 px-4 py-2 border rounded-lg focus:outline-none focus:border-0 duration-300 focus:shadow-xl"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />
@@ -79,7 +80,7 @@ export default function Partners() {
                                 exit={{ opacity: 0, y: 10 }}
                                 className="bg-gray-800 rounded-2xl shadow p-4 flex items-center gap-6 hover:shadow-lg transition"
                             >
-                                {/* Şəkil */}
+                                {/* Img */}
                                 <div className="flex-shrink-0 bg-white p-4 rounded-xl w-32 h-32 flex items-center justify-center">
                                     <img
                                         src={partner.image}
@@ -88,24 +89,24 @@ export default function Partners() {
                                     />
                                 </div>
 
-                                {/* Məlumat */}
+                                {/* Info */}
                                 <div className="flex-1 flex flex-col justify-between h-full">
                                     <div>
                                         <h2 className="text-xl font-semibold text-white">{partner.name}</h2>
-                                        <p className="text-gray-400">{partner.email}</p>
+                                        <p className="text-gray-400 flex items-center gap-1"><CiMail />{partner.email}</p>
                                         <p className="text-gray-400 flex items-center gap-1"><IoEarth />{partner.country}</p>
                                     </div>
 
                                     <div className="flex items-center justify-between mt-2">
                                         <span
-                                            className={`px-3 py-1 rounded-full text-white text-sm ${partner.status === "active" ? "bg-green-500" : "bg-gray-500"}`}
+                                            className={`font-semibold text-white py-1 rounded-full text-sm uppercase px-5 ${partner.status === "active" ? "bg-green-500" : "bg-gray-500"}`}
                                         >
                                             {partner.status}
                                         </span>
 
                                         <button
                                             onClick={() => setSelectedPartner(partner)}
-                                            className="px-4 py-2 rounded-lg text-white text-2xl hover:text-green-500 duration-300 transition"
+                                            className="px-4 py-2 rounded-lg text-white text-3xl hover:text-green-500 duration-300 transition"
                                         >
                                             <FaRegEdit />
                                         </button>

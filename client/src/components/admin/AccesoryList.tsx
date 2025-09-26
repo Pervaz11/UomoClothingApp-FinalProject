@@ -30,14 +30,14 @@ const AccessoryList: React.FC = () => {
     }
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-6">
             {accessories.map((item) => (
                 <AccessoryCard
                     key={item._id}
-                    accessory={item}       // 🔹 bütün accessory obyektini ötürürük
-                    view="grid"            // 🔹 istəsən "list" də edə bilərsən
-                    onEdit={(id) => console.log("Edit", id)}
-                    onDelete={(id) => console.log("Delete", id)}
+                    accessory={item}
+                    view="grid"
+                    onEdit={(id: any) => console.log("Edit", id)}
+                    onDelete={(id: any) => console.log("Delete", id)}
                 />
             ))}
         </div>

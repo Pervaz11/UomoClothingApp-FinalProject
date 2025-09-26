@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import { CalendarDays } from "lucide-react";
 import EditItemModal from "./EditProductModal";
+import { AiOutlineEdit } from "react-icons/ai";
 
 type Accessory = {
     _id: string;
@@ -45,7 +46,7 @@ export default function AccessoryCard({ accessory, view }: Props) {
                     </span>
                 </div>
 
-                <div className={view === "list" ? "flex-1 flex flex-col gap-2" : "mt-3"}>
+                <div className={view === "list" ? " flex gap-2" : "mt-3"}>
                     <h3 className="text-lg font-semibold text-gray-200">{accessory.name}</h3>
                     <p className="text-sm text-gray-500 flex items-center gap-1">
                         <CalendarDays className="w-4 h-4 text-indigo-500" />
@@ -68,19 +69,20 @@ export default function AccessoryCard({ accessory, view }: Props) {
 
                     {accessory.stock !== undefined && (
                         <span
-                            className={`inline-block mt-1 text-xs px-3 py-1 rounded-full font-medium ${accessory.stock > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                            className={`inline-block mt-1 text-xs w-ful py-1 px-3 rounded-full font-medium ${accessory.stock > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                                 }`}
                         >
                             {accessory.stock > 0 ? `In stock (${accessory.stock})` : "Out of stock"}
                         </span>
                     )}
 
+
                     {/* Edit Button */}
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="mt-2 px-3 py-1 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition"
+                        className="mt-2 flex w-full items-center justify-center gap-2 px-3 py-1 bg-indigo-600 text-white font-semibold rounded-xl shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all text-sm"
                     >
-                        Edit
+                        <AiOutlineEdit className="text-base" /> Edit
                     </button>
                 </div>
             </motion.div>

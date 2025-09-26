@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Filters from "../../components/admin/AdminFilters";
 import ProductList from "../../components/admin/ProductList";
-import AccessoryList from "../../components/admin/AccesoryList"; 
+import AccessoryList from "../../components/admin/AccesoryList";
 import ViewToggle from "../../components/admin/ViewToggle";
 import Pagination from "../../components/Pagination";
+import AddProductModal from "../../components/admin/AddPorudtcModal";
 
 type Product = {
     _id: string;
@@ -23,29 +24,24 @@ export default function Products() {
     const [page, setPage] = useState(1);
     const [products, setProducts] = useState<Product[]>([]);
     const [total, setTotal] = useState(0);
+    const [showAddModal, setShowAddModal] = useState(false);
     const limit = 6;
 
+    // 🔹 Məhsulları gətirən funksiya
+    const fetchProducts = async () => {
+        if (tab !== "product") return;
+        try {
+            const res = await axios.get("http://localhost:3000/products", {
+                params: { page, limit, sortBy: "createdAt", order: "desc" },
+            });
+            setProducts(res.data.products);
+            setTotal(res.data.total);
+        } catch (error) {
+            console.error("❌ Failed to fetch products:", error);
+        }
+    };
+
     useEffect(() => {
-        if (tab !== "product") return; 
-
-        const fetchProducts = async () => {
-            try {
-                const res = await axios.get("http://localhost:3000/products", {
-                    params: {
-                        page,
-                        limit,
-                        sortBy: "createdAt",
-                        order: "desc",
-                    },
-                });
-
-                setProducts(res.data.products);
-                setTotal(res.data.total);
-            } catch (error) {
-                console.error("❌ Failed to fetch products:", error);
-            }
-        };
-
         fetchProducts();
     }, [page, tab]);
 
@@ -64,6 +60,16 @@ export default function Products() {
                     </h1>
 
                     <div className="flex items-center gap-4">
+                        {/* 🔹 Add Product Button (yalnız məhsul tabında) */}
+                        {tab === "product" && (
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                            >
+                                ➕ Add Product
+                            </button>
+                        )}
+
                         {/* 🔹 Switch Tabs */}
                         <div className="inline-flex rounded-full bg-gray-200 p-1">
                             <button
@@ -101,9 +107,17 @@ export default function Products() {
                         />
                     </>
                 ) : (
-                    <AccessoryList view={view} /> 
+                    <AccessoryList view={view} />
                 )}
             </main>
+
+            {/* 🔹 Add Product Modal */}
+            {showAddModal && (
+                <AddProductModal
+                    onClose={() => setShowAddModal(false)}
+                    onSuccess={fetchProducts}
+                />
+            )}
         </div>
     );
 }

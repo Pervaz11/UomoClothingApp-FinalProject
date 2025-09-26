@@ -2,10 +2,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import { CalendarDays } from "lucide-react";
-import EditProductModal from "./EditProductModal";
+import EditItemModal from "./EditProductModal";
 
 type Product = {
-    id: number;
+    id: string;
     name: string;
     price: number;
     rating: number;
@@ -30,7 +30,9 @@ export default function ProductCard({ product, view }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className={`border rounded-2xl bg-gray-800 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden ${view === "list" ? "flex items-center p-2 gap-6" : "p-3"
+                className={`border rounded-2xl bg-gray-800 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden ${view === "list"
+                    ? "flex items-center p-2 gap-6"
+                    : "p-3"
                     }`}
             >
                 {/* Img */}
@@ -38,7 +40,9 @@ export default function ProductCard({ product, view }: Props) {
                     <img
                         src={product.image}
                         alt={product.name}
-                        className={`rounded-xl object-cover transition-transform duration-500 ${view === "list" ? "w-42 h-42" : "w-full h-80"
+                        className={`rounded-xl object-cover transition-transform duration-500 ${view === "list"
+                            ? "w-42 h-42"
+                            : "w-full h-80"
                             } group-hover:scale-105`}
                     />
                     <span className="absolute bottom-2 left-2 bg-indigo-600/90 text-white text-xs px-3 py-1 rounded-full shadow-md">
@@ -84,7 +88,7 @@ export default function ProductCard({ product, view }: Props) {
                     {/* Edit Button */}
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="mt-2 w-full items-center text-center  font-semibold py-1 rounded-2xl bg-blue-700 text-white text-sm hover:bg-indigo-700 transition"
+                        className="mt-2 w-full items-center text-center font-semibold py-1 rounded-2xl bg-blue-700 text-white text-sm hover:bg-indigo-700 transition"
                     >
                         Edit
                     </button>
@@ -92,7 +96,12 @@ export default function ProductCard({ product, view }: Props) {
             </motion.div>
 
             {/* Modal */}
-            {isEditing && <EditProductModal product={product} onClose={() => setIsEditing(false)} />}
+            {isEditing && (
+                <EditItemModal
+                    item={{ ...product, type: "product" }}
+                    onClose={() => setIsEditing(false)}
+                />
+            )}
         </>
     );
 }

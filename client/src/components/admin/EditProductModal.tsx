@@ -26,7 +26,6 @@ export default function EditItemModal({ item, onClose }: Props) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // Hər iki tip üçün endpoint eyni, əgər fərqli endpoint varsa burada şərt əlavə edə bilərik
             const endpoint =
                 item.type === "product"
                     ? `http://localhost:3000/products/${item.id}`

@@ -17,17 +17,29 @@ type Props = {
 };
 
 export default function ProductList({ products, view }: Props) {
+    if (!products.length) {
+        return (
+            <div className="text-center text-gray-400 py-10">
+                No products found.
+            </div>
+        );
+    }
+
     return (
         <div
-            className={`grid gap-6 ${view === "grid"
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                : "grid-cols-1"
-                }`}
+            className={
+                view === "grid"
+                    ? "grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                    : "flex flex-col gap-4"
+            }
         >
             {products.map((p) => {
                 const avgRating =
                     p.reviews && p.reviews.length
-                        ? p.reviews.reduce((a, r) => a + r.rating, 0) / p.reviews.length
+                        ? Number(
+                            (p.reviews.reduce((a, r) => a + r.rating, 0) /
+                                p.reviews.length).toFixed(1)
+                        )
                         : 0;
 
                 return (

@@ -30,17 +30,19 @@ const AccessoryList: React.FC = () => {
     }
 
     return (
-        <div className="grid grid-cols-2 gap-6">
-            {accessories.map((item) => (
-                <AccessoryCard
-                    key={item._id}
-                    accessory={item}
-                    view="grid"
-                    onEdit={(id: any) => console.log("Edit", id)}
-                    onDelete={(id: any) => console.log("Delete", id)}
-                />
-            ))}
-        </div>
+        <>
+            <div className="grid grid-cols-2 gap-6">
+                {accessories.map((item) => (
+                    <AccessoryCard
+                        key={item._id}
+                        accessory={item}
+                        view="grid"
+                        onEdit={(id: any) => console.log("Edit", id)}
+                        onDelete={(id: any) => console.log("Delete", id)}
+                    />
+                ))}
+            </div>
+        </>
     );
 };
 

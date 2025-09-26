@@ -14,6 +14,7 @@ import Login from "../pages/shared/Login";
 import NotFound from "../pages/shared/NotFound";
 import Profile from "../pages/client/Profile";
 import Details from "../pages/client/Details";
+import AddToCart from "../pages/client/AddToCart";
 
 // Admin
 import AdminLayout from "../layout/admin/Layout";
@@ -22,7 +23,6 @@ import AccessoryDetails from "../pages/client/AccesoryDetails";
 import Users from "../components/admin/Users";
 import Products from "../pages/admin/ProductManagament";
 import PartnersAdminPanel from "../pages/admin/PartnersAdminPanel";
-
 
 const ROUTES = [
     // Client
@@ -44,6 +44,7 @@ const ROUTES = [
             { path: "account", element: <AccountDetails /> },
             { path: "details/:id", element: <Details /> },
             { path: "details/accessory/:id", element: <AccessoryDetails /> },
+            { path: "addToCart", element: <AddToCart /> },
         ],
     },
 
@@ -55,9 +56,8 @@ const ROUTES = [
             { index: true, element: <AdminDashboard /> },
             { path: "users", element: <Users /> },
             { path: "products", element: <Products /> },
-            { path: "partners", element: <PartnersAdminPanel /> }
+            { path: "partners", element: <PartnersAdminPanel /> },
         ],
-
     },
 
     { path: "*", element: <NotFound /> },

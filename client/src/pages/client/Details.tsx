@@ -1,27 +1,20 @@
-import { useState, useEffect, Suspense, lazy, type Key } from "react";
-import { useParams } from "react-router-dom"; 
+import { useState, useEffect, Suspense, lazy } from "react";
+import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import LightGallery from "lightgallery/react";
 import "lightgallery/css/lightgallery.css";
 import "lightgallery/css/lg-zoom.css";
 import "lightgallery/css/lg-thumbnail.css";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../features/cartSlice";
 
-// Lazy loaded tabs
 const ReviewsTab = lazy(() => import("../../components/ReviwesTab"));
 const InfoTab = lazy(() => import("../../components/InfoTab"));
 const DescriptionTab = lazy(() => import("../../components/DescriptionTab"));
 
-const SkeletonLoader = () => (
-    <div className="animate-pulse space-y-3">
-        <div className="h-4 bg-gray-200 rounded w-1/3" />
-        <div className="h-4 bg-gray-200 rounded w-2/3" />
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
-    </div>
-);
-
 const Details = () => {
-    const { id } = useParams<{ id?: string }>(); 
+    const { id } = useParams<{ id?: string }>();
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState("M");
@@ -29,18 +22,30 @@ const Details = () => {
     const [activeTab, setActiveTab] = useState("description");
     const [quantity, setQuantity] = useState(1);
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
         if (!id) return;
         setLoading(true);
         axios
             .get(`http://localhost:3000/products/${id}`)
-            .then((res) => {
-                const data = res.data;
-                setProduct(data);
-            })
+            .then((res) => setProduct(res.data))
             .catch((err) => console.error("Error fetching product:", err))
             .finally(() => setLoading(false));
     }, [id]);
+
+    const handleAddToCart = () => {
+        if (!product?._id) return;
+        dispatch(
+            addToCart({
+                productId: product._id,
+                title: product.title,
+                price: product.price,
+                image: product.images?.[0]?.url || "/placeholder.jpg",
+                quantity,
+            })
+        );
+    };
 
     if (loading) return <p className="p-6">Loading...</p>;
     if (!product) return <p className="p-6">Product not found</p>;
@@ -48,30 +53,11 @@ const Details = () => {
     const sizes = ["XS", "S", "M", "L", "XL"];
     const colors = ["red", "black", "white"];
     const images = product.images?.map((img: any) => img.url) || [];
-    const visibleThumbnails = images.slice(0, 4);
-    const hiddenCount = images.length - visibleThumbnails.length;
-
-    const renderTabContent = () => {
-        switch (activeTab) {
-            case "info":
-                return <InfoTab />;
-            case "reviews":
-                return <ReviewsTab />;
-            default:
-                return <DescriptionTab />;
-        }
-    };
-
-    const tabs = [
-        { id: "description", label: "Description" },
-        { id: "info", label: "Additional Information" },
-        { id: "reviews", label: "Reviews (2)" },
-    ];
 
     return (
         <div className="mx-auto p-6 max-w-7xl space-y-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                {/* Images */}
+                {/* Product Images */}
                 <div>
                     <LightGallery speed={500}>
                         {images.length > 0 && (
@@ -85,29 +71,16 @@ const Details = () => {
                                 />
                             </a>
                         )}
-                        <div className="grid grid-cols-4 gap-4">
-                            {visibleThumbnails.map((img: string | undefined, i: Key | null | undefined) => (
-                                <motion.a href={img} key={i} whileHover={{ scale: 1.05 }}>
-                                    <div className="relative">
-                                        <img
-                                            src={img}
-                                            alt={`Thumbnail ${i}`}
-                                            className="rounded-xl cursor-pointer border hover:border-black transition shadow-sm"
-                                        />
-                                        {i === visibleThumbnails.length - 1 && hiddenCount > 0 && (
-                                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-xl text-white text-sm font-medium">
-                                                +{hiddenCount} more
-                                            </div>
-                                        )}
-                                    </div>
-                                </motion.a>
-                            ))}
-                        </div>
                     </LightGallery>
                 </div>
 
                 {/* Product Info */}
-                <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="space-y-8">
+                <motion.div
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="space-y-8"
+                >
                     <h2 className="text-4xl font-bold">{product.title}</h2>
                     <p className="text-2xl font-semibold">${product.price}</p>
                     <p>{product.description}</p>
@@ -116,12 +89,14 @@ const Details = () => {
                     <div>
                         <h3 className="font-medium text-sm mb-3">Size</h3>
                         <div className="flex gap-2">
-                            {sizes.map(size => (
+                            {sizes.map((size) => (
                                 <motion.button
                                     key={size}
                                     onClick={() => setSelectedSize(size)}
                                     whileTap={{ scale: 0.9 }}
-                                    className={`px-4 py-2 rounded-lg border text-sm font-medium ${selectedSize === size ? "bg-black text-white border-black shadow-md" : "border-gray-300 hover:border-black/60"
+                                    className={`px-4 py-2 rounded-lg border text-sm font-medium ${selectedSize === size
+                                            ? "bg-black text-white border-black shadow-md"
+                                            : "border-gray-300 hover:border-black/60"
                                         }`}
                                 >
                                     {size}
@@ -134,12 +109,14 @@ const Details = () => {
                     <div>
                         <h3 className="font-medium text-sm mb-3">Color</h3>
                         <div className="flex gap-3">
-                            {colors.map(color => (
+                            {colors.map((color) => (
                                 <motion.div
                                     key={color}
                                     onClick={() => setSelectedColor(color)}
                                     whileHover={{ scale: 1.1 }}
-                                    className={`w-9 h-9 rounded-full cursor-pointer border-2 ${selectedColor === color ? "border-black shadow-md" : "border-gray-300 hover:border-black/40"
+                                    className={`w-9 h-9 rounded-full cursor-pointer border-2 ${selectedColor === color
+                                            ? "border-black shadow-md"
+                                            : "border-gray-300 hover:border-black/40"
                                         }`}
                                     style={{ backgroundColor: color }}
                                 />
@@ -147,42 +124,92 @@ const Details = () => {
                         </div>
                     </div>
 
-                    {/* Quantity & Cart */}
+                    {/* Quantity & Add to Cart */}
                     <div className="flex gap-4 items-center">
                         <div className="flex items-center border overflow-hidden shadow-sm">
-                            <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="px-4 py-2 text-gray-600 hover:bg-gray-100">-</button>
+                            <button
+                                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100"
+                            >
+                                -
+                            </button>
                             <span className="px-5 py-2 text-sm font-medium">{quantity}</span>
-                            <button onClick={() => setQuantity(q => q + 1)} className="px-4 py-2 text-gray-600 hover:bg-gray-100">+</button>
+                            <button
+                                onClick={() => setQuantity((q) => q + 1)}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100"
+                            >
+                                +
+                            </button>
                         </div>
-                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-black text-white px-8 py-3 shadow hover:shadow-lg text-sm font-medium">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="bg-black text-white px-8 py-3 shadow hover:shadow-lg text-sm font-medium"
+                            onClick={handleAddToCart}
+                        >
                             Add to Cart
                         </motion.button>
                     </div>
                 </motion.div>
             </div>
 
-            {/* Tabs Section */}
-            <div className="space-y-6 mt-12">
-                <div className="flex gap-8">
-                    {tabs.map(tab => (
+            {/* Tabs */}
+            <div className="space-y-6">
+                <div className="flex border-b">
+                    {["description", "info", "reviews"].map((tab) => (
                         <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`relative pb-3 text-sm font-medium ${activeTab === tab.id ? "text-black" : "text-gray-500 hover:text-black"}`}
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`px-6 py-3 text-sm font-medium ${activeTab === tab
+                                    ? "border-b-2 border-black text-black"
+                                    : "text-gray-500"
+                                }`}
                         >
-                            {tab.label}
-                            {activeTab === tab.id && <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-black" />}
+                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
                         </button>
                     ))}
                 </div>
 
-                <Suspense fallback={<SkeletonLoader />}>
+                <div className="p-6 bg-white shadow rounded-lg">
                     <AnimatePresence mode="wait">
-                        <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                            {renderTabContent()}
-                        </motion.div>
+                        {activeTab === "description" && (
+                            <motion.div
+                                key="description"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            >
+                                <Suspense fallback={<p>Loading...</p>}>
+                                    <DescriptionTab description={product.description} />
+                                </Suspense>
+                            </motion.div>
+                        )}
+                        {activeTab === "info" && (
+                            <motion.div
+                                key="info"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            >
+                                <Suspense fallback={<p>Loading...</p>}>
+                                    <InfoTab product={product} />
+                                </Suspense>
+                            </motion.div>
+                        )}
+                        {activeTab === "reviews" && (
+                            <motion.div
+                                key="reviews"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            >
+                                <Suspense fallback={<p>Loading...</p>}>
+                                    <ReviewsTab productId={product._id} />
+                                </Suspense>
+                            </motion.div>
+                        )}
                     </AnimatePresence>
-                </Suspense>
+                </div>
             </div>
         </div>
     );

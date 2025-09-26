@@ -4,8 +4,8 @@ import Filters from "../../components/admin/AdminFilters";
 import ProductList from "../../components/admin/ProductList";
 import AccessoryList from "../../components/admin/AccesoryList";
 import ViewToggle from "../../components/admin/ViewToggle";
-import Pagination from "../../components/Pagination";
 import AddProductModal from "../../components/admin/AddPorudtcModal";
+import Pagination from "../../components/admin/AdminPagination";
 import { FaPlus } from "react-icons/fa";
 
 type Product = {
@@ -28,7 +28,6 @@ export default function Products() {
     const [showAddModal, setShowAddModal] = useState(false);
     const limit = 6;
 
-    // 🔹 Məhsulları gətirən funksiya
     const fetchProducts = async () => {
         if (tab !== "product") return;
         try {
@@ -64,13 +63,13 @@ export default function Products() {
                         {tab === "product" && (
                             <button
                                 onClick={() => setShowAddModal(true)}
-                                className="px-2 py-1  flex items-center gap-2 font-bold duration-300 rounded-lg bg-gray-800 text-white hover:bg-black"
+                                className="px-3 py-2 flex items-center gap-2 font-semibold duration-300 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg transition"
                             >
                                 <FaPlus /> Add Product
                             </button>
                         )}
 
-                        {/* 🔹 Switch Tabs */}
+                        {/* Switch Tabs */}
                         <div className="inline-flex rounded-full bg-gray-200 p-1">
                             <button
                                 onClick={() => setTab("product")}
@@ -100,24 +99,27 @@ export default function Products() {
                 {tab === "product" ? (
                     <>
                         <ProductList products={products} view={view} />
+
+                        {/* Pagination */}
                         <Pagination
-                            page={page}
-                            setPage={setPage}
-                            total={Math.ceil(total / limit)}
+                            currentPage={page}
+                            totalItems={total}
+                            pageSize={limit}
+                            onPageChange={(p) => setPage(p)}
                         />
                     </>
                 ) : (
                     <AccessoryList view={view} />
                 )}
-            </main>
 
-            {/* Add Product Modal */}
-            {showAddModal && (
-                <AddProductModal
-                    onClose={() => setShowAddModal(false)}
-                    onSuccess={fetchProducts}
-                />
-            )}
+                {/* Add Product Modal */}
+                {showAddModal && (
+                    <AddProductModal
+                        onClose={() => setShowAddModal(false)}
+                        onSuccess={fetchProducts}
+                    />
+                )}
+            </main>
         </div>
     );
 }

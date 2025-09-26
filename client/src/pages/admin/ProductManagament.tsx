@@ -6,6 +6,7 @@ import AccessoryList from "../../components/admin/AccesoryList";
 import ViewToggle from "../../components/admin/ViewToggle";
 import Pagination from "../../components/Pagination";
 import AddProductModal from "../../components/admin/AddPorudtcModal";
+import { FaPlus } from "react-icons/fa";
 
 type Product = {
     _id: string;
@@ -60,13 +61,12 @@ export default function Products() {
                     </h1>
 
                     <div className="flex items-center gap-4">
-                        {/* 🔹 Add Product Button (yalnız məhsul tabında) */}
                         {tab === "product" && (
                             <button
                                 onClick={() => setShowAddModal(true)}
-                                className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                                className="px-2 py-1  flex items-center gap-2 font-bold duration-300 rounded-lg bg-gray-800 text-white hover:bg-black"
                             >
-                                ➕ Add Product
+                                <FaPlus /> Add Product
                             </button>
                         )}
 
@@ -96,7 +96,7 @@ export default function Products() {
                     </div>
                 </div>
 
-                {/* 🔹 Tab Content */}
+                {/* Tab Content */}
                 {tab === "product" ? (
                     <>
                         <ProductList products={products} view={view} />
@@ -111,7 +111,7 @@ export default function Products() {
                 )}
             </main>
 
-            {/* 🔹 Add Product Modal */}
+            {/* Add Product Modal */}
             {showAddModal && (
                 <AddProductModal
                     onClose={() => setShowAddModal(false)}

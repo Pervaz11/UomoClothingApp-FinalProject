@@ -6,6 +6,7 @@ type Product = {
     _id: string;
     name: string;
     price: number;
+    stock: number;
     images: { url: string; alt: string }[];
     labels?: string[];
     discount?: {
@@ -14,6 +15,7 @@ type Product = {
         expiresAt?: string;
     };
 };
+
 
 const Products = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -121,9 +123,10 @@ const Products = () => {
                                 {slideItems.map((item) => (
                                     <ListCard
                                         key={item._id}
-                                        id={item._id} // ✅ Düzgün id verildi
+                                        id={item._id}
                                         title={item.name}
                                         price={item.price}
+                                        stock={item.stock}
                                         images={item.images}
                                         labels={item.labels}
                                         discount={item.discount}

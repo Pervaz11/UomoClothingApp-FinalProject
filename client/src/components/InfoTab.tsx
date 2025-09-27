@@ -1,4 +1,13 @@
-const InfoTab = () => {
+type InfoTabProps = {
+    product: {
+        title: string;
+        price: number;
+        stock?: number;
+        [key: string]: any;
+    };
+};
+
+const InfoTab: React.FC<InfoTabProps> = ({ }) => {
     return (
         <div className="flex flex-col gap-6 text-gray-800">
             <div className="flex gap-18 md:gap-50">

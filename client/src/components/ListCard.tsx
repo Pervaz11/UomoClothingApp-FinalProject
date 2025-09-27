@@ -15,11 +15,12 @@ type Image = {
     url: string;
     alt: string;
 };
-    
+
 type ListCardProps = {
     id: string;
     title: string;
     price: number;
+    stock: number;
     images: Image[];
     labels?: string[];
     discount?: Discount;
@@ -29,9 +30,10 @@ const ListCard: React.FC<ListCardProps> = ({
     id,
     title,
     price,
+    stock,
     images,
     labels,
-    discount,
+    discount
 }) => {
     const dispatch = useDispatch();
     const now = new Date();
@@ -55,11 +57,13 @@ const ListCard: React.FC<ListCardProps> = ({
                 price: finalPrice,
                 image: images?.[0]?.url || "/placeholder.jpg",
                 quantity: 1,
+                stock: stock
             })
         );
         toast.success(`${title} added to cart!`);
     };
-    return (
+
+    return (   // ✅ burada return funksiyanın içində
         <div className="relative group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
             {/* Wishlist */}
             <button className="absolute top-2 right-2 z-10 p-1 bg-white rounded-full shadow hover:scale-110 transition">
@@ -121,5 +125,6 @@ const ListCard: React.FC<ListCardProps> = ({
         </div>
     );
 };
+
 
 export default ListCard;

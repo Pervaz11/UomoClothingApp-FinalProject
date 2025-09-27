@@ -1,21 +1,20 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-
-
 type CartItem = {
-    [x: string]: string;
-    productId: string;
+    productId: string; 
     title: string;
     price: number;
     image: string;
     quantity: number;
+    stock: number;
+    color?: string;
 };
+
 
 interface CartState {
     items: CartItem[];
 }
 
-// LocalStorage-dən oxu
 const initialState: CartState = {
     items: JSON.parse(localStorage.getItem("cart") || "[]"),
 };
@@ -28,11 +27,15 @@ const cartSlice = createSlice({
             const existing = state.items.find(
                 (item) => item.productId === action.payload.productId
             );
+
             if (existing) {
-                existing.quantity += action.payload.quantity;
+                if (existing.quantity < action.payload.stock) {
+                    existing.quantity += 1;
+                }
             } else {
-                state.items.push(action.payload);
+                state.items.push({ ...action.payload, quantity: 1 });
             }
+
             localStorage.setItem("cart", JSON.stringify(state.items));
         },
         removeFromCart: (state, action: PayloadAction<string>) => {
@@ -51,12 +54,35 @@ const cartSlice = createSlice({
         ) => {
             const item = state.items.find(i => i.productId === action.payload.id);
             if (item) {
-                (item as any).color = action.payload.color;
+                item.color = action.payload.color;
+                localStorage.setItem("cart", JSON.stringify(state.items));
+            }
+        },
+
+        increaseQuantity: (state, action: PayloadAction<string>) => {
+            const item = state.items.find(i => i.productId === action.payload);
+            if (item && item.quantity < item.stock) {
+                item.quantity += 1;
+                localStorage.setItem("cart", JSON.stringify(state.items));
+            }
+        },
+        decreaseQuantity: (state, action: PayloadAction<string>) => {
+            const item = state.items.find(i => i.productId === action.payload);
+            if (item && item.quantity > 1) {
+                item.quantity -= 1;
                 localStorage.setItem("cart", JSON.stringify(state.items));
             }
         },
     },
 });
 
-export const { addToCart, removeFromCart, clearCart, updateItemColor } = cartSlice.actions;
+export const {
+    addToCart,
+    removeFromCart,
+    clearCart,
+    updateItemColor,
+    increaseQuantity,
+    decreaseQuantity,
+} = cartSlice.actions;
+
 export default cartSlice.reducer;

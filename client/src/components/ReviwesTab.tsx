@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 
-const Reviews = () => {
+type ReviewsTabProps = {
+    productId: string;
+};
+
+const Reviews: React.FC<ReviewsTabProps> = () => {
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
 

@@ -1,4 +1,7 @@
-const DescriptionTab = () => {
+type DescriptionTabProps = {
+    description: string;
+};
+const DescriptionTab: React.FC<DescriptionTabProps> = ({ }) => {
     return (
         <>
             <div className="gap-10 flex flex-col">

@@ -63,7 +63,7 @@ const ListCard: React.FC<ListCardProps> = ({
         toast.success(`${title} added to cart!`);
     };
 
-    return (   // ✅ burada return funksiyanın içində
+    return (  
         <div className="relative group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
             {/* Wishlist */}
             <button className="absolute top-2 right-2 z-10 p-1 bg-white rounded-full shadow hover:scale-110 transition">

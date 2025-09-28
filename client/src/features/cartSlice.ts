@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 type CartItem = {
-    productId: string; 
+    productId: string;
     title: string;
     price: number;
     image: string;
@@ -9,7 +9,6 @@ type CartItem = {
     stock: number;
     color?: string;
 };
-
 
 interface CartState {
     items: CartItem[];
@@ -29,15 +28,17 @@ const cartSlice = createSlice({
             );
 
             if (existing) {
-                if (existing.quantity < action.payload.stock) {
-                    existing.quantity += 1;
-                }
+                // Mövcud quantity üzərinə gələn quantity əlavə et
+                const newQuantity = existing.quantity + action.payload.quantity;
+                existing.quantity = Math.min(newQuantity, existing.stock);
             } else {
-                state.items.push({ ...action.payload, quantity: 1 });
+                // İlk dəfə əlavə olunursa, gələn quantity olduğu kimi istifadə olunur
+                state.items.push({ ...action.payload });
             }
 
             localStorage.setItem("cart", JSON.stringify(state.items));
         },
+
         removeFromCart: (state, action: PayloadAction<string>) => {
             state.items = state.items.filter(
                 (item) => item.productId !== action.payload
@@ -52,7 +53,9 @@ const cartSlice = createSlice({
             state,
             action: PayloadAction<{ id: string; color: string }>
         ) => {
-            const item = state.items.find(i => i.productId === action.payload.id);
+            const item = state.items.find(
+                (i) => i.productId === action.payload.id
+            );
             if (item) {
                 item.color = action.payload.color;
                 localStorage.setItem("cart", JSON.stringify(state.items));
@@ -60,14 +63,14 @@ const cartSlice = createSlice({
         },
 
         increaseQuantity: (state, action: PayloadAction<string>) => {
-            const item = state.items.find(i => i.productId === action.payload);
+            const item = state.items.find((i) => i.productId === action.payload);
             if (item && item.quantity < item.stock) {
                 item.quantity += 1;
                 localStorage.setItem("cart", JSON.stringify(state.items));
             }
         },
         decreaseQuantity: (state, action: PayloadAction<string>) => {
-            const item = state.items.find(i => i.productId === action.payload);
+            const item = state.items.find((i) => i.productId === action.payload);
             if (item && item.quantity > 1) {
                 item.quantity -= 1;
                 localStorage.setItem("cart", JSON.stringify(state.items));

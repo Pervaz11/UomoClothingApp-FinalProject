@@ -8,8 +8,8 @@ import "lightgallery/css/lg-thumbnail.css";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../features/cartSlice";
-
-
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const ReviewsTab = lazy(() => import("../../components/ReviwesTab"));
 const InfoTab = lazy(() => import("../../components/InfoTab"));
@@ -41,17 +41,66 @@ const Details = () => {
         dispatch(
             addToCart({
                 productId: product._id,
-                title: product.title || product.name, 
+                title: product.title || product.name,
                 price: product.price,
                 image: product.images?.[0]?.url || "/placeholder.jpg",
                 quantity,
-                stock: product.stock || 0 
+                stock: product.stock || 0,
             })
         );
-
     };
 
-    if (loading) return <p className="p-6">Loading...</p>;
+    // Skeleton while loading
+    if (loading) {
+        return (
+            <div className="mx-auto p-6 max-w-7xl space-y-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    {/* Image Skeleton */}
+                    <div>
+                        <Skeleton height={500} borderRadius={16} />
+                    </div>
+
+                    {/* Info Skeleton */}
+                    <div className="space-y-8">
+                        <Skeleton width={300} height={40} />
+                        <Skeleton width={120} height={30} />
+                        <Skeleton count={3} />
+
+                        {/* Sizes Skeleton */}
+                        <div className="flex gap-2">
+                            {[...Array(5)].map((_, i) => (
+                                <Skeleton key={i} width={50} height={40} borderRadius={8} />
+                            ))}
+                        </div>
+
+                        {/* Colors Skeleton */}
+                        <div className="flex gap-3">
+                            {[...Array(3)].map((_, i) => (
+                                <Skeleton key={i} circle width={40} height={40} />
+                            ))}
+                        </div>
+
+                        {/* Quantity + Add button Skeleton */}
+                        <div className="flex gap-4 items-center">
+                            <Skeleton width={100} height={40} />
+                            <Skeleton width={120} height={45} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Tabs Skeleton */}
+                <div className="space-y-6">
+                    <div className="flex gap-4">
+                        {[...Array(3)].map((_, i) => (
+                            <Skeleton key={i} width={100} height={30} />
+                        ))}
+                    </div>
+                    <Skeleton height={200} borderRadius={12} />
+                </div>
+            </div>
+        );
+    }
+
     if (!product) return <p className="p-6">Product not found</p>;
 
     const sizes = ["XS", "S", "M", "L", "XL"];
@@ -99,8 +148,8 @@ const Details = () => {
                                     onClick={() => setSelectedSize(size)}
                                     whileTap={{ scale: 0.9 }}
                                     className={`px-4 py-2 rounded-lg border text-sm font-medium ${selectedSize === size
-                                        ? "bg-black text-white border-black shadow-md"
-                                        : "border-gray-300 hover:border-black/60"
+                                            ? "bg-black text-white border-black shadow-md"
+                                            : "border-gray-300 hover:border-black/60"
                                         }`}
                                 >
                                     {size}
@@ -119,8 +168,8 @@ const Details = () => {
                                     onClick={() => setSelectedColor(color)}
                                     whileHover={{ scale: 1.1 }}
                                     className={`w-9 h-9 rounded-full cursor-pointer border-2 ${selectedColor === color
-                                        ? "border-black shadow-md"
-                                        : "border-gray-300 hover:border-black/40"
+                                            ? "border-black shadow-md"
+                                            : "border-gray-300 hover:border-black/40"
                                         }`}
                                     style={{ backgroundColor: color }}
                                 />
@@ -165,8 +214,8 @@ const Details = () => {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-6 py-3 text-sm font-medium ${activeTab === tab
-                                ? "border-b-2 border-black text-black"
-                                : "text-gray-500"
+                                    ? "border-b-2 border-black text-black"
+                                    : "text-gray-500"
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -183,7 +232,7 @@ const Details = () => {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                             >
-                                <Suspense fallback={<p>Loading...</p>}>
+                                <Suspense fallback={<Skeleton count={5} />}>
                                     <DescriptionTab description={product.description} />
                                 </Suspense>
                             </motion.div>
@@ -195,7 +244,7 @@ const Details = () => {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                             >
-                                <Suspense fallback={<p>Loading...</p>}>
+                                <Suspense fallback={<Skeleton count={5} />}>
                                     <InfoTab product={product} />
                                 </Suspense>
                             </motion.div>
@@ -207,7 +256,7 @@ const Details = () => {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                             >
-                                <Suspense fallback={<p>Loading...</p>}>
+                                <Suspense fallback={<Skeleton count={5} />}>
                                     <ReviewsTab productId={product._id} />
                                 </Suspense>
                             </motion.div>

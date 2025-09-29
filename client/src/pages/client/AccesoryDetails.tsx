@@ -52,11 +52,15 @@ const AccessoryDetails = () => {
     const renderTabContent = () => {
         switch (activeTab) {
             case "info":
-                return <InfoTab />;
+                return <InfoTab product={{
+                    title: "",
+                    price: 0,
+                    stock: undefined
+                }} />;
             case "reviews":
-                return <ReviewsTab />;
+                return <ReviewsTab productId={""} />;
             default:
-                return <DescriptionTab />;
+                return <DescriptionTab description={""} />;
         }
     };
 

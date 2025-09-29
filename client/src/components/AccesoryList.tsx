@@ -60,8 +60,7 @@ const AccessoryList: React.FC<{ pagination?: boolean; sortOption: string; page: 
                         id={item._id}
                         title={item.name}
                         price={item.price}
-                        images={item.images}
-                    />
+                        images={item.images} stock={0}                    />
                 ))}
             </div>
         </div>

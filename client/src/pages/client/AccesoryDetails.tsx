@@ -12,8 +12,8 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 const ReviewsTab = lazy(() => import("../../components/ReviwesTab"));
-const InfoTab = lazy(() => import("../../components/InfoTab"));
-const DescriptionTab = lazy(() => import("../../components/DescriptionTab"));
+const InfoTab = lazy(() => import("../../components/AccesoryInfo"));
+const DescriptionTab = lazy(() => import("../../components/AccessoryDescription"));
 
 const AccessoryDetails = () => {
     const { id } = useParams<{ id?: string }>();
@@ -149,7 +149,7 @@ const AccessoryDetails = () => {
 
             {/* Tabs */}
             <div className="space-y-6">
-                <div className="flex border-b">
+                <div className="flex">
                     {["description", "info", "reviews"].map(tab => (
                         <button
                             key={tab}
@@ -161,7 +161,7 @@ const AccessoryDetails = () => {
                     ))}
                 </div>
 
-                <div className="p-6 bg-white shadow rounded-lg">
+                <div className="p-6 rounded-lg">
                     <AnimatePresence mode="wait">
                         {activeTab === "description" && (
                             <motion.div key="description" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

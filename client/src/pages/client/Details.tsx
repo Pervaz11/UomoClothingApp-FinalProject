@@ -225,7 +225,7 @@ const Details = () => {
                     ))}
                 </div>
 
-                <div className="p-6 bg-white shadow rounded-lg">
+                <div className="p-6 bg-white rounded-lg">
                     <AnimatePresence mode="wait">
                         {activeTab === "description" && (
                             <motion.div

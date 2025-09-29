@@ -1,52 +1,47 @@
-type DescriptionTabProps = {
-    description: string;
-};
-const DescriptionTab: React.FC<DescriptionTabProps> = ({ }) => {
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+
+export default function Description() {
+    const { id } = useParams();
+    const [product, setProduct] = useState<any>(null);
+
+    useEffect(() => {
+        axios.get(`http://localhost:3000/products/${id}`)
+            .then(res => setProduct(res.data))
+            .catch(err => console.error("Error fetching product:", err));
+    }, [id]);
+
+    if (!product) return <p></p>;
+
     return (
-        <>
-            <div className="gap-10 flex flex-col">
-                <h1 className="text-xl font-medium">
-                    Sed do eiusmod tempor incididunt ut labore
-                </h1>
-                <p className="max-150 tracking-wider">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum. Sed ut
-                    perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                    doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo
-                    inventore veritatis et quasi architecto beatae vitae dicta sunt
-                    explicabo.
-                </p>
-            </div>
+        <div className="">
+            <h2 className="font-bold text-lg mb-2">{product.name}</h2>
+            <p className="text-gray-600 mb-4">{product.description}</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-10">
+            <div className="grid grid-cols-2 gap-6">
+                {/* Left column */}
                 <div>
-                    <h2 className="text-lg font-semibold mb-2">Why choose product?</h2>
-                    <ul className="list-disc list-inside space-y-1">
-                        <li>Create by cotton fabric with soft and smooth</li>
-                        <li>Simple, Configurable (e.g. size, color, etc.), bundled</li>
-                        <li>Downloadable/Digital Products, Virtual Products</li>
+                    <h3 className="font-semibold mb-2">Why choose product?</h3>
+                    <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                        <li>Material: {product.material}</li>
+                        <li>Brand: {product.brand}</li>
+                        <li>Categories: {product.categories?.join(", ")}</li>
                     </ul>
-
-                    <h3 className="text-lg font-semibold mt-6 mb-2">Lining</h3>
-                    <p>100% Polyester, Main: 100% Polyester.</p>
+                    <p className="mt-4"><b>Lining:</b> {product.material}</p>
                 </div>
 
+                {/* Right column */}
                 <div>
-                    <h2 className="text-lg font-semibold mb-2">Sample Number List</h2>
-                    <ol className="list-decimal list-inside space-y-1">
-                        <li>Create Store-specific attributes on the fly</li>
-                        <li>Simple, Configurable (e.g. size, color, etc.), bundled</li>
-                        <li>Downloadable/Digital Products, Virtual Products</li>
+                    <h3 className="font-semibold mb-2">Product Details</h3>
+                    <ol className="list-decimal pl-5 text-gray-700 space-y-1">
+                        <li>SKU: {product.sku}</li>
+                        <li>Stock: {product.stock}</li>
+                        <li>Featured: {product.isFeatured ? "Yes" : "No"}</li>
+                        <li>Status: {product.status ?? "—"}</li>
                     </ol>
                 </div>
             </div>
-        </>
+        </div>
     );
-};
-
-export default DescriptionTab;
+}

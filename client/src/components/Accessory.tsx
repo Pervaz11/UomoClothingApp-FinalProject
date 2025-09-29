@@ -68,9 +68,9 @@ const Accessories: React.FC = () => {
                         <AccessoryCard
                             title={item.name}
                             price={item.price}
-                            images={item.images}
-                            id={""}
-                            stock={0} />
+                            images={item.images} 
+                            id={""} 
+                            stock={0}                        />
                     </div>
                 ))}
             </div>

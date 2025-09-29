@@ -1,14 +1,17 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 type CartItem = {
-    productId: string;
+    id: string;
     title: string;
     price: number;
     image: string;
     quantity: number;
     stock: number;
     color?: string;
+    type: "product" | "accessory";
+    productId?: string;
 };
+
 
 interface CartState {
     items: CartItem[];
@@ -24,68 +27,57 @@ const cartSlice = createSlice({
     reducers: {
         addToCart: (state, action: PayloadAction<CartItem>) => {
             const existing = state.items.find(
-                (item) => item.productId === action.payload.productId
+                (item) => item.id === action.payload.id && item.type === action.payload.type
             );
 
             if (existing) {
-                // Mövcud quantity üzərinə gələn quantity əlavə et
                 const newQuantity = existing.quantity + action.payload.quantity;
                 existing.quantity = Math.min(newQuantity, existing.stock);
             } else {
-                // İlk dəfə əlavə olunursa, gələn quantity olduğu kimi istifadə olunur
                 state.items.push({ ...action.payload });
             }
-
-            localStorage.setItem("cart", JSON.stringify(state.items));
         },
 
-        removeFromCart: (state, action: PayloadAction<string>) => {
+        removeFromCart: (state, action: PayloadAction<{ id: string; type: "product" | "accessory" }>) => {
             state.items = state.items.filter(
-                (item) => item.productId !== action.payload
+                (item) => !(item.id === action.payload.id && item.type === action.payload.type)
             );
-            localStorage.setItem("cart", JSON.stringify(state.items));
         },
+
         clearCart: (state) => {
             state.items = [];
-            localStorage.setItem("cart", JSON.stringify(state.items));
         },
-        updateItemColor: (
-            state,
-            action: PayloadAction<{ id: string; color: string }>
-        ) => {
+
+        updateItemColor: (state, action: PayloadAction<{ id: string; type: "product" | "accessory"; color: string }>) => {
             const item = state.items.find(
-                (i) => i.productId === action.payload.id
+                (i) => i.id === action.payload.id && i.type === action.payload.type
             );
             if (item) {
                 item.color = action.payload.color;
-                localStorage.setItem("cart", JSON.stringify(state.items));
             }
         },
 
-        increaseQuantity: (state, action: PayloadAction<string>) => {
-            const item = state.items.find((i) => i.productId === action.payload);
+        increaseQuantity: (state, action: PayloadAction<{ id: string; type: "product" | "accessory" }>) => {
+            const item = state.items.find(
+                (i) => i.id === action.payload.id && i.type === action.payload.type
+            );
             if (item && item.quantity < item.stock) {
                 item.quantity += 1;
-                localStorage.setItem("cart", JSON.stringify(state.items));
             }
         },
-        decreaseQuantity: (state, action: PayloadAction<string>) => {
-            const item = state.items.find((i) => i.productId === action.payload);
+
+        decreaseQuantity: (state, action: PayloadAction<{ id: string; type: "product" | "accessory" }>) => {
+            const item = state.items.find(
+                (i) => i.id === action.payload.id && i.type === action.payload.type
+            );
             if (item && item.quantity > 1) {
                 item.quantity -= 1;
-                localStorage.setItem("cart", JSON.stringify(state.items));
             }
         },
     },
 });
 
-export const {
-    addToCart,
-    removeFromCart,
-    clearCart,
-    updateItemColor,
-    increaseQuantity,
-    decreaseQuantity,
-} = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart, updateItemColor, increaseQuantity, decreaseQuantity } =
+    cartSlice.actions;
 
 export default cartSlice.reducer;

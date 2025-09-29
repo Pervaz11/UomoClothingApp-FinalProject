@@ -46,6 +46,8 @@ const Details = () => {
                 image: product.images?.[0]?.url || "/placeholder.jpg",
                 quantity,
                 stock: product.stock || 0,
+                id: "",
+                type: "product"
             })
         );
     };
@@ -148,8 +150,8 @@ const Details = () => {
                                     onClick={() => setSelectedSize(size)}
                                     whileTap={{ scale: 0.9 }}
                                     className={`px-4 py-2 rounded-lg border text-sm font-medium ${selectedSize === size
-                                            ? "bg-black text-white border-black shadow-md"
-                                            : "border-gray-300 hover:border-black/60"
+                                        ? "bg-black text-white border-black shadow-md"
+                                        : "border-gray-300 hover:border-black/60"
                                         }`}
                                 >
                                     {size}
@@ -168,8 +170,8 @@ const Details = () => {
                                     onClick={() => setSelectedColor(color)}
                                     whileHover={{ scale: 1.1 }}
                                     className={`w-9 h-9 rounded-full cursor-pointer border-2 ${selectedColor === color
-                                            ? "border-black shadow-md"
-                                            : "border-gray-300 hover:border-black/40"
+                                        ? "border-black shadow-md"
+                                        : "border-gray-300 hover:border-black/40"
                                         }`}
                                     style={{ backgroundColor: color }}
                                 />
@@ -208,14 +210,14 @@ const Details = () => {
 
             {/* Tabs */}
             <div className="space-y-6">
-                <div className="flex border-b">
+                <div className="flex">
                     {["description", "info", "reviews"].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-6 py-3 text-sm font-medium ${activeTab === tab
-                                    ? "border-b-2 border-black text-black"
-                                    : "text-gray-500"
+                                ? "border-b-2 border-black text-black"
+                                : "text-gray-500"
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}

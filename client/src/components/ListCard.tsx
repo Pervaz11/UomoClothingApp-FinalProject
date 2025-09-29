@@ -26,21 +26,11 @@ type ListCardProps = {
     discount?: Discount;
 };
 
-const ListCard: React.FC<ListCardProps> = ({
-    id,
-    title,
-    price,
-    stock,
-    images,
-    labels,
-    discount
-}) => {
+const ListCard: React.FC<ListCardProps> = ({ id, title, price, stock, images, labels, discount }) => {
     const dispatch = useDispatch();
     const now = new Date();
     const isDiscountActive =
-        discount &&
-        discount.value > 0 &&
-        (!discount.expiresAt || new Date(discount.expiresAt) > now);
+        discount && discount.value > 0 && (!discount.expiresAt || new Date(discount.expiresAt) > now);
 
     const finalPrice =
         isDiscountActive && discount?.type === "percentage"
@@ -52,18 +42,20 @@ const ListCard: React.FC<ListCardProps> = ({
     const handleAddToCart = () => {
         dispatch(
             addToCart({
-                productId: id,
+                id,
+                type: "product",
                 title,
                 price: finalPrice,
                 image: images?.[0]?.url || "/placeholder.jpg",
                 quantity: 1,
-                stock: stock
+                stock,
+                productId: ""
             })
         );
         toast.success(`${title} added to cart!`);
     };
 
-    return (  
+    return (
         <div className="relative group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
             {/* Wishlist */}
             <button className="absolute top-2 right-2 z-10 p-1 bg-white rounded-full shadow hover:scale-110 transition">
@@ -107,24 +99,15 @@ const ListCard: React.FC<ListCardProps> = ({
 
             {/* Title */}
             <Link to={`/details/${id}`}>
-                <h3 className="text-sm p-2 font-semibold text-gray-800 hover:underline">
-                    {title}
-                </h3>
+                <h3 className="text-sm p-2 font-semibold text-gray-800 hover:underline">{title}</h3>
             </Link>
 
             <div className="mt-1 flex px-2 pb-2 items-center gap-2">
-                <p className="text-sm text-gray-900 font-semibold">
-                    ${finalPrice.toFixed(2)}
-                </p>
-                {isDiscountActive && (
-                    <p className="text-xs text-gray-500 line-through">
-                        ${price.toFixed(2)}
-                    </p>
-                )}
+                <p className="text-sm text-gray-900 font-semibold">${finalPrice.toFixed(2)}</p>
+                {isDiscountActive && <p className="text-xs text-gray-500 line-through">${price.toFixed(2)}</p>}
             </div>
         </div>
     );
 };
-
 
 export default ListCard;

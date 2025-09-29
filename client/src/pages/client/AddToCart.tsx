@@ -1,11 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "../../store/store";
-import {
-    removeFromCart,
-    updateItemColor,
-    increaseQuantity,
-    decreaseQuantity,
-} from "../../features/cartSlice";
+import { removeFromCart, updateItemColor, increaseQuantity, decreaseQuantity } from "../../features/cartSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Trash2 } from "lucide-react";
 
@@ -15,10 +10,7 @@ const AddToCart: React.FC = () => {
     const cartItems = useSelector((state: RootState) => state.cart.items);
     const dispatch = useDispatch();
 
-    const totalPrice = cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-    );
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return (
         <div className="max-w-7xl mx-auto p-6 grid lg:grid-cols-3 gap-10">
@@ -32,30 +24,26 @@ const AddToCart: React.FC = () => {
                 {cartItems.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl">
                         <ShoppingCart className="w-16 h-16 text-gray-300 mb-4" />
-                        <p className="text-gray-500 text-lg font-medium">
-                            Your cart is empty.
-                        </p>
+                        <p className="text-gray-500 text-lg font-medium">Your cart is empty.</p>
                     </div>
                 ) : (
                     <AnimatePresence>
                         {cartItems.map((item) => (
                             <motion.div
-                                key={item.productId}
+                                key={`${item.type}-${item.id}`}
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 layout
                                 className="flex flex-col sm:flex-row items-center justify-between bg-white rounded-2xl shadow-sm p-5 hover:shadow-lg transition-all"
                             >
-                                {/* Product info */}
+                                {/* Product/Accessory info */}
                                 <div className="flex items-center gap-5 w-full sm:w-auto">
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-28 h-28 object-cover rounded-xl"
-                                    />
+                                    <img src={item.image} alt={item.title} className="w-28 h-28 object-cover rounded-xl" />
                                     <div>
-                                        <h2 className="font-semibold text-lg">{item.title}</h2>
+                                        <h2 className="font-semibold text-lg">
+                                            {item.title} <span className="text-xs text-gray-400">({item.type})</span>
+                                        </h2>
                                         <p className="text-gray-500">
                                             ${item.price.toFixed(2)} x {item.quantity}
                                         </p>
@@ -63,9 +51,7 @@ const AddToCart: React.FC = () => {
                                         {/* Quantity Counter */}
                                         <div className="flex items-center gap-3 mt-2">
                                             <button
-                                                onClick={() =>
-                                                    dispatch(decreaseQuantity(item.productId))
-                                                }
+                                                onClick={() => dispatch(decreaseQuantity({ id: item.id, type: item.type }))}
                                                 className="px-2 py-1 border rounded disabled:opacity-50"
                                                 disabled={item.quantity <= 1}
                                             >
@@ -73,43 +59,37 @@ const AddToCart: React.FC = () => {
                                             </button>
                                             <span className="font-medium">{item.quantity}</span>
                                             <button
-                                                onClick={() =>
-                                                    dispatch(increaseQuantity(item.productId))
-                                                }
+                                                onClick={() => dispatch(increaseQuantity({ id: item.id, type: item.type }))}
                                                 className="px-2 py-1 border rounded disabled:opacity-50"
                                                 disabled={item.quantity >= item.stock}
                                             >
                                                 +
                                             </button>
-                                            <span className="text-sm text-gray-500 ml-2">
-                                                Stock: {item.stock}
-                                            </span>
+                                            <span className="text-sm text-gray-500 ml-2">Stock: {item.stock}</span>
                                         </div>
 
-                                        {/* Color options */}
-                                        <div className="flex gap-2 mt-3">
-                                            {colors.map((color) => (
-                                                <button
-                                                    key={color}
-                                                    onClick={() =>
-                                                        dispatch(
-                                                            updateItemColor({ id: item.productId, color })
-                                                        )
-                                                    }
-                                                    className={`w-7 h-7 rounded-full border-2 transition-all duration-200 ${item.color === color
-                                                        ? "ring-0.5 ring-black scale-110"
-                                                        : "border-none"
-                                                        }`}
-                                                    style={{ backgroundColor: color.toLowerCase() }}
-                                                />
-                                            ))}
-                                        </div>
+                                        {/*  */}
+                                        {item.type === "product" && (
+                                            <div className="flex gap-2 mt-3">
+                                                {colors.map((color) => (
+                                                    <button
+                                                        key={color}
+                                                        onClick={() =>
+                                                            dispatch(updateItemColor({ id: item.id, type: item.type, color }))
+                                                        }
+                                                        className={`w-7 h-7 rounded-full border-2 transition-all duration-200 ${item.color === color ? "ring-0.5 ring-black scale-110" : "border-none"
+                                                            }`}
+                                                        style={{ backgroundColor: color.toLowerCase() }}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
                                 {/* Remove */}
                                 <button
-                                    onClick={() => dispatch(removeFromCart(item.productId))}
+                                    onClick={() => dispatch(removeFromCart({ id: item.id, type: item.type }))}
                                     className="mt-4 sm:mt-0 flex items-center gap-1 text-red-500 hover:text-red-600 font-medium"
                                 >
                                     <Trash2 className="w-4 h-4" />
@@ -137,9 +117,7 @@ const AddToCart: React.FC = () => {
                     </div>
                     <div className="flex justify-between">
                         <span className="text-gray-600">VAT (10%)</span>
-                        <span className="font-medium">
-                            ${(totalPrice * 0.1).toFixed(2)}
-                        </span>
+                        <span className="font-medium">${(totalPrice * 0.1).toFixed(2)}</span>
                     </div>
                     <div className="border-t pt-4 flex justify-between font-bold text-lg">
                         <span>Total</span>

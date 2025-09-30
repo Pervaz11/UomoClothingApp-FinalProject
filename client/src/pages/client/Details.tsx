@@ -47,50 +47,41 @@ const Details = () => {
                 quantity,
                 stock: product.stock || 0,
                 id: "",
-                type: "product"
+                type: "product",
             })
         );
     };
+
+    const isOutOfStock = product?.stock === 0;
 
     // Skeleton while loading
     if (loading) {
         return (
             <div className="mx-auto p-6 max-w-7xl space-y-12">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    {/* Image Skeleton */}
                     <div>
                         <Skeleton height={500} borderRadius={16} />
                     </div>
-
-                    {/* Info Skeleton */}
                     <div className="space-y-8">
                         <Skeleton width={300} height={40} />
                         <Skeleton width={120} height={30} />
                         <Skeleton count={3} />
-
-                        {/* Sizes Skeleton */}
                         <div className="flex gap-2">
                             {[...Array(5)].map((_, i) => (
                                 <Skeleton key={i} width={50} height={40} borderRadius={8} />
                             ))}
                         </div>
-
-                        {/* Colors Skeleton */}
                         <div className="flex gap-3">
                             {[...Array(3)].map((_, i) => (
                                 <Skeleton key={i} circle width={40} height={40} />
                             ))}
                         </div>
-
-                        {/* Quantity + Add button Skeleton */}
                         <div className="flex gap-4 items-center">
                             <Skeleton width={100} height={40} />
                             <Skeleton width={120} height={45} />
                         </div>
                     </div>
                 </div>
-
-                {/* Tabs Skeleton */}
                 <div className="space-y-6">
                     <div className="flex gap-4">
                         {[...Array(3)].map((_, i) => (
@@ -147,12 +138,13 @@ const Details = () => {
                             {sizes.map((size) => (
                                 <motion.button
                                     key={size}
-                                    onClick={() => setSelectedSize(size)}
-                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => !isOutOfStock && setSelectedSize(size)}
+                                    whileTap={{ scale: !isOutOfStock ? 0.9 : 1 }}
                                     className={`px-4 py-2 rounded-lg border text-sm font-medium ${selectedSize === size
-                                        ? "bg-black text-white border-black shadow-md"
-                                        : "border-gray-300 hover:border-black/60"
-                                        }`}
+                                            ? "bg-black text-white border-black shadow-md"
+                                            : "border-gray-300 hover:border-black/60"
+                                        } ${isOutOfStock ? "bg-gray-200 border-gray-200 text-gray-400 cursor-not-allowed" : ""}`}
+                                    disabled={isOutOfStock}
                                 >
                                     {size}
                                 </motion.button>
@@ -167,13 +159,11 @@ const Details = () => {
                             {colors.map((color) => (
                                 <motion.div
                                     key={color}
-                                    onClick={() => setSelectedColor(color)}
-                                    whileHover={{ scale: 1.1 }}
-                                    className={`w-9 h-9 rounded-full cursor-pointer border-2 ${selectedColor === color
-                                        ? "border-black shadow-md"
-                                        : "border-gray-300 hover:border-black/40"
-                                        }`}
-                                    style={{ backgroundColor: color }}
+                                    onClick={() => !isOutOfStock && setSelectedColor(color)}
+                                    whileHover={{ scale: !isOutOfStock ? 1.1 : 1 }}
+                                    className={`w-9 h-9 rounded-full border-2 cursor-pointer ${selectedColor === color ? "border-black shadow-md" : "border-gray-300 hover:border-black/40"
+                                        } ${isOutOfStock ? "bg-gray-300 border-gray-300 cursor-not-allowed" : ""}`}
+                                    style={{ backgroundColor: isOutOfStock ? "#d1d5db" : color }}
                                 />
                             ))}
                         </div>
@@ -181,29 +171,35 @@ const Details = () => {
 
                     {/* Quantity & Add to Cart */}
                     <div className="flex gap-4 items-center">
-                        <div className="flex items-center border overflow-hidden shadow-sm">
-                            <button
-                                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                                className="px-4 py-2 text-gray-600 hover:bg-gray-100"
-                            >
-                                -
-                            </button>
-                            <span className="px-5 py-2 text-sm font-medium">{quantity}</span>
-                            <button
-                                onClick={() => setQuantity((q) => q + 1)}
-                                className="px-4 py-2 text-gray-600 hover:bg-gray-100"
-                            >
-                                +
-                            </button>
-                        </div>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="bg-black text-white px-8 py-3 shadow hover:shadow-lg text-sm font-medium"
-                            onClick={handleAddToCart}
-                        >
-                            Add to Cart
-                        </motion.button>
+                        {isOutOfStock ? (
+                            <span className="text-red-600 font-semibold text-lg">Out of Stock</span>
+                        ) : (
+                            <>
+                                <div className="flex items-center border overflow-hidden shadow-sm">
+                                    <button
+                                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                                        className="px-4 py-2 text-gray-600 hover:bg-gray-100"
+                                    >
+                                        -
+                                    </button>
+                                    <span className="px-5 py-2 text-sm font-medium">{quantity}</span>
+                                    <button
+                                        onClick={() => setQuantity((q) => q + 1)}
+                                        className="px-4 py-2 text-gray-600 hover:bg-gray-100"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="bg-black text-white px-8 py-3 shadow hover:shadow-lg text-sm font-medium"
+                                    onClick={handleAddToCart}
+                                >
+                                    Add to Cart
+                                </motion.button>
+                            </>
+                        )}
                     </div>
                 </motion.div>
             </div>
@@ -228,36 +224,21 @@ const Details = () => {
                 <div className="p-6 bg-white rounded-lg">
                     <AnimatePresence mode="wait">
                         {activeTab === "description" && (
-                            <motion.div
-                                key="description"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
+                            <motion.div key="description" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 <Suspense fallback={<Skeleton count={5} />}>
                                     <DescriptionTab description={product.description} />
                                 </Suspense>
                             </motion.div>
                         )}
                         {activeTab === "info" && (
-                            <motion.div
-                                key="info"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
+                            <motion.div key="info" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 <Suspense fallback={<Skeleton count={5} />}>
                                     <InfoTab product={product} />
                                 </Suspense>
                             </motion.div>
                         )}
                         {activeTab === "reviews" && (
-                            <motion.div
-                                key="reviews"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
+                            <motion.div key="reviews" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 <Suspense fallback={<Skeleton count={5} />}>
                                     <ReviewsTab productId={product._id} />
                                 </Suspense>

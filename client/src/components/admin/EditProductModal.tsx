@@ -13,6 +13,10 @@ type Item = {
     stock?: number;
     category?: string;
     type: "product" | "accessory";
+    discount?: {
+        type: "percentage" | "fixed";
+        value: number;
+    };
 };
 
 type Props = {
@@ -26,6 +30,8 @@ export default function EditItemModal({ item, onClose }: Props) {
     const [name, setName] = useState(item.name);
     const [price, setPrice] = useState(item.price);
     const [stock, setStock] = useState(item.stock || 0);
+    const [discountType, setDiscountType] = useState<"percentage" | "fixed">(item.discount?.type || "percentage");
+    const [discountValue, setDiscountValue] = useState<number>(item.discount?.value || 0);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -36,7 +42,13 @@ export default function EditItemModal({ item, onClose }: Props) {
                     ? `http://localhost:3000/products/${item.id}`
                     : `http://localhost:3000/accessory/${item.id}`;
 
-            await axios.patch(endpoint, { name, price, stock });
+            await axios.patch(endpoint, {
+                name,
+                price,
+                stock,
+                discount: { type: discountType, value: discountValue }
+            });
+
             toast.success(`${item.type === "product" ? "Product" : "Accessory"} updated successfully`);
             onClose();
         } catch (error) {
@@ -136,6 +148,31 @@ export default function EditItemModal({ item, onClose }: Props) {
                                 value={stock}
                                 onChange={(e) => setStock(Number(e.target.value))}
                                 placeholder={(item.stock ?? 0).toString()}
+                                className="w-full pl-10 pr-20 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+                            />
+                        </div>
+
+                        {/* Discount Type */}
+                        <div className="flex gap-2 mt-2">
+                            <label className="text-gray-300">Discount Type:</label>
+                            <select
+                                value={discountType}
+                                onChange={(e) => setDiscountType(e.target.value as "percentage" | "fixed")}
+                                className="ml-2 rounded-xl bg-gray-800 text-white px-3 py-2 focus:ring-2 focus:ring-indigo-500 transition"
+                            >
+                                <option value="percentage">Percentage %</option>
+                                <option value="fixed">Fixed $</option>
+                            </select>
+                        </div>
+
+                        {/* Discount Value */}
+                        <div className="relative mt-2">
+                            <AiOutlineTag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                            <input
+                                type="number"
+                                value={discountValue}
+                                onChange={(e) => setDiscountValue(Number(e.target.value))}
+                                placeholder="Discount Value"
                                 className="w-full pl-10 pr-20 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
                             />
                         </div>

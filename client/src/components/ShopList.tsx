@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import qs from "qs";
 import ListCard from "./ListCard";
 
 type Product = {
@@ -15,27 +16,68 @@ type Product = {
     };
 };
 
+type Filters = {
+    categories?: string[];
+    colors?: string[];
+    sizes?: string[];
+    brands?: string[];
+    priceRange?: [number, number];
+};
+
 const ITEMS_PER_PAGE = 8;
 
-const ShopList: React.FC<{ pagination?: boolean; sortOption: string; page: number }> = ({
-    pagination = true,
-    sortOption,
-    page,
-}) => {
+const mapSortOption = (sort: string) => {
+    switch (sort) {
+        case "az":
+            return "name:asc";
+        case "za":
+            return "name:desc";
+        case "low-high":
+            return "price:asc";
+        case "high-low":
+            return "price:desc";
+        default:
+            return undefined;
+    }
+};
+
+const ShopList: React.FC<{
+    filters: Filters;
+    pagination?: boolean;
+    sortOption: string;
+    page: number;
+}> = ({ filters, pagination = true, sortOption, page }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [, setTotalProducts] = useState<number>(0);
 
     useEffect(() => {
         setLoading(true);
+
+        const params = {
+            categories: filters.categories?.join(","),
+            colors: filters.colors?.join(","),
+            sizes: filters.sizes?.join(","),
+            brands: filters.brands?.join(","),
+            minPrice: filters.priceRange?.[0],
+            maxPrice: filters.priceRange?.[1],
+            sort: mapSortOption(sortOption),
+            page,
+        };
+
         axios
-            .get("http://localhost:3000/products")
+            .get("http://localhost:3000/products", {
+                params,
+                paramsSerializer: (p) => qs.stringify(p),
+            })
             .then((res) => {
                 const data = res.data.products ?? [];
                 setProducts(data);
+                setTotalProducts(res.data.total ?? data.length);
             })
             .catch((err) => console.error(err))
             .finally(() => setLoading(false));
-    }, []);
+    }, [filters, sortOption, page]);
 
     const sortedProducts = [...products].sort((a, b) => {
         if (sortOption === "az") return a.name.localeCompare(b.name);
@@ -69,7 +111,8 @@ const ShopList: React.FC<{ pagination?: boolean; sortOption: string; page: numbe
                         images={item.images}
                         labels={item.labels}
                         discount={item.discount}
-                        stock={0} />
+                        stock={0}
+                    />
                 ))}
             </div>
         </div>

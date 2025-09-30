@@ -35,7 +35,9 @@ const AccessoryCard: React.FC<AccessoryCardProps> = ({
                 price,
                 image: images?.[0]?.url || "/placeholder.jpg",
                 quantity: 1,
-                stock
+                stock,
+                id: "",
+                type: "product"
             })
         );
         toast.success(`${title} added to cart!`);

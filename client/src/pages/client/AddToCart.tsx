@@ -14,9 +14,9 @@ const AddToCart: React.FC = () => {
 
     return (
         <div className="max-w-7xl mx-auto p-6 grid lg:grid-cols-3 gap-10">
-            {/* Left: Cart Items */}
+            {/* Cart Items */}
             <div className="lg:col-span-2 space-y-6">
-                <h1 className="text-4xl font-extrabold flex items-center gap-2">
+                <h1 className="text-4xl font-extrabold flex items-center gap-3">
                     <ShoppingCart className="w-8 h-8 text-black" />
                     Your Cart
                 </h1>
@@ -31,55 +31,54 @@ const AddToCart: React.FC = () => {
                         {cartItems.map((item) => (
                             <motion.div
                                 key={`${item.type}-${item.id}`}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 40 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 layout
-                                className="flex flex-col sm:flex-row items-center justify-between bg-white rounded-2xl shadow-sm p-5 hover:shadow-lg transition-all"
+                                className="flex flex-col sm:flex-row items-center justify-between bg-white rounded-3xl shadow-lg p-6 hover:shadow-2xl transition-all"
                             >
-                                {/* Product/Accessory info */}
+                                {/* Left: Image + Info */}
                                 <div className="flex items-center gap-5 w-full sm:w-auto">
-                                    <img src={item.image} alt={item.title} className="w-28 h-28 object-cover rounded-xl" />
-                                    <div>
-                                        <h2 className="font-semibold text-lg">
-                                            {item.title} <span className="text-xs text-gray-400">({item.type})</span>
+                                    <motion.img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="w-28 h-28 object-cover rounded-2xl shadow-md"
+                                        whileHover={{ scale: 1.05 }}
+                                        transition={{ type: "spring", stiffness: 300 }}
+                                    />
+                                    <div className="flex flex-col gap-2">
+                                        <h2 className="font-semibold text-lg">{item.title}
+                                            <span className="text-xs text-gray-400"> ({item.type})</span>
                                         </h2>
-                                        <p className="text-gray-500">
-                                            ${item.price.toFixed(2)} x {item.quantity}
-                                        </p>
+                                        <p className="text-gray-600 font-medium">${item.price.toFixed(2)} x {item.quantity}</p>
 
-                                        {/* Quantity Counter */}
+                                        {/* Quantity */}
                                         <div className="flex items-center gap-3 mt-2">
                                             <button
                                                 onClick={() => dispatch(decreaseQuantity({ id: item.id, type: item.type }))}
-                                                className="px-2 py-1 border rounded disabled:opacity-50"
+                                                className="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
                                                 disabled={item.quantity <= 1}
-                                            >
-                                                -
-                                            </button>
-                                            <span className="font-medium">{item.quantity}</span>
+                                            >-</button>
+                                            <span className="font-medium w-5 text-center">{item.quantity}</span>
                                             <button
                                                 onClick={() => dispatch(increaseQuantity({ id: item.id, type: item.type }))}
-                                                className="px-2 py-1 border rounded disabled:opacity-50"
+                                                className="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
                                                 disabled={item.quantity >= item.stock}
-                                            >
-                                                +
-                                            </button>
-                                            <span className="text-sm text-gray-500 ml-2">Stock: {item.stock}</span>
+                                            >+</button>
+                                            <span className="text-sm text-gray-400 ml-2">Stock: {item.stock}</span>
                                         </div>
 
-                                        {/*  */}
+                                        {/* Color Picker */}
                                         {item.type === "product" && (
                                             <div className="flex gap-2 mt-3">
                                                 {colors.map((color) => (
-                                                    <button
+                                                    <motion.button
                                                         key={color}
-                                                        onClick={() =>
-                                                            dispatch(updateItemColor({ id: item.id, type: item.type, color }))
-                                                        }
-                                                        className={`w-7 h-7 rounded-full border-2 transition-all duration-200 ${item.color === color ? "ring-0.5 ring-black scale-110" : "border-none"
-                                                            }`}
-                                                        style={{ backgroundColor: color.toLowerCase() }}
+                                                        onClick={() => dispatch(updateItemColor({ id: item.id, type: item.type, color }))}
+                                                        className={`w-7 h-7 rounded-full border-2 cursor-pointer transition-all`}
+                                                        style={{ backgroundColor: color.toLowerCase(), borderColor: item.color === color ? 'black' : 'transparent' }}
+                                                        whileHover={{ scale: 1.2 }}
+                                                        animate={{ scale: item.color === color ? 1.2 : 1 }}
                                                     />
                                                 ))}
                                             </div>
@@ -87,21 +86,22 @@ const AddToCart: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/* Remove */}
-                                <button
+                                {/* Right: Remove Button */}
+                                <motion.button
                                     onClick={() => dispatch(removeFromCart({ id: item.id, type: item.type }))}
-                                    className="mt-4 sm:mt-0 flex items-center gap-1 text-red-500 hover:text-red-600 font-medium"
+                                    className="mt-4 sm:mt-0 flex items-center gap-1 text-red-500 hover:text-red-600 font-semibold"
+                                    whileHover={{ scale: 1.05 }}
                                 >
                                     <Trash2 className="w-4 h-4" />
                                     Remove
-                                </button>
+                                </motion.button>
                             </motion.div>
                         ))}
                     </AnimatePresence>
                 )}
             </div>
 
-            {/* Right: Checkout */}
+            {/* Order Summary stays the same */}
             <motion.div
                 initial={{ opacity: 0, x: 80 }}
                 animate={{ opacity: 1, x: 0 }}

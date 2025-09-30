@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import qs from "qs";
 import AccessoryCard from "./AccessoryCard";
 
 type Accessory = {
@@ -9,27 +10,68 @@ type Accessory = {
     images: { url: string; alt: string }[];
 };
 
+type Filters = {
+    categories?: string[];
+    colors?: string[];
+    sizes?: string[];
+    brands?: string[];
+    priceRange?: [number, number];
+};
+
 const ITEMS_PER_PAGE = 8;
 
-const AccessoryList: React.FC<{ pagination?: boolean; sortOption: string; page: number }> = ({
-    pagination = true,
-    sortOption,
-    page,
-}) => {
+const mapSortOption = (sort: string) => {
+    switch (sort) {
+        case "az":
+            return "name:asc";
+        case "za":
+            return "name:desc";
+        case "low-high":
+            return "price:asc";
+        case "high-low":
+            return "price:desc";
+        default:
+            return undefined;
+    }
+};
+
+const AccessoryList: React.FC<{
+    filters: Filters;
+    pagination?: boolean;
+    sortOption: string;
+    page: number;
+}> = ({ filters, pagination = true, sortOption, page }) => {
     const [accessories, setAccessories] = useState<Accessory[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [, setTotalAccessories] = useState<number>(0);
 
     useEffect(() => {
         setLoading(true);
+
+        const params = {
+            categories: filters.categories?.join(","),
+            colors: filters.colors?.join(","),
+            sizes: filters.sizes?.join(","),
+            brands: filters.brands?.join(","),
+            minPrice: filters.priceRange?.[0],
+            maxPrice: filters.priceRange?.[1],
+            sort: mapSortOption(sortOption),
+            page,
+        };
+
         axios
-            .get("http://localhost:3000/accessory")
+            .get("http://localhost:3000/accessory", {
+                params,
+                paramsSerializer: (p) => qs.stringify(p),
+            })
             .then((res) => {
                 const data = res.data.accessories ?? [];
                 setAccessories(data);
+                setTotalAccessories(res.data.total ?? data.length);
             })
             .catch((err) => console.error("Error fetching accessories:", err))
             .finally(() => setLoading(false));
-    }, []);
+    }, [filters, sortOption, page]);
 
     const sortedAccessories = [...accessories].sort((a, b) => {
         if (sortOption === "az") return a.name.localeCompare(b.name);
@@ -60,7 +102,9 @@ const AccessoryList: React.FC<{ pagination?: boolean; sortOption: string; page: 
                         id={item._id}
                         title={item.name}
                         price={item.price}
-                        images={item.images} stock={0}                    />
+                        images={item.images}
+                        stock={0}
+                    />
                 ))}
             </div>
         </div>

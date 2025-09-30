@@ -6,11 +6,20 @@ import Pagination from "../../components/Pagination";
 import CustomSelect from "../../components/SelectionFilter";
 import FilterButton from "../../components/ShopFilter";
 
+type Filters = {
+    categories?: string[];
+    colors?: string[];
+    sizes?: string[];
+    brands?: string[];
+    priceRange?: [number, number];
+};
+
 const Shop: React.FC = () => {
     const [tab, setTab] = useState<"accessory" | "product">("accessory");
     const [sortOption, setSortOption] = useState<string>("default");
-
     const [page, setPage] = useState<number>(1);
+    const [filters, setFilters] = useState<Filters>({});
+
     const totalPages = 5;
 
     const handlePrev = () => {
@@ -23,9 +32,9 @@ const Shop: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            {/* Banner */}
             <section className="relative bg-[url('https://uomo-nextjs-ecommerce.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fshop%2Fshop_banner_character1.png&w=3840&q=75')] bg-cover bg-center py-16">
                 <div className="absolute inset-0 bg-amber-200/40 mix-blend-multiply" />
-
                 <div className="relative max-w-7xl mx-auto px-6 text-center p-20 text-black">
                     <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
                         Discover Our {tab === "accessory" ? "Accessories" : "Clothes"}
@@ -36,7 +45,7 @@ const Shop: React.FC = () => {
                 </div>
             </section>
 
-
+            {/* Tabs + Filter + Sort */}
             <div className="max-w-7xl mx-auto px-6 my-10 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="inline-flex rounded-full bg-gray-200 p-1">
                     <button
@@ -60,37 +69,50 @@ const Shop: React.FC = () => {
                 </div>
 
                 <div className="md:flex items-center">
-                    <FilterButton />
+                    {/* 🔹 FilterButton artıq setFilters alır */}
+                    <FilterButton setFilters={setFilters} />
                     <CustomSelect sortOption={sortOption} setSortOption={setSortOption} />
                 </div>
             </div>
 
+            {/* Products / Accessories */}
             <div className="max-w-7xl mx-auto px-6 pb-16">
                 <AnimatePresence mode="wait">
                     <motion.div
-                        key={tab + sortOption + page}
+                        key={tab + sortOption + page + JSON.stringify(filters)}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.4 }}
                     >
                         {tab === "accessory" ? (
-                            <AccessoryList pagination sortOption={sortOption} page={page} />
+                            <AccessoryList
+                                pagination
+                                sortOption={sortOption}
+                                page={page}
+                                filters={filters} // 🔹 filters buradan gedir
+                            />
                         ) : (
-                            <ShopList pagination sortOption={sortOption} page={page} />
+                            <ShopList
+                                pagination
+                                sortOption={sortOption}
+                                page={page}
+                                filters={filters} // 🔹 filters buradan gedir
+                            />
                         )}
                     </motion.div>
                 </AnimatePresence>
             </div>
+
+            {/* Pagination */}
             <div className="m-10">
-                {/* Pagination */}
                 {totalPages > 1 && (
                     <Pagination
                         page={page}
                         totalPages={totalPages}
                         onPrev={handlePrev}
                         onNext={handleNext}
-                        onPageClick={(num) => setPage(num)}
+                        onPageClick={(num: number) => setPage(num)}
                     />
                 )}
             </div>

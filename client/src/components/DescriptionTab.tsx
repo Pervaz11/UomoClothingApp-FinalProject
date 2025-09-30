@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-export default function Description() {
+interface DescriptionTabProps {
+    description: string;
+}
+
+const DescriptionTab: React.FC<DescriptionTabProps> = ({ }) => {
     const { id } = useParams();
     const [product, setProduct] = useState<any>(null);
 
@@ -15,7 +19,7 @@ export default function Description() {
     if (!product) return <p></p>;
 
     return (
-        <div className="">
+        <div>
             <h2 className="font-bold text-lg mb-2">{product.name}</h2>
             <p className="text-gray-600 mb-4">{product.description}</p>
 
@@ -44,4 +48,6 @@ export default function Description() {
             </div>
         </div>
     );
-}
+};
+
+export default DescriptionTab;  // ✅ add this

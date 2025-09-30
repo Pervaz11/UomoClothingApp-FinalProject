@@ -128,7 +128,24 @@ const Details = () => {
                     className="space-y-8"
                 >
                     <h2 className="text-4xl font-bold">{product.title}</h2>
-                    <p className="text-2xl font-semibold">${product.price}</p>
+                    {/* Product Price with Discount */}
+                    <div className="flex items-center gap-3">
+                        {product.discount &&
+                            (!product.discount.expiresAt || new Date(product.discount.expiresAt) > new Date()) ? (
+                            <>
+                                <p className="text-2xl font-semibold text-red-600">
+                                    ${(
+                                        product.discount.type === "percentage"
+                                            ? product.price * (1 - product.discount.value / 100)
+                                            : product.price - product.discount.value
+                                    ).toFixed(2)}
+                                </p>
+                                <p className="text-xl line-through text-gray-400">${product.price}</p>
+                            </>
+                        ) : (
+                            <p className="text-2xl font-semibold">${product.price}</p>
+                        )}
+                    </div>
                     <p>{product.description}</p>
 
                     {/* Sizes */}
@@ -141,8 +158,8 @@ const Details = () => {
                                     onClick={() => !isOutOfStock && setSelectedSize(size)}
                                     whileTap={{ scale: !isOutOfStock ? 0.9 : 1 }}
                                     className={`px-4 py-2 rounded-lg border text-sm font-medium ${selectedSize === size
-                                            ? "bg-black text-white border-black shadow-md"
-                                            : "border-gray-300 hover:border-black/60"
+                                        ? "bg-black text-white border-black shadow-md"
+                                        : "border-gray-300 hover:border-black/60"
                                         } ${isOutOfStock ? "bg-gray-200 border-gray-200 text-gray-400 cursor-not-allowed" : ""}`}
                                     disabled={isOutOfStock}
                                 >
@@ -245,6 +262,7 @@ const Details = () => {
                             </motion.div>
                         )}
                     </AnimatePresence>
+
                 </div>
             </div>
         </div>

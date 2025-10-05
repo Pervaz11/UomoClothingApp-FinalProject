@@ -14,6 +14,7 @@ import {
     FiX,
     FiLogOut,
 } from "react-icons/fi";
+import { MdQuestionMark } from "react-icons/md";
 
 const navItems = [
     { section: null, label: "Dashboard", to: "/admin", icon: <FiHome /> },
@@ -33,6 +34,7 @@ const navItems = [
     { section: "Apps" },
     { label: "Messages", to: "/admin/messages", icon: <FiMessageSquare />, badge: 16 },
     { label: "Calendar", to: "/admin/calendar", icon: <FiCalendar /> },
+    { label: "Fag", to: "/admin/fag", icon: <MdQuestionMark /> },
 ];
 
 const AdminSidebar = () => {

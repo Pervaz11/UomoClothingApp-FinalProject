@@ -11,12 +11,12 @@ import TwoCards from "../../components/TwoCards"
 import Posters from "../../components/Posters"
 import Services from "../../components/Services"
 import Accessories from "../../components/Accessory"
-import ChatWidget from "../../components/Chat"
+import ChatBot from "./Chat"
 
 const Home = () => {
   return (
     <>
-      <ChatWidget />
+      <ChatBot />
       <section>
         <NewsletterModal />
       </section>

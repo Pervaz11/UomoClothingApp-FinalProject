@@ -1,21 +1,14 @@
 import mongoose from "mongoose";
 
-const chatSchema = new mongoose.Schema(
-    {
-        question: {
-            type: String,
-            required: true,
-        },
-        answer: {
-            type: String,
-            required: true,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-        },
+const chatSchema = new mongoose.Schema({
+    question: {
+        type: String,
+        required: true,
     },
-    { versionKey: false }
-);
+    answer: {
+        type: String,
+        required: true,
+    },
+}, { timestamps: true });
 
 export default chatSchema;

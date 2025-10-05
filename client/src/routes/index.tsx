@@ -23,6 +23,7 @@ import AccessoryDetails from "../pages/client/AccesoryDetails";
 import Users from "../components/admin/Users";
 import Products from "../pages/admin/ProductManagament";
 import PartnersAdminPanel from "../pages/admin/PartnersAdminPanel";
+import AdminFAQ from "../pages/admin/FagController";
 
 const ROUTES = [
     // Client
@@ -57,6 +58,7 @@ const ROUTES = [
             { path: "users", element: <Users /> },
             { path: "products", element: <Products /> },
             { path: "partners", element: <PartnersAdminPanel /> },
+            { path: "fag", element: <AdminFAQ /> },
         ],
     },
 

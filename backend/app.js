@@ -13,7 +13,9 @@ import userRouter from "./src/routes/userRoute.js";
 import chatRouter from "./src/routes/chatRoute.js";
 import locationRouter from "./src/routes/locationRoute.js";
 import statsRouter from "./src/routes/statsRoute.js";
+import contactRoutes from "./src/routes/contactRoute.js";
 import "./src/config/passport.js";
+
 
 const app = express();
 
@@ -65,5 +67,5 @@ app.use("/location", locationRouter);
 app.use("/auth", userRouter);
 app.use("/chat", chatRouter);
 app.use("/stats", statsRouter);
-
+app.use("/contact", contactRoutes);
 export default app;

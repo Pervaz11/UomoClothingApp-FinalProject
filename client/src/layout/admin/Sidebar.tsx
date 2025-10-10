@@ -13,7 +13,6 @@ import {
     FiMenu,
     FiX,
     FiLogOut,
-    FiTag,
     FiMail,
 } from "react-icons/fi";
 import { MdQuestionMark } from "react-icons/md";

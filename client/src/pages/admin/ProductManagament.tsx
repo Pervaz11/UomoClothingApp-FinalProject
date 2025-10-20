@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Filters from "../../components/admin/AdminFilters";
 import ProductList from "../../components/admin/ProductList";
 import AccessoryList from "../../components/admin/AccesoryList";
 import ViewToggle from "../../components/admin/ViewToggle";
@@ -46,12 +45,7 @@ export default function Products() {
     }, [page, tab]);
 
     return (
-        <div className="flex min-h-screen bg-gray-50 p-6">
-            {/* Filters */}
-            <aside className="w-64 pr-6">
-                <Filters />
-            </aside>
-
+        <div className="flex min-h-screen p-6">
             {/* Content */}
             <main className="flex-1">
                 <div className="flex items-center justify-between mb-6">

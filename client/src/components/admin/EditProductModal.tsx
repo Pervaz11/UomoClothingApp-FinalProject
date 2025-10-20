@@ -17,6 +17,7 @@ type Item = {
         type: "percentage" | "fixed";
         value: number;
     };
+    status?: string | null;
 };
 
 type Props = {
@@ -32,6 +33,7 @@ export default function EditItemModal({ item, onClose }: Props) {
     const [stock, setStock] = useState(item.stock || 0);
     const [discountType, setDiscountType] = useState<"percentage" | "fixed">(item.discount?.type || "percentage");
     const [discountValue, setDiscountValue] = useState<number>(item.discount?.value || 0);
+    const [status, setStatus] = useState(item.status || "");
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -46,7 +48,8 @@ export default function EditItemModal({ item, onClose }: Props) {
                 name,
                 price,
                 stock,
-                discount: { type: discountType, value: discountValue }
+                discount: { type: discountType, value: discountValue },
+                status: status || null,
             });
 
             toast.success(`${item.type === "product" ? "Product" : "Accessory"} updated successfully`);
@@ -150,6 +153,22 @@ export default function EditItemModal({ item, onClose }: Props) {
                                 placeholder={(item.stock ?? 0).toString()}
                                 className="w-full pl-10 pr-20 py-3 rounded-xl bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
                             />
+                        </div>
+
+                        {/* Status */}
+                        <div className="flex flex-col gap-1 mt-2">
+                            <label className="text-gray-300 text-sm">Status:</label>
+                            <select
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                                className="rounded-xl bg-gray-800 text-white px-3 py-2 focus:ring-2 focus:ring-indigo-500 transition"
+                            >
+                                <option value="">None</option>
+                                <option value="Best Seller">Best Seller</option>
+                                <option value="On Sale">On Sale</option>
+                                <option value="Top Rated">Top Rated</option>
+                                <option value="New Arrival">New Arrival</option>
+                            </select>
                         </div>
 
                         {/* Discount Type */}

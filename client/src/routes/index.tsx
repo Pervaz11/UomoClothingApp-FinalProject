@@ -25,6 +25,7 @@ import Products from "../pages/admin/ProductManagament";
 import PartnersAdminPanel from "../pages/admin/PartnersAdminPanel";
 import AdminFAQ from "../pages/admin/FagController";
 import Contact from "../pages/admin/ContactManage";
+import AdminCalendar from "../pages/admin/Calenadar";
 
 const ROUTES = [
     // Client
@@ -61,6 +62,7 @@ const ROUTES = [
             { path: "partners", element: <PartnersAdminPanel /> },
             { path: "fag", element: <AdminFAQ /> },
             { path: "contact", element: <Contact /> },
+            { path: "calendar", element: <AdminCalendar /> },
         ],
     },
 

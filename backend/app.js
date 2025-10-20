@@ -14,8 +14,8 @@ import chatRouter from "./src/routes/chatRoute.js";
 import locationRouter from "./src/routes/locationRoute.js";
 import statsRouter from "./src/routes/statsRoute.js";
 import contactRoutes from "./src/routes/contactRoute.js";
+import eventRouter from "./src/routes/eventRoute.js";
 import "./src/config/passport.js";
-
 
 const app = express();
 
@@ -25,20 +25,26 @@ const limiter = rateLimit({
     limit: 100,
 });
 
-// Middlewares
+// 🧱 Middleware sırası vacibdir!
 app.use(helmet());
 app.use(limiter);
+
+// ✅ JSON body parser ən əvvəldə olmalıdır
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// ✅ CORS düzgün konfiqurasiya
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    })
+);
 
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-}));
-
+// Cache-disable
 app.use((_req, res, next) => {
-    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader("Cache-Control", "no-store");
     next();
 });
 
@@ -68,4 +74,6 @@ app.use("/auth", userRouter);
 app.use("/chat", chatRouter);
 app.use("/stats", statsRouter);
 app.use("/contact", contactRoutes);
+app.use("/events", eventRouter);
+
 export default app;

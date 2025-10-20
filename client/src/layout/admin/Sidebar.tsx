@@ -7,13 +7,11 @@ import {
     FiBox,
     FiShoppingCart,
     FiCreditCard,
-    FiBarChart2,
     FiMessageSquare,
     FiCalendar,
     FiMenu,
     FiX,
     FiLogOut,
-    FiMail,
 } from "react-icons/fi";
 import { MdQuestionMark } from "react-icons/md";
 
@@ -28,12 +26,10 @@ const navItems = [
     { label: "Payments", to: "/admin/payments", icon: <FiCreditCard /> },
     { label: "Partners", to: "/admin/partners", icon: <FiUsers /> },
     { section: "Information Management" },
-    { label: "Reports", to: "/admin/reports", icon: <FiBarChart2 /> },
-    { section: "Apps" },
     { label: "Messages", to: "/admin/messages", icon: <FiMessageSquare />, badge: 16 },
-    { label: "Calendar", to: "/admin/calendar", icon: <FiCalendar /> },
     { label: "Fag", to: "/admin/fag", icon: <MdQuestionMark /> },
-    { label: "Newsletter", to: "/admin/newsletter", icon: <FiMail /> },
+    { section: "Apps" },
+    { label: "Calendar", to: "/admin/calendar", icon: <FiCalendar /> },
 ];
 
 

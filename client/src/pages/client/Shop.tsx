@@ -69,7 +69,6 @@ const Shop: React.FC = () => {
                 </div>
 
                 <div className="md:flex items-center">
-                    {/* 🔹 FilterButton artıq setFilters alır */}
                     <FilterButton setFilters={setFilters} />
                     <CustomSelect sortOption={sortOption} setSortOption={setSortOption} />
                 </div>
@@ -90,14 +89,14 @@ const Shop: React.FC = () => {
                                 pagination
                                 sortOption={sortOption}
                                 page={page}
-                                filters={filters} // 🔹 filters buradan gedir
+                                filters={filters}
                             />
                         ) : (
                             <ShopList
                                 pagination
                                 sortOption={sortOption}
                                 page={page}
-                                filters={filters} // 🔹 filters buradan gedir
+                                filters={filters}
                             />
                         )}
                     </motion.div>

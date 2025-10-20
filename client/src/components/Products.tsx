@@ -14,8 +14,8 @@ type Product = {
         value: number;
         expiresAt?: string;
     };
+    status?: "New Arrival" | "Best Seller" | "Top Rated" | null;
 };
-
 
 const Products = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -24,7 +24,7 @@ const Products = () => {
     const [tabLoading, setTabLoading] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const tabs = ["All", "New Arrivals", "Best Seller", "Top Rated"];
+    const tabs = ["All", "New Arrivals", "Best Seller", "On sale"];
     const itemsPerSlide = 4;
 
     useEffect(() => {
@@ -57,22 +57,16 @@ const Products = () => {
     const getFilteredProducts = () => {
         switch (activeTab) {
             case 1:
-                return products.filter(
-                    (p) =>
-                        p.labels?.includes("New Arrival") ||
-                        (p.discount && p.discount.type === "percentage" && p.discount.value >= 20)
-                );
+                return products.filter((p) => p.status === "New Arrival");
             case 2:
-                return products.filter(
-                    (p) =>
-                        p.labels?.includes("Best Seller") ||
-                        (p.discount && p.discount.type === "fixed" && p.discount.value >= 10)
-                );
+                return products.filter((p) => p.status === "Best Seller");
             case 3:
                 return products.filter(
                     (p) =>
-                        p.labels?.includes("Top Rated") ||
-                        (p.discount && new Date(p.discount.expiresAt || "").getTime() > Date.now())
+                        p.discount &&
+                        p.discount.value > 0 &&
+                        (!p.discount.expiresAt ||
+                            new Date(p.discount.expiresAt).getTime() > Date.now())
                 );
             default:
                 return products;
@@ -195,9 +189,15 @@ const Products = () => {
                         key={index}
                         onClick={() => handleTabClick(index)}
                         className={`relative text-sm sm:text-lg mt-2 uppercase transition-all duration-300 
-              ${activeTab === index ? "text-black font-semibold" : "text-gray-500 hover:text-black"} 
+              ${activeTab === index
+                                ? "text-black font-semibold"
+                                : "text-gray-500 hover:text-black"
+                            } 
               before:absolute before:bottom-0 before:left-0 before:h-[2px] before:bg-black before:transition-all before:duration-300 
-              ${activeTab === index ? "before:w-5" : "before:w-0 hover:before:w-10"}`}
+              ${activeTab === index
+                                ? "before:w-5"
+                                : "before:w-0 hover:before:w-10"
+                            }`}
                     >
                         {tab}
                     </button>

@@ -4,13 +4,26 @@ import { API_BASE_URL } from "./api";
 const instance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10_000,
-  headers: { "api-key": "code_academy" },
+  headers: {
+    "api-key": "code_academy",
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
 });
 
-const getAccessToken = () => localStorage.getItem("token");
+// Token alma funksiyası
+const getAccessToken = (): string | null => {
+  try {
+    const stored = localStorage.getItem("token");
+    if (!stored) return null;
 
+    return stored.replace(/^"|"$/g, "");
+  } catch {
+    return null;
+  }
+};
 
-
+// Request interceptor
 instance.interceptors.request.use(
   function (config) {
     const token = getAccessToken();

@@ -9,8 +9,7 @@ function uploadMiddleware(folderName) {
     params: (_, file) => {
       const folderPath = folderName.trim();
       const fileExtension = extname(file.originalname).substring(1);
-      const publicId = `${file.fieldname}-${Date.now()}`; //set to cloudinary
-
+      const publicId = `${file.fieldname}-${Date.now()}`;
       return {
         folder: folderPath,
         public_id: publicId,
@@ -22,12 +21,17 @@ function uploadMiddleware(folderName) {
   return multer({
     storage: storage,
     limits: {
-      fileSize: 5 * 1024 * 1024, // keep images size < 5 MB
+      fileSize: 15 * 1024 * 1024,
     },
     fileFilter: (_, file, cb) => {
-      const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif",
+      ];
       if (!allowedTypes.includes(file.mimetype)) {
-        const err = new Error("Only JPEG, PNG, and WebP images are allowed");
+        const err = new Error("Only JPEG, PNG, WebP və GIF images are allowed");
         err.code = "INVALID_FILE_TYPE";
         return cb(err, false);
       }

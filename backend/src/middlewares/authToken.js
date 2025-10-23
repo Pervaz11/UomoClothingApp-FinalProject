@@ -1,35 +1,28 @@
-import jwt from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 import { JWT_ACCESS_SECRET_KEY } from "../config/config.js";
 
-export default function authToken(req, res, next) {
-  try {
-    const authHeader = req.headers["authorization"];
-    if (!authHeader) {
-      return res.status(401).json({ message: "No token provided!" });
-    }
+export default (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-    // Header format: "Bearer token"
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ message: "No token provided!" });
-    }
-
-    jwt.verify(token, JWT_ACCESS_SECRET_KEY, (err, decoded) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid or expired token!" });
-      }
-
-      // Burda decoded obyekti token-dən gəlir
-      // Əgər login zamanı { id: user._id } ilə yaratmısansa, onda decoded.id olacaq
-      req.user = {
-        id: decoded.id,
-        email: decoded.email,
-        role: decoded.role,
-      };
-
-      next();
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Token not provided!",
+      statusCode: 401
     });
-  } catch (error) {
-    res.status(500).json({ message: "Token verification failed", error: error.message });
   }
-}
+
+  verify(token, JWT_ACCESS_SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid or expired token!",
+        statusCode: 403
+      });
+    }
+    console.log("Decoded token:", decoded);
+    req.user = decoded; // id, email, fullName, role
+    next();
+  });
+};

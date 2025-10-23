@@ -4,10 +4,10 @@ import { jwtDecode } from "jwt-decode";
 
 interface UserState {
     id: string | null;
-    username: string | null;
     email: string | null;
     role: string | null;
     fullName: string | null;
+    username: string | null;
     profileImage: string | null;
     phoneNumber: string | null;
     token: string | null;
@@ -16,10 +16,10 @@ interface UserState {
 
 const initialState: UserState = {
     id: null,
-    username: null,
     email: null,
     role: null,
     fullName: null,
+    username: null,
     profileImage: null,
     phoneNumber: null,
     token: localStorage.getItem("token"),
@@ -29,23 +29,23 @@ const initialState: UserState = {
 function loadInitialUserData(initialUser: UserState) {
     try {
         const token = localStorage.getItem("token");
-        if (token) {
+        if (token && token.split(".").length === 3) {
             const decoded: {
                 role: string;
                 email: string;
                 fullName: string;
-                profileImage: string;
                 username: string;
-                phoneNumber: string;
+                profileImage: string;
                 id: string;
                 iat: Date;
                 exp: Date;
+                phoneNumber: string;
             } = jwtDecode(token);
             initialUser.id = decoded.id;
-            initialUser.username = decoded.username;
             initialUser.email = decoded.email;
             initialUser.role = decoded.role;
             initialUser.fullName = decoded.fullName;
+            initialUser.username = decoded.username;
             initialUser.profileImage = decoded.profileImage;
             initialUser.phoneNumber = decoded.phoneNumber;
             initialUser.isAuthenticated = true;
@@ -66,21 +66,22 @@ const userSlice = createSlice({
             state,
             action: PayloadAction<{
                 id: string;
-                username: string;
                 email: string;
                 role: string;
                 fullName: string;
+                username: string;
                 profileImage: string;
                 phoneNumber: string;
                 token: string;
             }>
         ) => {
-            const { id, username, email, role, fullName, profileImage, phoneNumber, token } = action.payload;
+            const { id, email, role, fullName, username, profileImage, phoneNumber, token } =
+                action.payload;
             state.id = id;
-            state.username = username;
             state.email = email;
             state.role = role;
             state.fullName = fullName;
+            state.username = username;
             state.profileImage = profileImage;
             state.phoneNumber = phoneNumber;
             state.token = token;
@@ -93,6 +94,7 @@ const userSlice = createSlice({
             state.role = null;
             state.fullName = null;
             state.profileImage = null;
+            state.phoneNumber = null;
             state.token = null;
             state.isAuthenticated = false;
             localStorage.removeItem("token");

@@ -55,22 +55,28 @@ const Products = () => {
     };
 
     const getFilteredProducts = () => {
+        let filtered = products;
+
         switch (activeTab) {
             case 1:
-                return products.filter((p) => p.status === "New Arrival");
+                filtered = filtered.filter((p) => p.status === "New Arrival");
+                break;
             case 2:
-                return products.filter((p) => p.status === "Best Seller");
+                filtered = filtered.filter((p) => p.status === "Best Seller");
+                break;
             case 3:
-                return products.filter(
+                filtered = filtered.filter(
                     (p) =>
                         p.discount &&
                         p.discount.value > 0 &&
                         (!p.discount.expiresAt ||
                             new Date(p.discount.expiresAt).getTime() > Date.now())
                 );
-            default:
-                return products;
+                break;
         }
+
+        // **Sadece stock > 0 olan məhsulları göstəririk**
+        return filtered.filter((p) => p.stock > 0);
     };
 
     const filtered = getFilteredProducts();

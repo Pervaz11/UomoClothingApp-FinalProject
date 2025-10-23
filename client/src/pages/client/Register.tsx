@@ -1,337 +1,200 @@
-import { useState } from "react";
-import { GiMonkey } from "react-icons/gi";
-import { FaRegEyeSlash } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
+import React, { useState } from "react";
 import { useFormik } from "formik";
-import registerValidationSchema from "../../../src/validations/registerValidation";
-import { useSnackbar } from "notistack";
+import registerValidationSchema from "../../validations/registerValidation";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../../services/api";
-import { Link } from "react-router-dom";
 
 const Register = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [preview, setPreview] = useState<string | null>(null);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
-    const { enqueueSnackbar } = useSnackbar();
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (e.currentTarget.files && file) {
-            setPreview(URL.createObjectURL(file));
-            console.log("FILE: ", file);
-            formik.setFieldValue("file", e.currentTarget.files[0]);
-        }
-    };
-
-    const formik = useFormik<{
-        fullName: string;
-        username: string;
-        email: string;
-        phone: string;
-        file: File | null;
-        password: string;
-        confirmPassword: string;
-    }>({
+    const formik = useFormik({
         initialValues: {
-            fullName: "",
-            username: "",
+            firstName: "",
+            lastName: "",
             email: "",
-            phone: "",
-            file: null,
+            phoneNumber: "",
+            username: "",
             password: "",
             confirmPassword: "",
+            file: null,
         },
         validationSchema: registerValidationSchema,
-        onSubmit: async (values, actions) => {
-            const formData = new FormData();
-            formData.append("fullName", values.fullName);
-            formData.append("username", values.username);
-            formData.append("email", values.email);
-            formData.append("password", values.password);
-            if (values.phone) {
-                formData.append("phoneNumber", values.phone);
-            }
-
-            if (values.file) {
-                formData.append("profileImage", values.file);
-            }
-
+        onSubmit: async (values) => {
+            setLoading(true);
+            setError("");
+            setSuccess("");
             try {
-                const response = await axios.post(
-                    `${API_BASE_URL}/auth/register`,
-                    formData,
-                    {
-                        headers: { "Content-Type": "multipart/form-data" },
+                const formData = new FormData();
+                Object.entries(values).forEach(([key, value]) => {
+                    if (key === "file" && value) {
+                        formData.append("profileImage", value as unknown as Blob);
+                    } else {
+                        formData.append(key, value as string);
                     }
-                );
-                console.log("response:", response);
-                actions.resetForm();
-                setPreview(null); // clear preview
-                enqueueSnackbar("registered successfully, verify your email!", {
-                    anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "right",
-                    },
-                    autoHideDuration: 2000,
-                    variant: "success",
                 });
-                navigate("/login");
-            } catch (error) {
-                let message = "Registration failed";
-                if (
-                    typeof error === "object" &&
-                    error !== null &&
-                    "response" in error &&
-                    error.response &&
-                    typeof error.response === "object" &&
-                    "data" in error.response &&
-                    error.response.data &&
-                    typeof error.response.data === "object" &&
-                    "message" in error.response.data &&
-                    typeof error.response.data.message === "string"
-                ) {
-                    message = error.response.data.message;
-                }
-                enqueueSnackbar(message, {
-                    autoHideDuration: 2000,
-                    anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "right",
-                    },
-                    variant: "error",
-                });
-                values.email = "";
-                values.username = "";
+                await axios.post("http://localhost:3000/auth/register", formData);
+                setSuccess("Qeydiyyat uğurla tamamlandı!");
+                setTimeout(() => {
+                    navigate("/login");
+                }, 100);
+                formik.resetForm();
+                setPreview(null);
+            } catch (err: any) {
+                setError(err.response?.data?.message || "Xəta baş verdi");
+            } finally {
+                setLoading(false);
             }
         },
     });
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        formik.setFieldValue("file", file);
+        if (file) {
+            setPreview(URL.createObjectURL(file));
+        } else {
+            setPreview(null);
+        }
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200 px-4">
-            <div className="w-full max-w-lg bg-white p-8 rounded-2xl shadow-xl">
-                <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-                    Create Your Account
-                </h2>
-
-                {/* Google Sign Up */}
-                <button
-                    onClick={() => {
-                        window.location.href = `http://localhost:3000/auth/google/callback`;
-                    }}
-                    className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-xl hover:bg-blue-50 transition mb-6"
-                >
-                    <FcGoogle size={22} />
-                    <span className="text-sm font-medium text-gray-700">
-                        Sign up with Google
-                    </span>
-                </button>
-
-                {/* Divider */}
-                <div className="relative mb-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300" />
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="bg-white px-2 text-gray-500">
-                            or sign up with email
-                        </span>
-                    </div>
-                </div>
-
-                {/* Form */}
-                <form
-                    onSubmit={formik.handleSubmit}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm"
-                >
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <form
+                onSubmit={formik.handleSubmit}
+                encType="multipart/form-data"
+                className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
+            >
+                <h2 className="text-2xl font-bold mb-6 text-center">Qeydiyyat</h2>
+                <div className="space-y-4">
                     <div>
-                        <label className="block font-medium text-gray-700 mb-1">
-                            Full Name
-                        </label>
                         <input
                             type="text"
-                            name="fullName"
-                            value={formik.values.fullName}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-blue-400 focus:outline-none focus:ring-2"
-                            placeholder="Full name"
+                            placeholder="Ad"
+                            {...formik.getFieldProps("firstName")}
+                            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        {formik.errors.fullName && formik.touched.fullName && (
+                        {formik.touched.firstName && formik.errors.firstName && (
                             <span className="text-red-500 text-sm">
-                                {formik.errors.fullName}
+                                {formik.errors.firstName}
                             </span>
                         )}
                     </div>
-
                     <div>
-                        <label className="block font-medium text-gray-700 mb-1">
-                            Username
-                        </label>
                         <input
                             type="text"
-                            name="username"
-                            value={formik.values.username}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-blue-400 focus:outline-none focus:ring-2"
-                            placeholder="Username"
+                            placeholder="Soyad"
+                            {...formik.getFieldProps("lastName")}
+                            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        {formik.errors.username && formik.touched.username && (
+                        {formik.touched.lastName && formik.errors.lastName && (
                             <span className="text-red-500 text-sm">
-                                {formik.errors.username}
+                                {formik.errors.lastName}
                             </span>
                         )}
                     </div>
-
                     <div>
-                        <label className="block font-medium text-gray-700 mb-1">
-                            Email
-                        </label>
                         <input
                             type="email"
-                            name="email"
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-blue-400 focus:outline-none focus:ring-2"
                             placeholder="Email"
+                            {...formik.getFieldProps("email")}
+                            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        {formik.errors.email && formik.touched.email && (
+                        {formik.touched.email && formik.errors.email && (
                             <span className="text-red-500 text-sm">
                                 {formik.errors.email}
                             </span>
                         )}
                     </div>
-
                     <div>
-                        <label className="block font-medium text-gray-700 mb-1">
-                            Phone <span className="text-gray-400 text-xs">(optional)</span>
-                        </label>
                         <input
-                            type="tel"
-                            name="phone"
-                            value={formik.values.phone}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-blue-400 focus:outline-none focus:ring-2"
-                            placeholder="(+994)-XX-XXX-XX-XX"
+                            type="text"
+                            placeholder="Telefon"
+                            {...formik.getFieldProps("phoneNumber")}
+                            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        {formik.errors.phone && formik.touched.phone && (
+                        {formik.touched.phoneNumber && formik.errors.phoneNumber && (
                             <span className="text-red-500 text-sm">
-                                {formik.errors.phone}
+                                {formik.errors.phoneNumber}
                             </span>
                         )}
                     </div>
-
-                    <div className="md:col-span-2">
-                        <label className="block font-medium text-gray-700 mb-1">
-                            Profile Image{" "}
-                            <span className="text-gray-400 text-xs">(optional)</span>
-                        </label>
+                    <div>
                         <input
-                            type="file"
-                            name="file"
-                            onBlur={formik.handleBlur}
-                            onChange={handleImageChange}
-                            className="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-4 file:border file:border-gray-300 file:rounded-lg file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            type="text"
+                            placeholder="İstifadəçi adı"
+                            {...formik.getFieldProps("username")}
+                            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        {formik.errors.file && formik.touched.file && (
-                            <span className="text-red-500 text-sm">{formik.errors.file}</span>
-                        )}
-                        {preview && (
-                            <img
-                                src={preview}
-                                alt="Preview"
-                                className="mt-2 h-16 w-16 object-cover rounded-2xl border border-gray-300"
-                            />
+                        {formik.touched.username && formik.errors.username && (
+                            <span className="text-red-500 text-sm">
+                                {formik.errors.username}
+                            </span>
                         )}
                     </div>
-
-                    <div className="relative">
-                        <label className="block font-medium text-gray-700 mb-1">
-                            Password
-                        </label>
+                    <div>
                         <input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={formik.values.password}
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-blue-400 focus:outline-none focus:ring-2 pr-12"
-                            placeholder="••••••••"
+                            type="password"
+                            placeholder="Şifrə"
+                            {...formik.getFieldProps("password")}
+                            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <button
-                            type="button"
-                            tabIndex={-1}
-                            className="absolute right-3 top-9 text-2xl text-yellow-700 hover:text-yellow-900 focus:outline-none"
-                            onClick={() => setShowPassword((prev) => !prev)}
-                            aria-label={showPassword ? "Şifrəni gizlət" : "Şifrəni göstər"}
-                        >
-                            {showPassword ? <GiMonkey /> : <FaRegEyeSlash />}
-                        </button>
-                        {formik.errors.password && formik.touched.password && (
+                        {formik.touched.password && formik.errors.password && (
                             <span className="text-red-500 text-sm">
                                 {formik.errors.password}
                             </span>
                         )}
                     </div>
-
-                    <div className="relative">
-                        <label className="block font-medium text-gray-700 mb-1">
-                            Confirm Password
-                        </label>
+                    <div>
                         <input
-                            type={showConfirmPassword ? "text" : "password"}
-                            name="confirmPassword"
-                            value={formik.values.confirmPassword}
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-blue-400 focus:outline-none focus:ring-2 pr-12"
-                            placeholder="••••••••"
+                            type="password"
+                            placeholder="Şifrəni təsdiqlə"
+                            {...formik.getFieldProps("confirmPassword")}
+                            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <button
-                            type="button"
-                            tabIndex={-1}
-                            className="absolute right-3 top-9 text-2xl text-yellow-700 hover:text-yellow-900 focus:outline-none"
-                            onClick={() => setShowConfirmPassword((prev) => !prev)}
-                            aria-label={showConfirmPassword ? "Şifrəni gizlət" : "Şifrəni göstər"}
-                        >
-                            {showConfirmPassword ? <GiMonkey /> : <FaRegEyeSlash />}
-                        </button>
-                        {formik.errors.confirmPassword &&
-                            formik.touched.confirmPassword && (
+                        {formik.touched.confirmPassword &&
+                            formik.errors.confirmPassword && (
                                 <span className="text-red-500 text-sm">
                                     {formik.errors.confirmPassword}
                                 </span>
                             )}
                     </div>
-
-                    <div className="md:col-span-2">
-                        <button
-                            disabled={
-                                formik.isSubmitting ||
-                                !formik.dirty ||
-                                Object.entries(formik.errors).length > 0
-                            }
-                            type="submit"
-                            className="w-full py-3 disabled:bg-blue-400 disabled:cursor-not-allowed cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition mt-2"
-                        >
-                            Register
-                        </button>
+                    <div>
+                        <input
+                            type="file"
+                            name="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="w-full"
+                        />
+                        {preview && (
+                            <img
+                                src={preview}
+                                alt="Preview"
+                                className="mt-2 rounded"
+                                width={80}
+                            />
+                        )}
+                        {formik.touched.file && formik.errors.file && (
+                            <span className="text-red-500 text-sm">{formik.errors.file}</span>
+                        )}
                     </div>
-                </form>
-
-                <p className="text-center text-sm text-gray-500 mt-6">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-blue-600 hover:underline">
-                        Login
-                    </Link>
-                </p>
-            </div>
+                </div>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full mt-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                >
+                    {loading ? "Yüklənir..." : "Qeydiyyat"}
+                </button>
+                {error && <div className="text-red-500 text-center mt-4">{error}</div>}
+                {success && (
+                    <div className="text-green-600 text-center mt-4">{success}</div>
+                )}
+            </form>
         </div>
     );
 };

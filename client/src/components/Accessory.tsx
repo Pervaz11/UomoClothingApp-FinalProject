@@ -14,7 +14,7 @@ type Accessory = {
 const Accessories: React.FC = () => {
     const [accessories, setAccessories] = useState<Accessory[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [, setActiveIndex] = useState(0);
 
     useEffect(() => {
         axios
@@ -115,10 +115,6 @@ const Accessories: React.FC = () => {
                         onClick={() => {
                             for (let i = 0; i < index; i++) nextSlide();
                         }}
-                        className={`w-3 h-3 rounded-full transition-all duration-500 ${index === activeIndex % 6
-                            ? "bg-black scale-110"
-                            : "bg-gray-400 hover:bg-gray-500"
-                            }`}
                     ></button>
                 ))}
             </div>

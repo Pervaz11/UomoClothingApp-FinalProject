@@ -25,19 +25,19 @@ const limiter = rateLimit({
     limit: 100,
 });
 
-// 🧱 Middleware sırası vacibdir!
+// Middleware sırası vacibdir!
 app.use(helmet());
 app.use(limiter);
 
-// ✅ JSON body parser ən əvvəldə olmalıdır
+// JSON body parser 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ CORS düzgün konfiqurasiya
+// CORS
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: "http://localhost:5174",
         credentials: true,
     })
 );
@@ -70,10 +70,10 @@ app.use("/products", productRouter);
 app.use("/accessory", accessoryRouter);
 app.use("/partners", partnersRouter);
 app.use("/location", locationRouter);
-app.use("/auth", userRouter);
 app.use("/chat", chatRouter);
 app.use("/stats", statsRouter);
 app.use("/contact", contactRoutes);
 app.use("/events", eventRouter);
+app.use("/auth", userRouter);
 
 export default app;

@@ -3,4 +3,4 @@ const logger = (req, _, next) => {
   next();
 };
 
-module.exports = logger;
+export default logger;

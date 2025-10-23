@@ -8,9 +8,7 @@ import {
     FiCheck,
     FiBox,
     FiImage,
-    FiLayers,
     FiHash,
-    FiGrid,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 

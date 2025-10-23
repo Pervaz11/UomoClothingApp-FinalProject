@@ -1,49 +1,37 @@
-import { Router } from "express";
-const router = Router();
-
+import express from "express";
+import uploadMiddleware from "../middlewares/uploadMiddleware.js";
 import {
     registerUser,
+    login,
     getAllUsers,
     verifyEmail,
-    unlockAccount,
-    login,
-    refresh,
-    logout,
     forgotPassword,
     resetPassword,
-    getMe,
-    updateMe
+    refresh,
+    logout,
 } from "../controller/userController.js";
 
-import uploadMiddleware from "../middlewares/uploadMiddleware.js";
-import authToken from "../middlewares/authToken.js";
-const upload = uploadMiddleware("userImages");
+const router = express.Router();
 
-import passport from "passport";
+// ✅ Register user
+router.post("/register", uploadMiddleware("users").single("profileImage"), registerUser);
 
-// Google OAuth routes
-router.get("/auth/google/", passport.authenticate("google", { scope: ["profile", "email"] }));
-
-router.get(
-    "/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "http://localhost:5173/login", session: true }),
-    (_req, res) => {
-        res.redirect("http://localhost:5173");
-    }
-);
-
-// User routes
-router.get("/me", authToken, getMe);
-router.put("/me", authToken, upload.single("profileImage"), updateMe);
-
-router.post("/register", upload.single("profileImage"), registerUser);
-router.get("/verify-email", verifyEmail);
-router.get("/unlock-account", unlockAccount);
-router.get("/users", getAllUsers);
+// ✅ Login user
 router.post("/login", login);
+
+// ✅ Get all users (admin only perhaps)
+router.get("/users", getAllUsers);
+
+
+// ✅ Verify email
+router.get("/verify-email", verifyEmail);
+
+// ✅ Forgot/reset password
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
-router.post("/refresh", refresh);
+
+// ✅ Token refresh & logout
+router.get("/refresh", refresh);
 router.post("/logout", logout);
 
 export default router;

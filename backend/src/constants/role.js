@@ -1,7 +1,7 @@
 const roles = {
+    superadmin: "superadmin",
     admin: "admin",
-    client: "client",
-    superAdmin: "superAdmin",
+    customer: "customer",
     courier: "courier",
 };
 

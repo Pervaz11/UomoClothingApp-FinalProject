@@ -1,9 +1,6 @@
 import React from "react";
 import { Heart } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../features/cartSlice";
-import { toast } from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 type Image = {
     url: string;
@@ -23,24 +20,13 @@ const AccessoryCard: React.FC<AccessoryCardProps> = ({
     title,
     price,
     stock,
-    images
+    images,
 }) => {
-    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const handleAddToCart = () => {
-        dispatch(
-            addToCart({
-                productId: id,
-                title,
-                price,
-                image: images?.[0]?.url || "/placeholder.jpg",
-                quantity: 1,
-                stock,
-                id: "",
-                type: "product"
-            })
-        );
-        toast.success(`${title} added to cart!`);
+    const handleDetailsClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // üst Link-lərin trigger olunmaması üçün
+        navigate(`/details/accessory/${id}`);
     };
 
     return (
@@ -61,19 +47,18 @@ const AccessoryCard: React.FC<AccessoryCardProps> = ({
                 </div>
             </Link>
 
-
-            {/* Add to Cart */}
+            {/* View Details button */}
             <button
-                onClick={handleAddToCart}
+                onClick={handleDetailsClick}
                 className="absolute bottom-0 left-0 w-full bg-black bg-opacity-90 text-white text-sm py-2 opacity-0 group-hover:opacity-100 transition-all duration-300 uppercase font-medium"
             >
-                Add to Cart
+                View Details
             </button>
 
             {/* Info */}
             <div className="p-3">
                 <p className="text-xs text-gray-500 mb-1">Accessories</p>
-                <Link to={`/details/${id}`}>
+                <Link to={`/details/accessory/${id}`}>
                     <h3 className="text-sm font-semibold text-gray-800 hover:underline">
                         {title}
                     </h3>

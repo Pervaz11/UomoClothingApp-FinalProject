@@ -26,6 +26,9 @@ import PartnersAdminPanel from "../pages/admin/PartnersAdminPanel";
 import AdminFAQ from "../pages/admin/FagController";
 import Contact from "../pages/admin/ContactManage";
 import AdminCalendar from "../pages/admin/Calenadar";
+import CommonLayout from "../layout/common";
+import ForgotPassword from "../pages/client/ForgotPassword";
+import ResetPassword from "../pages/client/ResetPaswor";
 
 const ROUTES = [
     // Client
@@ -66,7 +69,25 @@ const ROUTES = [
         ],
     },
 
-    { path: "*", element: <NotFound /> },
+    {
+        path: "/",
+        element: <CommonLayout />,
+        children: [
+            { path: "*", element: <NotFound /> },
+            {
+                path: "*",
+                element: <NotFound />,
+            },
+            {
+                path: "auth/forgot-password",
+                element: <ForgotPassword />,
+            },
+            {
+                path: "auth/reset-password/:token",
+                element: <ResetPassword />,
+            },
+        ],
+    },
 ];
 
 export default ROUTES;

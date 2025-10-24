@@ -148,6 +148,31 @@ export const refresh = (req, res) => {
     });
 };
 
+// UPDATE PROFILE
+export const updateProfile = async (req, res, next) => {
+    try {
+        const userId = req.user?.id || req.params.id; // JWT-dən və ya paramdan
+        const updates = { ...req.body };
+
+        if (req.file && req.file.path) {
+            updates.profileImage = req.file.path;
+            updates.public_id = req.file.filename;
+        }
+
+        const user = await UserModel.findByIdAndUpdate(userId, updates, { new: true }).select("-password");
+
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        res.status(200).json({
+            message: "Profile updated successfully!",
+            data: user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 // LOGOUT
 export const logout = (_, res) => {
     res.clearCookie("refreshToken", { path: "/auth/refresh" });

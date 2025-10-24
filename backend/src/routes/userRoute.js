@@ -9,6 +9,7 @@ import {
     resetPassword,
     refresh,
     logout,
+    updateProfile
 } from "../controller/userController.js";
 
 const router = express.Router();
@@ -19,19 +20,24 @@ router.post("/register", uploadMiddleware("users").single("profileImage"), regis
 // ✅ Login user
 router.post("/login", login);
 
-// ✅ Get all users (admin only perhaps)
+// ✅ Get all users (optional: admin only)
 router.get("/users", getAllUsers);
-
 
 // ✅ Verify email
 router.get("/verify-email", verifyEmail);
 
-// ✅ Forgot/reset password
+// ✅ Forgot password
 router.post("/forgot-password", forgotPassword);
+
+// ✅ Reset password
 router.post("/reset-password", resetPassword);
 
-// ✅ Token refresh & logout
+// ✅ Token refresh
 router.get("/refresh", refresh);
+
+router.get("/update-profile", updateProfile);
+
+// ✅ Logout
 router.post("/logout", logout);
 
 export default router;

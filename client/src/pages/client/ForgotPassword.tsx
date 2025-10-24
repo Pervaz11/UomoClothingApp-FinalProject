@@ -1,106 +1,71 @@
-import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";
-import forgotPasswordValidationSchema from "../../../src/validations/forgotPasswordValidation";
-import { Link } from "react-router-dom";
-import { post } from "../../../src/services/commonRequest";
-import { endpoints } from "../../../src/services/api";
+import { useState } from "react";
+import { forgotPassword } from "../../api/userApi";
+import { useSnackbar } from "notistack";
 
 const ForgotPassword = () => {
-    const formik = useFormik({
-        initialValues: {
-            email: "",
-        },
-        validationSchema: forgotPasswordValidationSchema,
-        onSubmit: async (values, actions) => {
-            console.log("values: ", values);
-            const res: {
-                message: string;
-                statusCode?: number;
-            } = await post(`${endpoints.auth}/forgot-password`, {
-                email: values.email,
-            });
-            console.log("resp: ", res);
-            if (res.statusCode == 401) {
-                enqueueSnackbar(res.message, {
-                    autoHideDuration: 2000,
-                    anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "right",
-                    },
-                    variant: "error",
-                });
-            } else {
-                enqueueSnackbar(res.message || "Reset password email was sent!", {
-                    autoHideDuration: 2000,
-                    anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "right",
-                    },
-                    variant: "success",
-                });
-            }
+    const [email, setEmail] = useState("");
+    const { enqueueSnackbar } = useSnackbar();
 
-            actions.resetForm();
-        },
-    });
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const res = await forgotPassword(email);
+            enqueueSnackbar(res.message, { variant: "success" });
+        } catch (error: any) {
+            enqueueSnackbar(error?.message || "Xəta baş verdi", { variant: "error" });
+        }
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200 px-4">
-            <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
-                <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-                    Forgot Password
-                </h2>
+        // Bütün səhifənin mərkəzləşdirilməsi və fon rəngi
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
 
-                <p className="text-center text-gray-600 mb-6 text-sm">
-                    Enter your email address below and we'll send you a link to reset your
-                    password.
-                </p>
+            {/* Kart (Konteyner) Stili: Kölgə, yumru künclər və ağ fon */}
+            <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-2xl transition duration-500 ease-in-out transform hover:shadow-xl">
 
-                <form onSubmit={formik.handleSubmit} className="space-y-5 text-sm">
+                {/* Başlıq hissəsi */}
+                <div className="text-center">
+                    <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Şifrəni unutmusunuz?</h2>
+                    <p className="text-sm text-gray-500">
+                        Qeydiyyatdan keçdiyiniz <span className="font-semibold text-blue-600">email adresinizi</span> daxil edin.
+                    </p>
+                </div>
+
+                {/* Form stili */}
+                <form onSubmit={handleSubmit} className="space-y-6">
+
+                    {/* Daxiletmə sahəsi (Input) stili */}
                     <div>
-                        <label
-                            htmlFor="email"
-                            className="block font-medium text-gray-700 mb-1"
-                        >
-                            Email Address
-                        </label>
+                        <label htmlFor="email" className="sr-only">Email ünvanı</label>
                         <input
                             id="email"
                             type="email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            placeholder="nümunə@email.com"
                             required
-                            value={formik.values.email}
-                            name="email"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            placeholder="you@example.com"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="
+                appearance-none relative block w-full px-3 py-3 border 
+                border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg 
+                focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm
+                transition duration-150 ease-in-out
+              "
                         />
-                        {formik.errors.email && formik.touched.email && (
-                            <span className="text-red-500 text-sm">
-                                {formik.errors.email}
-                            </span>
-                        )}
                     </div>
 
+                    {/* Düymə stili */}
                     <button
-                        disabled={
-                            formik.isSubmitting ||
-                            !formik.dirty ||
-                            Object.entries(formik.errors).length > 0
-                        }
                         type="submit"
-                        className="w-full py-3 disabled:bg-blue-400 disabled:cursor-not-allowed cursor-pointer  bg-blue-600  text-white font-semibold rounded-xl transition"
+                        className="
+              group relative w-full flex justify-center py-3 px-4 border border-transparent 
+              text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+              transition duration-150 ease-in-out transform hover:scale-[1.01]
+            "
                     >
-                        Send Reset Link
+                        Şifrəni yenilə
                     </button>
                 </form>
-
-                <p className="text-center text-sm text-gray-500 mt-6">
-                    Remember your password?{" "}
-                    <Link to="/login" className="text-blue-600 hover:underline">
-                        Login
-                    </Link>
-                </p>
             </div>
         </div>
     );

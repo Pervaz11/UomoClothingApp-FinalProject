@@ -4,7 +4,6 @@ import AccessoryList from "../../components/AccesoryList";
 import ShopList from "../../components/ShopList";
 import Pagination from "../../components/Pagination";
 import CustomSelect from "../../components/SelectionFilter";
-import FilterButton from "../../components/ShopFilter";
 
 type Filters = {
     categories?: string[];
@@ -18,7 +17,7 @@ const Shop: React.FC = () => {
     const [tab, setTab] = useState<"accessory" | "product">("accessory");
     const [sortOption, setSortOption] = useState<string>("default");
     const [page, setPage] = useState<number>(1);
-    const [filters, setFilters] = useState<Filters>({});
+    const [filters] = useState<Filters>({});
 
     const totalPages = 5;
 
@@ -69,7 +68,6 @@ const Shop: React.FC = () => {
                 </div>
 
                 <div className="md:flex items-center">
-                    <FilterButton setFilters={setFilters} />
                     <CustomSelect sortOption={sortOption} setSortOption={setSortOption} />
                 </div>
             </div>

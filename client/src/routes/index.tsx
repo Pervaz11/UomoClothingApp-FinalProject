@@ -29,6 +29,7 @@ import AdminCalendar from "../pages/admin/Calenadar";
 import CommonLayout from "../layout/common";
 import ForgotPassword from "../pages/client/ForgotPassword";
 import ResetPassword from "../pages/client/ResetPaswor";
+import PaymentSuccess from "../pages/client/PaymentSuccsess";
 
 const ROUTES = [
     // Client
@@ -51,6 +52,7 @@ const ROUTES = [
             { path: "details/:id", element: <Details /> },
             { path: "details/accessory/:id", element: <AccessoryDetails /> },
             { path: "addToCart", element: <AddToCart /> },
+            { path: "payment-success", element: <PaymentSuccess /> },
         ],
     },
 

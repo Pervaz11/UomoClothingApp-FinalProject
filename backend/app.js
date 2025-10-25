@@ -15,9 +15,15 @@ import locationRouter from "./src/routes/locationRoute.js";
 import statsRouter from "./src/routes/statsRoute.js";
 import contactRoutes from "./src/routes/contactRoute.js";
 import eventRouter from "./src/routes/eventRoute.js";
+import paymentRouter from "./src/routes/paymentRoute.js";
+import orderRouter from "./src/routes/ordersRoute.js";
 import "./src/config/passport.js";
 
 const app = express();
+
+import dotenv from "dotenv";
+dotenv.config();
+
 
 // Rate limiter
 const limiter = rateLimit({
@@ -37,7 +43,7 @@ app.use(cookieParser());
 // CORS
 app.use(
     cors({
-        origin: "http://localhost:5174",
+        origin: ["http://localhost:5173", "http://localhost:5174"],
         credentials: true,
     })
 );
@@ -75,5 +81,8 @@ app.use("/stats", statsRouter);
 app.use("/contact", contactRoutes);
 app.use("/events", eventRouter);
 app.use("/auth", userRouter);
+app.use("/payment", paymentRouter);
+app.use("/payment/webhook", paymentRouter);
+app.use("/orders", orderRouter);
 
 export default app;

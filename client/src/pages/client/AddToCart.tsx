@@ -1,16 +1,65 @@
 import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "../../store/store";
-import { removeFromCart, updateItemColor, increaseQuantity, decreaseQuantity } from "../../features/cartSlice";
+import {
+    removeFromCart,
+    updateItemColor,
+    increaseQuantity,
+    decreaseQuantity,
+} from "../../features/cartSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Trash2 } from "lucide-react";
+import { useState } from "react";
+import axios from "axios";
 
 const colors = ["Yellow", "Red", "Blue", "Green"];
 
 const AddToCart: React.FC = () => {
     const cartItems = useSelector((state: RootState) => state.cart.items);
+    const user = useSelector((state: RootState) => state.user); // <- burada user-i çəkirik
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalPrice = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+
+    const handleCheckout = async () => {
+        if (cartItems.length === 0) return;
+        if (!user?.id) {
+            setError("User not logged in");
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/payment/create-checkout-session`,
+                {
+                    items: cartItems.map(item => ({
+                        id: item.id,
+                        type: item.type,
+                        quantity: item.quantity,
+                    })),
+                    userId: user.id, // artıq düzgün tanımlanıb
+                },
+                { withCredentials: true }
+            );
+            window.location.href = response.data.url;
+        } catch (err: any) {
+            console.error("Checkout error:", err);
+            setError(
+                err.response?.data?.message ||
+                "Failed to start checkout. Please try again."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     return (
         <div className="max-w-7xl mx-auto p-6 grid lg:grid-cols-3 gap-10">
@@ -24,7 +73,9 @@ const AddToCart: React.FC = () => {
                 {cartItems.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl">
                         <ShoppingCart className="w-16 h-16 text-gray-300 mb-4" />
-                        <p className="text-gray-500 text-lg font-medium">Your cart is empty.</p>
+                        <p className="text-gray-500 text-lg font-medium">
+                            Your cart is empty.
+                        </p>
                     </div>
                 ) : (
                     <AnimatePresence>
@@ -44,28 +95,62 @@ const AddToCart: React.FC = () => {
                                         alt={item.title}
                                         className="w-28 h-28 object-cover rounded-2xl shadow-md"
                                         whileHover={{ scale: 1.05 }}
-                                        transition={{ type: "spring", stiffness: 300 }}
+                                        transition={{
+                                            type: "spring",
+                                            stiffness: 300,
+                                        }}
                                     />
                                     <div className="flex flex-col gap-2">
-                                        <h2 className="font-semibold text-lg">{item.title}
-                                            <span className="text-xs text-gray-400"> ({item.type})</span>
+                                        <h2 className="font-semibold text-lg">
+                                            {item.title}
+                                            <span className="text-xs text-gray-400">
+                                                {" "}
+                                                ({item.type})
+                                            </span>
                                         </h2>
-                                        <p className="text-gray-600 font-medium">${item.price.toFixed(2)} x {item.quantity}</p>
+                                        <p className="text-gray-600 font-medium">
+                                            ${item.price.toFixed(2)} x{" "}
+                                            {item.quantity}
+                                        </p>
 
                                         {/* Quantity */}
                                         <div className="flex items-center gap-3 mt-2">
                                             <button
-                                                onClick={() => dispatch(decreaseQuantity({ id: item.id, type: item.type }))}
+                                                onClick={() =>
+                                                    dispatch(
+                                                        decreaseQuantity({
+                                                            id: item.id,
+                                                            type: item.type,
+                                                        })
+                                                    )
+                                                }
                                                 className="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
                                                 disabled={item.quantity <= 1}
-                                            >-</button>
-                                            <span className="font-medium w-5 text-center">{item.quantity}</span>
+                                            >
+                                                -
+                                            </button>
+                                            <span className="font-medium w-5 text-center">
+                                                {item.quantity}
+                                            </span>
                                             <button
-                                                onClick={() => dispatch(increaseQuantity({ id: item.id, type: item.type }))}
+                                                onClick={() =>
+                                                    dispatch(
+                                                        increaseQuantity({
+                                                            id: item.id,
+                                                            type: item.type,
+                                                        })
+                                                    )
+                                                }
                                                 className="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
-                                                disabled={item.quantity >= item.stock}
-                                            >+</button>
-                                            <span className="text-sm text-gray-400 ml-2">Stock: {item.stock}</span>
+                                                disabled={
+                                                    item.quantity >= item.stock
+                                                }
+                                            >
+                                                +
+                                            </button>
+                                            <span className="text-sm text-gray-400 ml-2">
+                                                Stock: {item.stock}
+                                            </span>
                                         </div>
 
                                         {/* Color Picker */}
@@ -74,11 +159,37 @@ const AddToCart: React.FC = () => {
                                                 {colors.map((color) => (
                                                     <motion.button
                                                         key={color}
-                                                        onClick={() => dispatch(updateItemColor({ id: item.id, type: item.type, color }))}
+                                                        onClick={() =>
+                                                            dispatch(
+                                                                updateItemColor(
+                                                                    {
+                                                                        id: item.id,
+                                                                        type: item.type,
+                                                                        color,
+                                                                    }
+                                                                )
+                                                            )
+                                                        }
                                                         className={`w-7 h-7 rounded-full border-2 cursor-pointer transition-all`}
-                                                        style={{ backgroundColor: color.toLowerCase(), borderColor: item.color === color ? 'black' : 'transparent' }}
-                                                        whileHover={{ scale: 1.2 }}
-                                                        animate={{ scale: item.color === color ? 1.2 : 1 }}
+                                                        style={{
+                                                            backgroundColor:
+                                                                color.toLowerCase(),
+                                                            borderColor:
+                                                                item.color ===
+                                                                    color
+                                                                    ? "black"
+                                                                    : "transparent",
+                                                        }}
+                                                        whileHover={{
+                                                            scale: 1.2,
+                                                        }}
+                                                        animate={{
+                                                            scale:
+                                                                item.color ===
+                                                                    color
+                                                                    ? 1.2
+                                                                    : 1,
+                                                        }}
                                                     />
                                                 ))}
                                             </div>
@@ -88,7 +199,14 @@ const AddToCart: React.FC = () => {
 
                                 {/* Right: Remove Button */}
                                 <motion.button
-                                    onClick={() => dispatch(removeFromCart({ id: item.id, type: item.type }))}
+                                    onClick={() =>
+                                        dispatch(
+                                            removeFromCart({
+                                                id: item.id,
+                                                type: item.type,
+                                            })
+                                        )
+                                    }
                                     className="mt-4 sm:mt-0 flex items-center gap-1 text-red-500 hover:text-red-600 font-semibold"
                                     whileHover={{ scale: 1.05 }}
                                 >
@@ -101,7 +219,7 @@ const AddToCart: React.FC = () => {
                 )}
             </div>
 
-            {/* Order Summary stays the same */}
+            {/* Order Summary */}
             <motion.div
                 initial={{ opacity: 0, x: 80 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -113,11 +231,15 @@ const AddToCart: React.FC = () => {
                 <div className="space-y-3">
                     <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
-                        <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                        <span className="font-medium">
+                            ${totalPrice.toFixed(2)}
+                        </span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-gray-600">VAT (10%)</span>
-                        <span className="font-medium">${(totalPrice * 0.1).toFixed(2)}</span>
+                        <span className="font-medium">
+                            ${(totalPrice * 0.1).toFixed(2)}
+                        </span>
                     </div>
                     <div className="border-t pt-4 flex justify-between font-bold text-lg">
                         <span>Total</span>
@@ -125,8 +247,21 @@ const AddToCart: React.FC = () => {
                     </div>
                 </div>
 
-                <button className="mt-6 w-full bg-black text-white py-3 rounded-xl font-semibold shadow hover:bg-gray-900 transition-colors">
-                    Proceed to Checkout
+                {error && (
+                    <p className="text-red-500 mt-3 text-sm text-center">
+                        {error}
+                    </p>
+                )}
+
+                <button
+                    onClick={handleCheckout}
+                    disabled={loading || cartItems.length === 0}
+                    className={`mt-6 w-full bg-black text-white py-3 rounded-xl font-semibold shadow transition-colors ${loading
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:bg-gray-900"
+                        }`}
+                >
+                    {loading ? "Processing..." : "Proceed to Checkout"}
                 </button>
             </motion.div>
         </div>

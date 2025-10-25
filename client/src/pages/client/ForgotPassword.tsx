@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { Mail, ArrowLeft, Send } from "lucide-react";
 import { forgotPassword } from "../../api/userApi";
 import { useSnackbar } from "notistack";
+import { Link } from "react-router-dom";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -12,61 +15,65 @@ const ForgotPassword = () => {
             const res = await forgotPassword(email);
             enqueueSnackbar(res.message, { variant: "success" });
         } catch (error: any) {
-            enqueueSnackbar(error?.message || "Xəta baş verdi", { variant: "error" });
+            enqueueSnackbar(error?.message || "An error occurred.", { variant: "error" });
         }
     };
 
     return (
-        // Bütün səhifənin mərkəzləşdirilməsi və fon rəngi
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-6">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="bg-white/80 backdrop-blur-xl border border-gray-200 shadow-xl rounded-2xl p-8 w-full max-w-md"
+            >
+                {/* Başlıq */}
+                <motion.h2
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-3xl font-semibold text-center mb-3"
+                >
+                    Forgot Password?
+                </motion.h2>
+                <p className="text-center text-gray-600 mb-8 text-sm">
+                    Enter your <span className="text-gray-900 font-medium">registered email</span> to reset your password.
+                </p>
 
-            {/* Kart (Konteyner) Stili: Kölgə, yumru künclər və ağ fon */}
-            <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-2xl transition duration-500 ease-in-out transform hover:shadow-xl">
-
-                {/* Başlıq hissəsi */}
-                <div className="text-center">
-                    <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Şifrəni unutmusunuz?</h2>
-                    <p className="text-sm text-gray-500">
-                        Qeydiyyatdan keçdiyiniz <span className="font-semibold text-blue-600">email adresinizi</span> daxil edin.
-                    </p>
-                </div>
-
-                {/* Form stili */}
+                {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
-
-                    {/* Daxiletmə sahəsi (Input) stili */}
-                    <div>
-                        <label htmlFor="email" className="sr-only">Email ünvanı</label>
+                    <div className="relative">
+                        <Mail className="absolute left-3 top-3.5 text-gray-500" size={18} />
                         <input
-                            id="email"
                             type="email"
                             value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            placeholder="nümunə@email.com"
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="example@mail.com"
                             required
-                            className="
-                appearance-none relative block w-full px-3 py-3 border 
-                border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg 
-                focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm
-                transition duration-150 ease-in-out
-              "
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition bg-white"
                         />
                     </div>
 
-                    {/* Düymə stili */}
-                    <button
+                    <motion.button
                         type="submit"
-                        className="
-              group relative w-full flex justify-center py-3 px-4 border border-transparent 
-              text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-              transition duration-150 ease-in-out transform hover:scale-[1.01]
-            "
+                        whileTap={{ scale: 0.97 }}
+                        className="w-full py-3 bg-black text-white rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-all"
                     >
-                        Şifrəni yenilə
-                    </button>
+                        <Send size={18} />
+                        Send Reset Link
+                    </motion.button>
                 </form>
-            </div>
+
+                {/* Geri keçid */}
+                <div className="mt-8 text-center">
+                    <Link
+                        to="/login"
+                        className="inline-flex items-center justify-center gap-2 text-gray-700 hover:text-black font-medium transition-all group"
+                    >
+                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                        Back to Login
+                    </Link>
+                </div>
+            </motion.div>
         </div>
     );
 };

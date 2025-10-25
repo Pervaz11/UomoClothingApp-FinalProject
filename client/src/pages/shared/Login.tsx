@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { FaRegHandPointRight } from "react-icons/fa6";
+import { motion } from "framer-motion";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../features/userSlice";
+import { LogIn, UserPlus, Hand } from "lucide-react";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -41,72 +42,106 @@ const Login = () => {
     };
 
     return (
-        <>
-            <form
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+            <motion.form
                 onSubmit={handleSubmit}
-                className="lg:w-[45%] w-[95%] mx-auto my-16 flex flex-col items-center gap-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-200"
             >
-                <span className="text-black lg:text-7xl text-5xl capitalize font-bold">
-                    login
-                </span>
-                <div className="w-full flex flex-col items-start gap-6">
-                    <div className="bg-[#FAFAFA] py-5 px-3 w-full rounded-xl">
+                <motion.h2
+                    className="text-3xl font-semibold text-center mb-8 tracking-tight"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    Welcome Back!
+                </motion.h2>
+
+                <div className="space-y-5">
+                    {/* Email */}
+                    <div className="relative">
                         <input
                             type="email"
                             placeholder="Email"
-                            className="bg-transparent border-none outline-none w-full"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition bg-white"
                             required
                         />
                     </div>
-                    <div className="flex items-center justify-between gap-3 bg-[#FAFAFA] py-5 px-3 w-full rounded-xl">
+
+                    {/* Password */}
+                    <div className="relative">
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder="Password"
-                            className="bg-transparent border-none outline-none w-full"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition bg-white pr-10"
                             required
                         />
-                        {showPassword ? (
-                            <IoEye
-                                className="text-2xl cursor-pointer"
-                                onClick={() => setShowPassword(false)}
-                            />
-                        ) : (
-                            <IoEyeOff
-                                className="text-2xl cursor-pointer"
-                                onClick={() => setShowPassword(true)}
-                            />
-                        )}
-                    </div>
-                    {error && <div className="text-red-500 text-sm">{error}</div>}
-                    <Link to="/auth/forgot-password" className="text-xl text-black relative group">
-                        Forgot password?
-                        <span className="absolute left-0 bottom-0 h-[1px] w-full bg-black transition-all duration-400 group-hover:w-0"></span>
-                    </Link>
-                    <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-6 mt-6">
                         <button
-                            type="submit"
-                            className="border bg-black text-white py-5 rounded-4xl cursor-pointer"
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-800"
                         >
-                            Sign in
+                            {showPassword ? (
+                                <IoEyeOff size={20} />
+                            ) : (
+                                <IoEye size={20} />
+                            )}
                         </button>
-                        <Link
-                            to="/register"
-                            className="w-full border bg-black text-white py-5 rounded-4xl cursor-pointer flex items-center justify-center"
-                        >
-                            Create account
-                        </Link>
                     </div>
+
+                    {error && (
+                        <motion.div
+                            className="text-red-500 text-sm text-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                        >
+                            {error}
+                        </motion.div>
+                    )}
+
+                    {/* Forgot Password */}
+                    <motion.div
+                        className="text-right"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        <Link
+                            to="/auth/forgot-password"
+                            className="text-sm text-gray-600 hover:text-black transition group relative"
+                        >
+                            Forgot password?
+                            <span className="absolute left-0 bottom-0 h-[1px] w-full bg-black transition-all duration-300 group-hover:w-0"></span>
+                        </Link>
+                    </motion.div>
                 </div>
-                <Link to="/" className="flex items-center justify-center gap-3">
-                    <FaRegHandPointRight className="text-xl mt-1" />
-                    <span className="text-2xl">Return to Store</span>
-                </Link>
-            </form>
-        </>
+
+                {/* Buttons */}
+                <div className="mt-8 grid grid-cols-2 gap-4">
+                    <motion.button
+                        type="submit"
+                        whileTap={{ scale: 0.97 }}
+                        className="flex items-center justify-center gap-2 py-3 bg-black text-white rounded-lg font-medium tracking-wide hover:bg-gray-800 transition-all"
+                    >
+                        <LogIn size={18} />
+                        Sign in
+                    </motion.button>
+
+                    <Link
+                        to="/register"
+                        className="flex items-center justify-center gap-2 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-all"
+                    >
+                        <UserPlus size={18} />
+                        Create account
+                    </Link>
+                </div>
+            </motion.form>
+        </div>
     );
 };
 

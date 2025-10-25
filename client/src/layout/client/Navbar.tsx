@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
                                     user.profileImage ||
                                     "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg"
                                 }
-                                alt={user.fullName || user.username}
+                                alt={user.fullName ?? user.username ?? "User avatar"}
                                 className="w-8 h-8 rounded-full object-cover border border-gray-200"
                             />
                             <span className="text-sm">{user.fullName || user.username}</span>
@@ -155,10 +155,6 @@ const Navbar: React.FC = () => {
                     </Link>
                 )}
 
-                <Link to="/wishlist" className="p-1 rounded-full hover:bg-gray-200 transition">
-                    <IoMdHeartEmpty className="text-3xl text-gray-700" />
-                </Link>
-
                 <Link to="/addToCart" className="relative rounded-full hover:bg-gray-200 transition p-2">
                     <LuShoppingBasket className="text-3xl text-gray-700" />
                     {cartCount > 0 && (
@@ -197,7 +193,7 @@ const Navbar: React.FC = () => {
                             >
                                 <img
                                     src={user.profileImage || "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg"}
-                                    alt={user.fullName || user.username}
+                                    alt={user.fullName || user.username || "User avatar"}
                                     className="w-8 h-8 rounded-full object-cover"
                                 />
                                 <span>{user.fullName || user.username}</span>

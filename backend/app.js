@@ -15,30 +15,36 @@ import locationRouter from "./src/routes/locationRoute.js";
 import statsRouter from "./src/routes/statsRoute.js";
 import contactRoutes from "./src/routes/contactRoute.js";
 import eventRouter from "./src/routes/eventRoute.js";
-import paymentRouter from "./src/routes/paymentRoute.js";
+import paymentRouter, { handleStripeWebhook } from "./src/routes/paymentRoute.js";
 import orderRouter from "./src/routes/ordersRoute.js";
 import "./src/config/passport.js";
-
-const app = express();
 
 import dotenv from "dotenv";
 dotenv.config();
 
+const app = express();
 
-// Rate limiter
+// 🔒 Rate limiter
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 100,
 });
 
-// Middleware sırası vacibdir!
+// Middleware-lər
 app.use(helmet());
 app.use(limiter);
+app.use(cookieParser());
 
-// JSON body parser 
+// ⚠️ Webhook üçün — JSON parserdən əvvəl
+app.post(
+    "/payment/webhook",
+    express.raw({ type: "application/json" }),
+    handleStripeWebhook
+);
+
+// Normal JSON parser-lar
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 // CORS
 app.use(
@@ -64,14 +70,12 @@ app.use(
     })
 );
 
-// Passport initialize
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Test route
-app.get("/", (_req, res) => res.send("API is running..."));
-
 // API routes
+app.use("/payment", paymentRouter);
 app.use("/products", productRouter);
 app.use("/accessory", accessoryRouter);
 app.use("/partners", partnersRouter);
@@ -81,8 +85,9 @@ app.use("/stats", statsRouter);
 app.use("/contact", contactRoutes);
 app.use("/events", eventRouter);
 app.use("/auth", userRouter);
-app.use("/payment", paymentRouter);
-app.use("/payment/webhook", paymentRouter);
 app.use("/orders", orderRouter);
+
+// Test route
+app.get("/", (_req, res) => res.send("API is running..."));
 
 export default app;

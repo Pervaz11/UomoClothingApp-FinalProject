@@ -30,6 +30,7 @@ import CommonLayout from "../layout/common";
 import ForgotPassword from "../pages/client/ForgotPassword";
 import ResetPassword from "../pages/client/ResetPaswor";
 import PaymentSuccess from "../pages/client/PaymentSuccsess";
+import CourierPage from "../pages/courier/CourierPage";
 
 const ROUTES = [
     // Client
@@ -53,6 +54,7 @@ const ROUTES = [
             { path: "details/accessory/:id", element: <AccessoryDetails /> },
             { path: "addToCart", element: <AddToCart /> },
             { path: "payment-success", element: <PaymentSuccess /> },
+            { path: "courier", element: <CourierPage /> },
         ],
     },
 

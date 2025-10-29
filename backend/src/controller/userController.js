@@ -9,6 +9,7 @@ import {
 } from "../service/userService.js";
 import { CLIENT_URL } from "../config/config.js";
 import formatMongoData from "../utils/formatMongoData.js";
+import UserModel from "../models/userModel.js";
 import { sendVerificationEmail } from "../utils/mailService.js";
 import jwt from "jsonwebtoken";
 
@@ -171,6 +172,40 @@ export const updateProfile = async (req, res, next) => {
         next(error);
     }
 };
+
+export const updateUserRole = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { role } = req.body;
+
+        if (!id || !role) {
+            return res.status(400).json({ message: "User ID and role are required" });
+        }
+
+        const user = await UserModel.findByIdAndUpdate(id, { role }, { new: true });
+
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        res.status(200).json({
+            message: "User role updated successfully",
+            data: user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await UserModel.findByIdAndDelete(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 
 // LOGOUT

@@ -61,22 +61,22 @@ const Navbar: React.FC = () => {
             {/* Desktop Links */}
             <ul className="hidden md:flex gap-4 font-medium uppercase text-sm tracking-wide">
                 <li>
-                    <Link to="/" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
+                    <Link to="/" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300 before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
                         Home
                     </Link>
                 </li>
                 <li>
-                    <Link to="/shop" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
+                    <Link to="/shop" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300 before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
                         Shop
                     </Link>
                 </li>
                 <li>
-                    <Link to="/about" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
+                    <Link to="/about" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300 before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
                         About
                     </Link>
                 </li>
                 <li>
-                    <Link to="/contact" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300  dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
+                    <Link to="/contact" className="text-gray-700 hover:text-black transition relative px-4 py-2 duration-300 before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7">
                         Contact
                     </Link>
                 </li>
@@ -84,9 +84,11 @@ const Navbar: React.FC = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-3">
-                <NotificationDropdown notifications={notifications} />
+                {/* ✅ Notification Dropdown düzəldilmiş */}
+                <div className="relative flex items-center">
+                    <NotificationDropdown notifications={notifications} />
+                </div>
 
-                {/* 🔥 Modern User Section */}
                 {isLoggedIn ? (
                     <div className="relative">
                         <button
@@ -115,7 +117,6 @@ const Navbar: React.FC = () => {
                             </svg>
                         </button>
 
-                        {/* Animated Dropdown */}
                         <AnimatePresence>
                             {isProfileDropdownOpen && (
                                 <motion.div
@@ -172,8 +173,7 @@ const Navbar: React.FC = () => {
                 </svg>
             </button>
 
-            {/* Mobile Dropdown */}
-            <div className={`absolute z-999 top-16 left-0 w-full bg-white shadow-md md:hidden transition-all duration-500 overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"}`}>
+            <div className={`absolute z-[999] top-16 left-0 w-full bg-white shadow-md md:hidden transition-all duration-500 overflow-hidden ${isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"}`}>
                 <ul className="flex flex-col gap-1 px-4 py-4">
                     <li><Link to="/" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Home</Link></li>
                     <li><Link to="/shop" className="block px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">Shop</Link></li>
@@ -182,8 +182,10 @@ const Navbar: React.FC = () => {
                 </ul>
 
                 {/* Mobile Actions */}
-                <div className="flex flex-col gap-2 border-t border-gray-200 px-4 py-3">
-                    <NotificationDropdown notifications={notifications} />
+                <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-4">
+                    <div className="flex justify-center">
+                        <NotificationDropdown notifications={notifications} />
+                    </div>
 
                     {isLoggedIn ? (
                         <div className="relative">

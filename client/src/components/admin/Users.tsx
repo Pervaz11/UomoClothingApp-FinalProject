@@ -1,15 +1,18 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Users, CheckCircle, Settings } from "lucide-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { Settings, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import Swal from "sweetalert2";
 
 type User = {
-    id: number;
-    name: string;
+    _id?: string;
+    id?: string;
+    fullName: string;
     email: string;
-    verified: boolean;
-    avatar: string;
-    registered: string;
+    profileImage: string;
+    isBanned: boolean;
+    role: string;
+    createdAt: string;
 };
 
 type PaginationProps = {
@@ -18,140 +21,227 @@ type PaginationProps = {
     setCurrentPage: (page: number) => void;
 };
 
-const USERS: User[] = [
-    { id: 1, name: "Mark Smith", email: "mark@example.com", verified: true, avatar: "https://i.pravatar.cc/150?img=1", registered: "2024-08-12" },
-    { id: 2, name: "Sarah Johnson", email: "sarah@example.com", verified: false, avatar: "https://i.pravatar.cc/150?img=2", registered: "2024-09-01" },
-    { id: 3, name: "James Williams", email: "james@example.com", verified: true, avatar: "https://i.pravatar.cc/150?img=3", registered: "2024-09-05" },
-    { id: 4, name: "Lisa Brown", email: "lisa@example.com", verified: true, avatar: "https://i.pravatar.cc/150?img=4", registered: "2024-09-10" },
-    { id: 5, name: "Tom Hardy", email: "tom@example.com", verified: false, avatar: "https://i.pravatar.cc/150?img=5", registered: "2024-09-15" },
-    { id: 6, name: "Emma Watson", email: "emma@example.com", verified: true, avatar: "https://i.pravatar.cc/150?img=6", registered: "2024-09-20" },
-    { id: 7, name: "Chris Evans", email: "chris@example.com", verified: false, avatar: "https://i.pravatar.cc/150?img=7", registered: "2024-09-22" },
-    { id: 8, name: "Robert Downey", email: "robert@example.com", verified: true, avatar: "https://i.pravatar.cc/150?img=8", registered: "2024-09-23" },
-];
+const Pagination = ({ currentPage, totalPages, setCurrentPage }: PaginationProps) => (
+    <div className="flex justify-center mt-6 gap-4 items-center">
+        <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            disabled={currentPage === 1}
+            onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+            className={`p-3 rounded-full ${currentPage === 1 ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`}
+        >
+            <ChevronLeft size={20} />
+        </motion.button>
 
-function Pagination({ currentPage, totalPages, setCurrentPage }: PaginationProps) {
-    return (
-        <div className="flex justify-center mt-6 space-x-4">
-            {/* Previous Button */}
-            <motion.button
-                whileHover={{ x: -5 }}
-                whileTap={{ scale: 0.95 }}
-                disabled={currentPage === 1}
-                onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-                className={`p-3 rounded-full transition ${currentPage === 1 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-800 text-white hover:bg-blue-900"}`}
-            >
-                <ChevronLeft size={24} />
-            </motion.button>
+        <span className="px-4 py-2 rounded-lg bg-gray-700 text-white font-medium">
+            {currentPage} / {totalPages}
+        </span>
 
-            {/* Next Button */}
-            <motion.button
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                disabled={currentPage === totalPages}
-                onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
-                className={`p-3 rounded-full transition ${currentPage === totalPages ? "bg-gray-400 cursor-not-allowed" : "bg-blue-800 text-white hover:bg-blue-900"}`}
-            >
-                <ChevronRight size={24} />
-            </motion.button>
-        </div>
-    );
-}
+        <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            disabled={currentPage === totalPages}
+            onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+            className={`p-3 rounded-full ${currentPage === totalPages ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}`}
+        >
+            <ChevronRight size={20} />
+        </motion.button>
+    </div>
+);
 
-export default function Dashboard() {
+const Dashboard = () => {
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [newRole, setNewRole] = useState<string>("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [usersPerPage] = useState(5);
+    const usersPerPage = 5;
 
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:3000/auth/users", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setUsers(res.data.data || []);
+            } catch (err: any) {
+                setError(err.response?.data?.message || "Failed to load users");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUsers();
+    }, []);
+
+    const totalPages = Math.ceil(users.length / usersPerPage);
     const indexOfLastUser = currentPage * usersPerPage;
-    const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = USERS.slice(indexOfFirstUser, indexOfLastUser);
+    const currentUsers = users.slice(indexOfLastUser - usersPerPage, indexOfLastUser);
 
-    const totalUsers = USERS.length;
-    const verifiedUsers = USERS.filter((u) => u.verified).length;
-    const totalPages = Math.ceil(totalUsers / usersPerPage);
+    const handleSave = async () => {
+        if (!selectedUser) return;
+        try {
+            const token = localStorage.getItem("token");
+            const userId = selectedUser._id || selectedUser.id;
+            await axios.put(
+                `http://localhost:3000/auth/users/${userId}`,
+                { role: newRole },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            Swal.fire("Updated!", "User role updated successfully", "success");
+            setUsers((prev) =>
+                prev.map((u) => (u._id || u.id) === userId ? { ...u, role: newRole } : u)
+            );
+            setSelectedUser(null);
+        } catch (err: any) {
+            Swal.fire("Error", err.response?.data?.message || "Update failed", "error");
+        }
+    };
+
+    const handleDelete = async (userId: string) => {
+        const confirm = await Swal.fire({
+            title: "Are you sure?",
+            text: "This user will be permanently deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e11d48",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Yes, delete",
+        });
+        if (!confirm.isConfirmed) return;
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`http://localhost:3000/auth/users/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setUsers((prev) => prev.filter((u) => (u._id || u.id) !== userId));
+            Swal.fire("Deleted!", "User removed successfully", "success");
+        } catch (err: any) {
+            Swal.fire("Error", err.response?.data?.message || "Delete failed", "error");
+        }
+    };
+
+    if (loading) return <p className="text-gray-300 text-center mt-10">Loading users...</p>;
+    if (error) return <p className="text-red-400 text-center mt-10">{error}</p>;
 
     return (
-        <div className="min-h-screen text-white p-8">
-            {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                <motion.div
-                    className="relative p-6 hover:scale-99 duration-200 rounded-2xl shadow-lg bg-gradient-to-r from-blue-900 to-gray-800 overflow-hidden"
-                >
-                    <div className="absolute top-3 right-3 opacity-20">
-                        <Users className="w-12 h-12" />
-                    </div>
-                    <h2 className="text-lg font-medium opacity-80">Total Users</h2>
-                    <p className="text-4xl font-bold mt-2">{totalUsers}</p>
-                </motion.div>
+        <div className="min-h-screen p-6 sm:p-10">
+            <h2 className="text-3xl font-bold text-gray-800 mb-8">User Management</h2>
 
-                <motion.div
-                    className="relative p-6  hover:scale-99 duration-200 rounded-2xl shadow-lg bg-gradient-to-r from-green-700 to-green-900 overflow-hidden"
-                >
-                    <div className="absolute top-3 right-3 opacity-20">
-                        <CheckCircle className="w-12 h-12" />
-                    </div>
-                    <h2 className="text-lg font-medium opacity-80">Verified Users</h2>
-                    <p className="text-4xl font-bold mt-2">{verifiedUsers}</p>
-                </motion.div>
+            <div className="overflow-x-auto rounded-2xl shadow-lg bg-gray-800 border border-gray-700">
+                <table className="w-full text-left text-gray-200">
+                    <thead className="bg-gray-700">
+                        <tr>
+                            <th className="py-3 px-4">User</th>
+                            <th className="py-3 px-4">Email</th>
+                            <th className="py-3 px-4">Role</th>
+                            <th className="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentUsers.map((user, index) => (
+                            <motion.tr
+                                key={user._id || user.id || index}
+                                className="bg-gray-800/60 hover:bg-gray-700 transition"
+                                layout
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                            >
+                                <td className="py-3 px-4 flex items-center gap-3">
+                                    <img
+                                        src={user.profileImage}
+                                        alt={user.fullName}
+                                        className="w-10 h-10 rounded-full object-cover"
+                                    />
+                                    {user.fullName}
+                                </td>
+                                <td className="py-3 px-4">{user.email}</td>
+                                <td className="py-3 px-4 capitalize">{user.role}</td>
+                                <td className="py-3 px-4 text-right flex justify-end gap-2">
+                                    <button
+                                        onClick={() => { setSelectedUser(user); setNewRole(user.role); }}
+                                        className="p-2 hover:bg-gray-600 rounded-xl transition"
+                                    >
+                                        <Settings className="w-5 h-5 text-gray-300" />
+                                    </button>
+                                    {/* <button
+                                        onClick={() => handleDelete(user._id || user.id!)}
+                                        className="p-2 hover:bg-red-600 rounded-xl transition"
+                                    >
+                                        <Trash2 className="w-5 h-5 text-red-400" />
+                                    </button> */}
+                                </td>
+                            </motion.tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
-            {/* Recent Users */}
-            <div className="bg-gray-800 rounded-2xl shadow-lg p-6">
-                <h2 className="text-xl font-semibold mb-6">Recent Users</h2>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-separate border-spacing-y-2">
-                        <thead>
-                            <tr className="text-gray-400 text-sm">
-                                <th className="py-2 px-3">User</th>
-                                <th className="py-2 px-3">Email</th>
-                                <th className="py-2 px-3">Registered</th>
-                                <th className="py-2 px-3">Status</th>
-                                <th className="py-2 px-3 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentUsers.map((user) => (
-                                <motion.tr
-                                    key={user.id}
-                                    className="bg-gray-700/60 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer"
+            <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
+
+            {/* Modal */}
+            <AnimatePresence>
+                {selectedUser && (
+                    <motion.div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8, y: -50 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.8, y: -50 }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
+                            className="bg-gray-900 rounded-3xl shadow-2xl p-6 sm:p-8 w-11/12 max-w-md border border-gray-700"
+                        >
+                            <h3 className="text-2xl font-bold text-white mb-6">
+                                Edit Role — {selectedUser.fullName}
+                            </h3>
+
+                            {/* Modern Dropdown */}
+                            <div className="relative mb-6">
+                                <motion.select
+                                    value={newRole}
+                                    onChange={(e) => setNewRole(e.target.value)}
+                                    whileFocus={{ scale: 1.02 }}
+                                    className="w-full p-3 text-white bg-gray-800 border border-gray-700 rounded-xl appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
-                                    <td className="py-3 px-3 flex items-center gap-3 rounded-l-xl">
-                                        <img
-                                            src={user.avatar}
-                                            alt={user.name}
-                                            className="w-10 h-10 rounded-full object-cover"
-                                        />
-                                        {user.name}
-                                    </td>
-                                    <td className="py-3 px-3">{user.email}</td>
-                                    <td className="py-3 px-3">{user.registered}</td>
-                                    <td className="py-3 px-3">
-                                        {user.verified ? (
-                                            <span className="px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400 rounded-full">
-                                                Verified
-                                            </span>
-                                        ) : (
-                                            <span className="px-3 py-1 text-xs font-medium bg-red-500/20 text-red-400 rounded-full">
-                                                Not Verified
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="py-3 px-3 text-right rounded-r-xl">
-                                        <button className="p-2 rounded-full hover:bg-gray-600 transition">
-                                            <Settings className="w-5 h-5 text-gray-300" />
-                                        </button>
-                                    </td>
-                                </motion.tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                    <option value="user">User</option>
+                                    <option value="courier">Courier</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="superadmin">Super Admin</option>
+                                </motion.select>
 
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    setCurrentPage={setCurrentPage}
-                />
-            </div>
+                                {/* Dropdown arrow */}
+                                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    onClick={() => setSelectedUser(null)}
+                                    className="px-5 py-2 bg-gray-700 text-white rounded-xl hover:bg-gray-600 transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSave}
+                                    className="px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
-}
+};
+
+export default Dashboard;

@@ -5,9 +5,6 @@ import {
     FiHome,
     FiUsers,
     FiBox,
-    FiShoppingCart,
-    FiCreditCard,
-    FiMessageSquare,
     FiCalendar,
     FiMenu,
     FiX,
@@ -22,11 +19,8 @@ const navItems = [
     { section: "Product Management" },
     { label: "Products", to: "/admin/products", icon: <FiBox /> },
     { section: "Ecommerce" },
-    { label: "Orders", to: "/admin/orders", icon: <FiShoppingCart /> },
-    { label: "Payments", to: "/admin/payments", icon: <FiCreditCard /> },
     { label: "Partners", to: "/admin/partners", icon: <FiUsers /> },
     { section: "Information Management" },
-    { label: "Messages", to: "/admin/messages", icon: <FiMessageSquare />, badge: 16 },
     { label: "Fag", to: "/admin/fag", icon: <MdQuestionMark /> },
     { section: "Apps" },
     { label: "Calendar", to: "/admin/calendar", icon: <FiCalendar /> },
@@ -106,11 +100,6 @@ const AdminSidebar = () => {
                                     >
                                         <span className="text-lg">{item.icon}</span>
                                         <span className="flex-1">{item.label}</span>
-                                        {item.badge && (
-                                            <span className="ml-auto text-xs bg-gray-600 text-white px-2 py-0.5 rounded-full">
-                                                {item.badge}
-                                            </span>
-                                        )}
                                     </NavLink>
                                 </li>
                             )

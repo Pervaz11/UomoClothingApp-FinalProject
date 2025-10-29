@@ -13,6 +13,7 @@ const formatDocument = (item) => {
     const { _id, __v, public_id, ...rest } = obj;
     return {
         id: _id?.toString(),
+        _id: _id?.toString(),
         ...rest,
     };
 };

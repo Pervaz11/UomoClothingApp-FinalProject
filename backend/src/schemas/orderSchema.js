@@ -14,7 +14,11 @@ const orderSchema = new mongoose.Schema(
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
         items: [orderItemSchema],
         total: { type: Number, required: true, min: 0 },
-        status: { type: String, enum: ["pending", "paid"], default: "pending" },
+        status: {
+            type: String,
+            enum: ["pending", "paid", "inTransit", "delivered"],
+            default: "pending",
+        },
         stripeSessionId: { type: String },
         address: { type: String, required: true },
         city: { type: String, required: true },

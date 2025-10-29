@@ -50,6 +50,9 @@ function loadInitialUserData(initialUser: UserState) {
             initialUser.phoneNumber = decoded.phoneNumber;
             initialUser.isAuthenticated = true;
             initialUser.token = token;
+
+            // ✅ YENİ: userId localStorage-da saxlanır
+            localStorage.setItem("userId", decoded.id);
         }
     } catch (error) {
         console.log("error: ", error);
@@ -87,6 +90,9 @@ const userSlice = createSlice({
             state.token = token;
             state.isAuthenticated = true;
             localStorage.setItem("token", token);
+
+            // ✅ YENİ: userId saxla
+            localStorage.setItem("userId", id);
         },
         logoutUser: (state) => {
             state.id = null;
@@ -98,6 +104,9 @@ const userSlice = createSlice({
             state.token = null;
             state.isAuthenticated = false;
             localStorage.removeItem("token");
+
+            // ✅ YENİ: userId sil
+            localStorage.removeItem("userId");
         },
     },
 });

@@ -1,81 +1,261 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../store/store";
+import { motion } from "framer-motion";
+import {
+    FaBoxOpen,
+    FaTruck,
+    FaDollarSign,
+    FaClock,
+    FaMapMarkerAlt,
+    FaPhone,
+    FaCheckCircle,
+    FaShippingFast,
+    FaTrash,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
 
-type OrderItem = {
-    id: string;
-    type: "product" | "accessory";
-    quantity: number;
-    name: string;
-    image: string;
-    price: number;
-};
-
-type Order = {
-    _id: string;
-    items: OrderItem[];
-    total: number;
-    createdAt: string;
-};
-
-const OrdersPage: React.FC = () => {
-    const user = useSelector((state: RootState) => state.user);
-    const [orders, setOrders] = useState<Order[]>([]);
+const OrdersPage = () => {
+    const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const userId = localStorage.getItem("userId");
 
     useEffect(() => {
         const fetchOrders = async () => {
-            if (!user?.id) return;
-
             try {
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/orders/${user.id}`
-                );
-                setOrders(res.data);
+                if (!userId || userId === "null") {
+                    setLoading(false);
+                    return;
+                }
+                const res = await axios.get(`http://localhost:3000/orders/user/${userId}`);
+                const validOrders = res.data.filter((o: any) => o.items?.length > 0);
+                setOrders(validOrders);
             } catch (err) {
-                console.error("Failed to fetch orders:", err);
+                console.error(err);
             } finally {
-                setLoading(false);
+                setTimeout(() => setLoading(false), 500);
             }
         };
 
         fetchOrders();
-    }, [user]);
+        const interval = setInterval(fetchOrders, 5000);
+        return () => clearInterval(interval);
+    }, [userId]);
 
-    if (loading) return <div>Loading orders...</div>;
-    if (!orders.length) return <div>You have no orders yet.</div>;
+    if (loading)
+        return (
+            <div className="flex flex-col items-center justify-center h-screen text-gray-700">
+                <motion.div
+                    initial={{ y: 0 }}
+                    animate={{ y: [-8, 8, -8] }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
+                    className="mb-4"
+                >
+                    <FaTruck className="text-5xl text-gray-800" />
+                </motion.div>
+                <motion.p
+                    initial={{ opacity: 0.5 }}
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ repeat: Infinity, duration: 1.6 }}
+                    className="text-lg font-medium"
+                >
+                    Loading orders...
+                </motion.p>
+            </div>
+        );
+
+    const getProgressWidth = (status: string) => {
+        switch (status) {
+            case "paid":
+                return "w-1/3";
+            case "inTransit":
+                return "w-2/3";
+            case "delivered":
+                return "w-full";
+            default:
+                return "w-0";
+        }
+    };
+
+    const getStatusText = (status: string) => {
+        switch (status) {
+            case "paid":
+                return "Paid";
+            case "inTransit":
+                return "In Transit";
+            case "delivered":
+                return "Delivered";
+            default:
+                return "Pending";
+        }
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case "paid":
+                return "bg-blue-100 text-blue-700";
+            case "inTransit":
+                return "bg-blue-200 text-blue-800";
+            case "delivered":
+                return "bg-green-100 text-green-700";
+            default:
+                return "bg-yellow-100 text-yellow-700";
+        }
+    };
+
+    const getStatusIcon = (status: string) => {
+        switch (status) {
+            case "paid":
+                return <FaDollarSign className="inline mr-1" />;
+            case "inTransit":
+                return <FaShippingFast className="inline mr-1" />;
+            case "delivered":
+                return <FaCheckCircle className="inline mr-1" />;
+            default:
+                return <FaClock className="inline mr-1" />;
+        }
+    };
+
+    const handleCancelOrder = async (order: any) => {
+        // Əgər status paid-dirsə cancel mümkün
+        if (order.status === "paid") {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to cancel this order?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, cancel it!",
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await axios.delete(`http://localhost:3000/orders/${order._id}/cancel`);
+                if (res.data.success) {
+                    setOrders((prev) => prev.filter((o) => o._id !== order._id));
+                    Swal.fire("Cancelled!", res.data.message, "success");
+                }
+            } catch (err: any) {
+                Swal.fire("Error", err.response?.data?.message || "Failed to cancel order", "error");
+            }
+        } else {
+            // Paid olmayan statuslarda alert göstər
+            Swal.fire(
+                "Cannot Cancel",
+                "This order cannot be cancelled because it is already " + order.status,
+                "info"
+            );
+        }
+    };
+
+
 
     return (
-        <div className="max-w-5xl mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-6">Your Orders</h1>
+        <div className="max-w-6xl mx-auto p-6">
+            <motion.h1
+                className="text-3xl font-extrabold text-gray-800 mb-8 flex items-center gap-3"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <FaBoxOpen className="text-gray-800" /> My Orders
+            </motion.h1>
 
-            {orders.map((order) => (
-                <div key={order._id} className="mb-8 border p-4 rounded-lg shadow">
-                    <h2 className="font-semibold mb-2">Order #{order._id}</h2>
-                    <p className="text-gray-500 text-sm mb-4">
-                        Placed on {new Date(order.createdAt).toLocaleString()}
-                    </p>
-                    <div className="space-y-4">
-                        {order.items.map((item) => (
-                            <div key={item.id} className="flex items-center gap-4">
+            {orders.length === 0 ? (
+                <motion.p
+                    className="text-gray-500 text-center text-lg mt-20"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                >
+                    You have not placed any orders yet.
+                </motion.p>
+            ) : (
+                <div className="flex flex-col gap-6">
+                    {orders.map((order) => (
+                        <motion.div
+                            key={order._id}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4 }}
+                            className="bg-white rounded-2xl shadow-md hover:shadow-lg border border-gray-100 transition-all p-5 flex flex-col sm:flex-row items-center gap-5"
+                        >
+                            {/* Image */}
+                            <div className="flex-shrink-0">
                                 <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-20 h-20 object-cover rounded"
+                                    src={order.items[0]?.image}
+                                    alt={order.items[0]?.name}
+                                    className="w-28 h-28 rounded-xl object-cover shadow-sm"
                                 />
-                                <div>
-                                    <p className="font-medium">{item.name}</p>
-                                    <p>
-                                        ${item.price.toFixed(2)} x {item.quantity}
-                                    </p>
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 w-full space-y-2">
+                                <h2 className="text-gray-800 font-semibold text-lg">
+                                    {order.items[0]?.name}
+                                </h2>
+                                <p className="text-sm text-gray-500 line-clamp-2">
+                                    {order.items.length > 1
+                                        ? `${order.items.length} items in order`
+                                        : "1 item"}
+                                </p>
+                                <div className="flex flex-wrap gap-3 text-sm text-gray-600 mt-2">
+                                    <span className="flex items-center gap-1">
+                                        <FaDollarSign /> ${order.total?.toFixed(2)}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <FaMapMarkerAlt /> {order.city}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <FaPhone /> {order.phone}
+                                    </span>
+                                </div>
+
+                                {/* Progress bar */}
+                                <div className="mt-4 w-full">
+                                    <div className="relative flex justify-between text-xs text-gray-500 mb-1">
+                                        <span>Paid</span>
+                                        <span>In Transit</span>
+                                        <span>Delivered</span>
+                                    </div>
+                                    <div className="w-full h-2 bg-gray-200 rounded-full relative">
+                                        <div
+                                            className={`absolute h-2 rounded-full transition-all duration-700 ${getProgressWidth(
+                                                order.status
+                                            )} ${order.status === "delivered"
+                                                ? "bg-green-500"
+                                                : "bg-blue-500"
+                                                }`}
+                                        ></div>
+                                    </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                    <p className="font-bold mt-4">Total: ${order.total.toFixed(2)}</p>
+
+                            {/* Status */}
+                            <div className="flex flex-col items-center gap-2">
+                                <span
+                                    className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                                        order.status
+                                    )}`}
+                                >
+                                    {getStatusIcon(order.status)} {getStatusText(order.status)}
+                                </span>
+
+                                <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                                    <FaClock /> {new Date(order.createdAt).toLocaleDateString()}
+                                </p>
+                                <button
+                                    onClick={() => handleCancelOrder(order)}
+                                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 px-2 text-white font-semibold transition-all shadow-sm
+        ${order.status === "paid" ? "bg-red-600 hover:bg-red-700" : "bg-gray-400 cursor-not-allowed"}`}
+                                >
+                                    <span className="text-sm">Cancel Order</span>
+                                </button>
+
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
-            ))}
+            )}
         </div>
     );
 };

@@ -24,7 +24,7 @@ dotenv.config();
 
 const app = express();
 
-// 🔒 Rate limiter
+// Rate limiter
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 100,
@@ -35,7 +35,7 @@ app.use(helmet());
 app.use(limiter);
 app.use(cookieParser());
 
-// ⚠️ Webhook üçün — JSON parserdən əvvəl
+// Webhook üçün — JSON parserdən əvvəl
 app.post(
     "/payment/webhook",
     express.raw({ type: "application/json" }),

@@ -13,14 +13,12 @@ import {
 } from "react-icons/fa6";
 import { FaCheckCircle, FaMapMarkerAlt } from "react-icons/fa";
 
-
 const CourierPage = () => {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState<string | null>(null);
     const [deletingItem, setDeletingItem] = useState<string | null>(null);
 
-    // ✅ Bütün paid və delivered sifarişləri gətir
     useEffect(() => {
         const fetchOrders = async () => {
             try {
@@ -30,7 +28,6 @@ const CourierPage = () => {
             } catch (err) {
                 console.error("Error fetching orders:", err);
             } finally {
-                // ✅ yükləmə vizual olaraq 5 saniyə sürsün
                 setTimeout(() => setLoading(false), 5000);
             }
         };
@@ -40,22 +37,34 @@ const CourierPage = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // ✅ Order-u delivered kimi işarələmək
-    const handleDelivered = async (id: string) => {
+    const handleInTransit = async (id: string) => {
         setUpdating(id);
         try {
-            const res = await axios.put(`http://localhost:3000/orders/${id}/delivered`);
+            const res = await axios.put(`http://localhost:3000/orders/${id}/in-transit`);
             setOrders((prev) => prev.map((order) => (order._id === id ? res.data : order)));
-            Swal.fire("Success", "Order marked as delivered!", "success");
+            Swal.fire("Success", "Order marked as In Transit!", "success");
         } catch (error) {
-            console.error("Failed to mark as delivered:", error);
+            console.error(error);
             Swal.fire("Error", "Failed to update order status.", "error");
         } finally {
             setUpdating(null);
         }
     };
 
-    // ✅ Məhsulu silmək
+    const handleDelivered = async (id: string) => {
+        setUpdating(id);
+        try {
+            const res = await axios.put(`http://localhost:3000/orders/${id}/delivered`);
+            setOrders((prev) => prev.map((order) => (order._id === id ? res.data : order)));
+            Swal.fire("Success", "Order marked as Delivered!", "success");
+        } catch (error) {
+            console.error(error);
+            Swal.fire("Error", "Failed to update order status.", "error");
+        } finally {
+            setUpdating(null);
+        }
+    };
+
     const handleDeleteItem = async (orderId: string, itemId: string) => {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -79,14 +88,13 @@ const CourierPage = () => {
             }
             Swal.fire("Deleted!", "Product successfully removed.", "success");
         } catch (error) {
-            console.error("Failed to delete item:", error);
+            console.error(error);
             Swal.fire("Error", "Failed to delete the item.", "error");
         } finally {
             setDeletingItem(null);
         }
     };
 
-    // ✅ Boş order-ləri təmizləmək
     const handleDeleteEmptyOrders = async () => {
         const result = await Swal.fire({
             title: "Clean Empty Orders?",
@@ -105,12 +113,11 @@ const CourierPage = () => {
             setOrders((prev) => prev.filter((o) => o.items?.length > 0));
             Swal.fire("Cleaned!", "All empty orders were deleted.", "success");
         } catch (error) {
-            console.error("Error cleaning empty orders:", error);
+            console.error(error);
             Swal.fire("Error", "Failed to clean empty orders.", "error");
         }
     };
 
-    // ✅ YENİ: daha şık, sakit loading animation
     if (loading)
         return (
             <div className="flex flex-col items-center justify-center h-screen text-gray-700">
@@ -134,7 +141,6 @@ const CourierPage = () => {
             </div>
         );
 
-    // ✅ Əsas UI
     return (
         <div className="max-w-7xl mx-auto p-6">
             <motion.h1
@@ -146,14 +152,14 @@ const CourierPage = () => {
                 <FaTruck className="text-gray-800" /> Courier Dashboard
             </motion.h1>
 
-            <div className="flex justify-end mb-6">
+            {/* <div className="flex justify-end mb-6">
                 <button
                     onClick={handleDeleteEmptyOrders}
                     className="bg-gray-800 hover:bg-gray-900 text-white font-semibold px-5 py-2 rounded-xl shadow-md flex items-center gap-2"
                 >
                     <FaTrash /> Delete Empty Orders
                 </button>
-            </div>
+            </div> */}
 
             {orders.length === 0 ? (
                 <motion.p
@@ -161,7 +167,7 @@ const CourierPage = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                 >
-                    No paid or delivered orders yet.
+                    No paid, inTransit, or delivered orders yet.
                 </motion.p>
             ) : (
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -180,7 +186,9 @@ const CourierPage = () => {
                                 <span
                                     className={`font-bold px-3 py-1 rounded-xl text-sm ${order.status === "paid"
                                         ? "bg-yellow-100 text-yellow-700"
-                                        : "bg-green-100 text-green-700"
+                                        : order.status === "inTransit"
+                                            ? "bg-blue-100 text-blue-700"
+                                            : "bg-green-100 text-green-700"
                                         }`}
                                 >
                                     {order.status.toUpperCase()}
@@ -248,15 +256,28 @@ const CourierPage = () => {
                             </div>
 
                             <div className="mt-4 flex gap-2">
-                                {order.status === "delivered" ? (
-                                    <motion.div
-                                        className="flex-1 flex items-center justify-center gap-2 text-green-600 font-semibold border border-green-200 bg-green-50 rounded-xl py-2"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
+                                {order.status === "paid" && (
+                                    <button
+                                        onClick={() => handleInTransit(order._id)}
+                                        disabled={updating === order._id}
+                                        className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 text-white font-semibold transition-all duration-200 shadow-sm ${updating === order._id
+                                            ? "bg-gray-400 cursor-not-allowed"
+                                            : "bg-blue-800 hover:bg-blue-900"
+                                            }`}
                                     >
-                                        <FaCheckCircle /> Delivered
-                                    </motion.div>
-                                ) : (
+                                        {updating === order._id ? (
+                                            <>
+                                                <FaClock className="animate-spin" /> Updating...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <FaTruck /> Mark as In Transit
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+
+                                {order.status === "inTransit" && (
                                     <button
                                         onClick={() => handleDelivered(order._id)}
                                         disabled={updating === order._id}
@@ -271,10 +292,20 @@ const CourierPage = () => {
                                             </>
                                         ) : (
                                             <>
-                                                <FaTruck /> Mark as Delivered
+                                                <FaCheckCircle /> Mark as Delivered
                                             </>
                                         )}
                                     </button>
+                                )}
+
+                                {order.status === "delivered" && (
+                                    <motion.div
+                                        className="flex-1 flex items-center justify-center gap-2 text-green-600 font-semibold border border-green-200 bg-green-50 rounded-xl py-2"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                    >
+                                        <FaCheckCircle /> Delivered
+                                    </motion.div>
                                 )}
                             </div>
                         </motion.div>

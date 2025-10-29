@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import Swal from "sweetalert2";
 
 type User = {
@@ -99,26 +99,44 @@ const Dashboard = () => {
         }
     };
 
-    const handleDelete = async (userId: string) => {
+    const handleBan = async (userId: string) => {
         const confirm = await Swal.fire({
             title: "Are you sure?",
-            text: "This user will be permanently deleted!",
+            text: "This user will be banned and cannot log in.",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#e11d48",
             cancelButtonColor: "#6b7280",
-            confirmButtonText: "Yes, delete",
+            confirmButtonText: "Yes, ban user",
         });
         if (!confirm.isConfirmed) return;
+
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/auth/users/${userId}`, {
+            await axios.put(`http://localhost:3000/auth/users/${userId}/ban`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setUsers((prev) => prev.filter((u) => (u._id || u.id) !== userId));
-            Swal.fire("Deleted!", "User removed successfully", "success");
+            Swal.fire("Banned!", "User has been banned successfully", "success");
+            setUsers((prev) =>
+                prev.map((u) => (u._id || u.id) === userId ? { ...u, isBanned: true } : u)
+            );
         } catch (err: any) {
-            Swal.fire("Error", err.response?.data?.message || "Delete failed", "error");
+            Swal.fire("Error", err.response?.data?.message || "Failed to ban user", "error");
+        }
+    };
+
+    const handleUnban = async (userId: string) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.put(`http://localhost:3000/auth/users/${userId}/unban`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            Swal.fire("Unbanned!", "User has been unbanned successfully", "success");
+            setUsers((prev) =>
+                prev.map((u) => (u._id || u.id) === userId ? { ...u, isBanned: false } : u)
+            );
+        } catch (err: any) {
+            Swal.fire("Error", err.response?.data?.message || "Failed to unban user", "error");
         }
     };
 
@@ -136,6 +154,7 @@ const Dashboard = () => {
                             <th className="py-3 px-4">User</th>
                             <th className="py-3 px-4">Email</th>
                             <th className="py-3 px-4">Role</th>
+                            <th className="py-3 px-4">Status</th>
                             <th className="py-3 px-4 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -158,6 +177,13 @@ const Dashboard = () => {
                                 </td>
                                 <td className="py-3 px-4">{user.email}</td>
                                 <td className="py-3 px-4 capitalize">{user.role}</td>
+                                <td className="py-3 px-4">
+                                    {user.isBanned ? (
+                                        <span className="text-red-400 font-semibold">Banned</span>
+                                    ) : (
+                                        <span className="text-green-400 font-semibold">Active</span>
+                                    )}
+                                </td>
                                 <td className="py-3 px-4 text-right flex justify-end gap-2">
                                     <button
                                         onClick={() => { setSelectedUser(user); setNewRole(user.role); }}
@@ -165,12 +191,22 @@ const Dashboard = () => {
                                     >
                                         <Settings className="w-5 h-5 text-gray-300" />
                                     </button>
-                                    {/* <button
-                                        onClick={() => handleDelete(user._id || user.id!)}
-                                        className="p-2 hover:bg-red-600 rounded-xl transition"
-                                    >
-                                        <Trash2 className="w-5 h-5 text-red-400" />
-                                    </button> */}
+
+                                    {user.isBanned ? (
+                                        <button
+                                            onClick={() => handleUnban(user._id || user.id!)}
+                                            className="p-2 hover:bg-green-600 rounded-xl transition"
+                                        >
+                                            <span className="text-green-400 font-medium">Unban</span>
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleBan(user._id || user.id!)}
+                                            className="p-2 hover:bg-red-600 rounded-xl transition"
+                                        >
+                                            <span className="text-red-400 font-medium">Ban</span>
+                                        </button>
+                                    )}
                                 </td>
                             </motion.tr>
                         ))}
@@ -197,10 +233,10 @@ const Dashboard = () => {
                             className="bg-gray-900 rounded-3xl shadow-2xl p-6 sm:p-8 w-11/12 max-w-md border border-gray-700"
                         >
                             <h3 className="text-2xl font-bold text-white mb-6">
-                                Edit Role — {selectedUser.fullName}
+                                Edit — {selectedUser.fullName}
                             </h3>
 
-                            {/* Modern Dropdown */}
+                            {/* Role Select */}
                             <div className="relative mb-6">
                                 <motion.select
                                     value={newRole}
@@ -208,16 +244,25 @@ const Dashboard = () => {
                                     whileFocus={{ scale: 1.02 }}
                                     className="w-full p-3 text-white bg-gray-800 border border-gray-700 rounded-xl appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
-                                    <option value="user">User</option>
-                                    <option value="courier">Courier</option>
+                                    <option value="customer">Customer</option>
+                                    <option value="curier">Courier</option>
                                     <option value="admin">Admin</option>
                                     <option value="superadmin">Super Admin</option>
                                 </motion.select>
 
-                                {/* Dropdown arrow */}
                                 <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    <svg
+                                        className="w-5 h-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 9l-7 7-7-7"
+                                        />
                                     </svg>
                                 </div>
                             </div>

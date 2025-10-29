@@ -5,24 +5,41 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../features/userSlice";
-import { LogIn, UserPlus, Hand } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+
+        const loadingToast = toast.loading("Signing in...");
+
         try {
             const res = await axios.post("http://localhost:3000/auth/login", {
                 email,
                 password,
             });
+
+            toast.dismiss(loadingToast);
+            toast.success("Welcome back! 🎉", {
+                style: {
+                    borderRadius: "12px",
+                    background: "linear-gradient(to right, #000000, #1e3a8a)",
+                    color: "#fff",
+                    fontWeight: "500",
+                },
+                iconTheme: {
+                    primary: "#10b981",
+                    secondary: "#fff",
+                },
+            });
+
             dispatch(
                 setUser({
                     id: res.data.user.id,
@@ -35,14 +52,30 @@ const Login = () => {
                     token: res.data.token,
                 })
             );
-            navigate("/");
+
+            setTimeout(() => navigate("/"), 1000);
         } catch (err: any) {
-            setError(err.response?.data?.message || "Login xətası");
+            toast.dismiss(loadingToast);
+            toast.error(err.response?.data?.message || "Login xətası baş verdi ⚠️", {
+                style: {
+                    borderRadius: "12px",
+                    background: "linear-gradient(to right, #7f1d1d, #991b1b)",
+                    color: "#fff",
+                    fontWeight: "500",
+                },
+                iconTheme: {
+                    primary: "#facc15",
+                    secondary: "#fff",
+                },
+            });
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+            {/* Toast Container */}
+            <Toaster position="top-center" reverseOrder={false} />
+
             <motion.form
                 onSubmit={handleSubmit}
                 initial={{ opacity: 0, y: 20 }}
@@ -59,7 +92,6 @@ const Login = () => {
                 </motion.h2>
 
                 <div className="space-y-5">
-                    {/* Email */}
                     <div className="relative">
                         <input
                             type="email"
@@ -71,7 +103,6 @@ const Login = () => {
                         />
                     </div>
 
-                    {/* Password */}
                     <div className="relative">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -86,25 +117,10 @@ const Login = () => {
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-800"
                         >
-                            {showPassword ? (
-                                <IoEyeOff size={20} />
-                            ) : (
-                                <IoEye size={20} />
-                            )}
+                            {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
                         </button>
                     </div>
 
-                    {error && (
-                        <motion.div
-                            className="text-red-500 text-sm text-center"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                        >
-                            {error}
-                        </motion.div>
-                    )}
-
-                    {/* Forgot Password */}
                     <motion.div
                         className="text-right"
                         initial={{ opacity: 0 }}
@@ -121,7 +137,6 @@ const Login = () => {
                     </motion.div>
                 </div>
 
-                {/* Buttons */}
                 <div className="mt-8 grid grid-cols-2 gap-4">
                     <motion.button
                         type="submit"

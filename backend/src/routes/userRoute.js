@@ -12,6 +12,8 @@ import {
     updateProfile,
     updateUserRole,
     deleteUser,
+    banUser,
+    unbanUser
 } from "../controller/userController.js";
 
 const router = express.Router();
@@ -21,6 +23,8 @@ router.post("/login", login);
 router.get("/users", getAllUsers);
 router.put("/users/:id", updateUserRole);
 router.delete("/users/:id", deleteUser);
+router.put("/users/:id/ban", banUser);
+router.put("/users/:id/unban", unbanUser);
 
 router.get("/verify-email", verifyEmail);
 router.post("/forgot-password", forgotPassword);

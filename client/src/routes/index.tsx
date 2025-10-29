@@ -1,4 +1,3 @@
-// Client
 import Layout from "../layout/client/Layout";
 import About from "../pages/client/About";
 import AccountDetails from "../pages/client/AccountDetails";
@@ -32,8 +31,10 @@ import ResetPassword from "../pages/client/ResetPaswor";
 import PaymentSuccess from "../pages/client/PaymentSuccsess";
 import CourierPage from "../pages/courier/CourierPage";
 
+import ProtectedRoute from "../components/ProtectedRoute";
+
 const ROUTES = [
-    // Client
+    // Client 
     {
         path: "/",
         element: <Layout />,
@@ -44,52 +45,70 @@ const ROUTES = [
             { path: "shop", element: <Shop /> },
             { path: "register", element: <Register /> },
             { path: "login", element: <Login /> },
-            { path: "profil", element: <Profile /> },
-            { path: "dashboard", element: <Dashboard /> },
-            { path: "wishlist", element: <WishList /> },
-            { path: "orders", element: <Orders /> },
-            { path: "addresses", element: <Adresses /> },
-            { path: "account", element: <AccountDetails /> },
             { path: "details/:id", element: <Details /> },
             { path: "details/accessory/:id", element: <AccessoryDetails /> },
-            { path: "addToCart", element: <AddToCart /> },
             { path: "payment-success", element: <PaymentSuccess /> },
-            { path: "courier", element: <CourierPage /> },
         ],
     },
 
-    // Admin
     {
-        path: "/admin",
-        element: <AdminLayout />,
+        element: <ProtectedRoute allowedRoles={["client", "courier", "admin", "superAdmin"]} />,
         children: [
-            { index: true, element: <AdminDashboard /> },
-            { path: "users", element: <Users /> },
-            { path: "products", element: <Products /> },
-            { path: "partners", element: <PartnersAdminPanel /> },
-            { path: "fag", element: <AdminFAQ /> },
-            { path: "contact", element: <Contact /> },
-            { path: "calendar", element: <AdminCalendar /> },
+            {
+                path: "/",
+                element: <Layout />,
+                children: [
+                    { path: "profil", element: <Profile /> },
+                    { path: "dashboard", element: <Dashboard /> },
+                    { path: "wishlist", element: <WishList /> },
+                    { path: "orders", element: <Orders /> },
+                    { path: "addresses", element: <Adresses /> },
+                    { path: "account", element: <AccountDetails /> },
+                    { path: "addToCart", element: <AddToCart /> },
+                    { path: "courier", element: <CourierPage /> },
+                ],
+            },
         ],
     },
 
+    // Admin SuperAdmin
+    {
+        element: <ProtectedRoute allowedRoles={["admin", "superAdmin"]} />,
+        children: [
+            {
+                path: "/admin",
+                element: <AdminLayout />,
+                children: [
+                    { index: true, element: <AdminDashboard /> },
+                    { path: "products", element: <Products /> },
+                    { path: "partners", element: <PartnersAdminPanel /> },
+                    { path: "fag", element: <AdminFAQ /> },
+                    { path: "contact", element: <Contact /> },
+                    { path: "calendar", element: <AdminCalendar /> },
+                ],
+            },
+        ],
+    },
+
+    // SuperAdmin
+    {
+        element: <ProtectedRoute allowedRoles={["superAdmin"]} />,
+        children: [
+            {
+                path: "/admin/users",
+                element: <Users />,
+            },
+        ],
+    },
+
+    // Common Layout (error və auth routes)
     {
         path: "/",
         element: <CommonLayout />,
         children: [
             { path: "*", element: <NotFound /> },
-            {
-                path: "*",
-                element: <NotFound />,
-            },
-            {
-                path: "auth/forgot-password",
-                element: <ForgotPassword />,
-            },
-            {
-                path: "auth/reset-password/:token",
-                element: <ResetPassword />,
-            },
+            { path: "auth/forgot-password", element: <ForgotPassword /> },
+            { path: "auth/reset-password/:token", element: <ResetPassword /> },
         ],
     },
 ];

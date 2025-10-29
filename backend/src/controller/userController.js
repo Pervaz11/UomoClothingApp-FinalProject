@@ -13,7 +13,7 @@ import UserModel from "../models/userModel.js";
 import { sendVerificationEmail } from "../utils/mailService.js";
 import jwt from "jsonwebtoken";
 
-// GET all users
+// ✅ GET all users
 export async function getAllUsers(_, res, next) {
     try {
         const users = await getAll();
@@ -26,7 +26,7 @@ export async function getAllUsers(_, res, next) {
     }
 }
 
-// REGISTER user
+// ✅ REGISTER user
 export async function registerUser(req, res, next) {
     try {
         if (req.file && req.file.path) {
@@ -54,7 +54,7 @@ export async function registerUser(req, res, next) {
     }
 }
 
-// VERIFY EMAIL
+// ✅ VERIFY EMAIL
 export const verifyEmail = async (req, res, next) => {
     try {
         const { token } = req.query;
@@ -65,7 +65,7 @@ export const verifyEmail = async (req, res, next) => {
     }
 };
 
-// FORGOT PASSWORD
+// ✅ FORGOT PASSWORD
 export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -76,7 +76,7 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// RESET PASSWORD
+// ✅ RESET PASSWORD
 export const resetPassword = async (req, res, next) => {
     try {
         const { newPassword, token } = req.body;
@@ -89,7 +89,7 @@ export const resetPassword = async (req, res, next) => {
     }
 };
 
-// LOGIN
+// ✅ LOGIN (ban yoxlaması əlavə olundu)
 export const login = async (req, res, next) => {
     try {
         const credentials = {
@@ -99,6 +99,14 @@ export const login = async (req, res, next) => {
         };
         const response = await loginService(credentials);
 
+        // 🚫 Ban yoxlaması
+        const user = await UserModel.findOne({ email: req.body.email });
+        if (user?.isBanned) {
+            return res.status(403).json({
+                message: "Your account has been banned by admin. You cannot log in.",
+            });
+        }
+
         const accessToken = jwt.sign(
             {
                 id: response.user.id,
@@ -106,7 +114,9 @@ export const login = async (req, res, next) => {
                 role: response.user.role,
                 fullName: response.user.fullName,
                 username: response.user.username,
-                profileImage: response.user.profileImage || "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg",
+                profileImage:
+                    response.user.profileImage ||
+                    "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg",
             },
             process.env.JWT_ACCESS_SECRET_KEY,
             { expiresIn: "1h" }
@@ -126,11 +136,11 @@ export const login = async (req, res, next) => {
             token: accessToken,
         });
     } catch (error) {
-        res.status(401).json({ message: error.message || "internal server error" });
+        res.status(401).json({ message: error.message || "Internal server error" });
     }
 };
 
-// REFRESH TOKEN
+// ✅ REFRESH TOKEN
 export const refresh = (req, res) => {
     const token = req.cookies.refreshToken;
     if (!token) return res.sendStatus(401);
@@ -149,10 +159,10 @@ export const refresh = (req, res) => {
     });
 };
 
-// UPDATE PROFILE
+// ✅ UPDATE PROFILE
 export const updateProfile = async (req, res, next) => {
     try {
-        const userId = req.user?.id || req.params.id; // JWT-dən və ya paramdan
+        const userId = req.user?.id || req.params.id;
         const updates = { ...req.body };
 
         if (req.file && req.file.path) {
@@ -160,7 +170,9 @@ export const updateProfile = async (req, res, next) => {
             updates.public_id = req.file.filename;
         }
 
-        const user = await UserModel.findByIdAndUpdate(userId, updates, { new: true }).select("-password");
+        const user = await UserModel.findByIdAndUpdate(userId, updates, {
+            new: true,
+        }).select("-password");
 
         if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -173,6 +185,7 @@ export const updateProfile = async (req, res, next) => {
     }
 };
 
+// ✅ UPDATE ROLE
 export const updateUserRole = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -183,7 +196,6 @@ export const updateUserRole = async (req, res, next) => {
         }
 
         const user = await UserModel.findByIdAndUpdate(id, { role }, { new: true });
-
         if (!user) return res.status(404).json({ message: "User not found" });
 
         res.status(200).json({
@@ -195,6 +207,7 @@ export const updateUserRole = async (req, res, next) => {
     }
 };
 
+// ✅ DELETE USER
 export const deleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -206,9 +219,31 @@ export const deleteUser = async (req, res, next) => {
     }
 };
 
+// 🚫 BAN USER
+export const banUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await UserModel.findByIdAndUpdate(id, { isBanned: true }, { new: true });
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.status(200).json({ message: `${user.fullName} has been banned`, data: user });
+    } catch (error) {
+        next(error);
+    }
+};
 
+// ✅ UNBAN USER
+export const unbanUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await UserModel.findByIdAndUpdate(id, { isBanned: false }, { new: true });
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.status(200).json({ message: `${user.fullName} has been unbanned`, data: user });
+    } catch (error) {
+        next(error);
+    }
+};
 
-// LOGOUT
+// ✅ LOGOUT
 export const logout = (_, res) => {
     res.clearCookie("refreshToken", { path: "/auth/refresh" });
     res.sendStatus(204);

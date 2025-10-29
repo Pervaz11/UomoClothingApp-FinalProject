@@ -142,14 +142,14 @@ const CourierPage = () => {
         );
 
     return (
-        <div className="max-w-7xl mx-auto p-6">
+        <div className="w-full max-w-full sm:max-w-3xl md:max-w-5xl lg:max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <motion.h1
                 className="text-4xl font-extrabold text-gray-800 mb-8 flex items-center gap-3"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <FaTruck className="text-gray-800" /> Courier Dashboard
+                <FaTruck className="text-gray-800 text-2xl xl:m-0 m-3" /> <span className="text-2xl">Courier Dashboard</span>
             </motion.h1>
 
             {/* <div className="flex justify-end mb-6">
@@ -170,7 +170,7 @@ const CourierPage = () => {
                     No paid, inTransit, or delivered orders yet.
                 </motion.p>
             ) : (
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     {orders.map((order) => (
                         <motion.div
                             key={order._id}
@@ -179,7 +179,7 @@ const CourierPage = () => {
                             transition={{ duration: 0.4 }}
                             className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl border border-gray-100 transition-transform hover:-translate-y-1"
                         >
-                            <div className="flex justify-between items-center mb-3">
+                            <div className="flex-wrap gap-2 justify-between items-center mb-3">
                                 <p className="font-semibold text-gray-700 flex items-center gap-2">
                                     <FaBoxOpen /> Order ID: {order._id}
                                 </p>
@@ -255,14 +255,14 @@ const CourierPage = () => {
                                 <FaClock /> {new Date(order.createdAt).toLocaleString()}
                             </div>
 
-                            <div className="mt-4 flex gap-2">
+                            <div className="mt-4  flex-col sm:flex-row gap-2">
                                 {order.status === "paid" && (
                                     <button
                                         onClick={() => handleInTransit(order._id)}
                                         disabled={updating === order._id}
                                         className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 text-white font-semibold transition-all duration-200 shadow-sm ${updating === order._id
-                                            ? "bg-gray-400 cursor-not-allowed"
-                                            : "bg-blue-800 hover:bg-blue-900"
+                                                ? "bg-gray-400 cursor-not-allowed"
+                                                : "bg-blue-800 hover:bg-blue-900"
                                             }`}
                                     >
                                         {updating === order._id ? (
@@ -282,8 +282,8 @@ const CourierPage = () => {
                                         onClick={() => handleDelivered(order._id)}
                                         disabled={updating === order._id}
                                         className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 text-white font-semibold transition-all duration-200 shadow-sm ${updating === order._id
-                                            ? "bg-gray-400 cursor-not-allowed"
-                                            : "bg-gray-800 hover:bg-gray-900"
+                                                ? "bg-gray-400 cursor-not-allowed"
+                                                : "bg-gray-800 hover:bg-gray-900"
                                             }`}
                                     >
                                         {updating === order._id ? (
@@ -308,6 +308,7 @@ const CourierPage = () => {
                                     </motion.div>
                                 )}
                             </div>
+
                         </motion.div>
                     ))}
                 </div>

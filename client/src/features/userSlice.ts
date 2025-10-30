@@ -37,10 +37,11 @@ function loadInitialUserData(initialUser: UserState) {
                 username: string;
                 profileImage: string;
                 id: string;
-                iat: Date;
-                exp: Date;
+                iat: number;
+                exp: number;
                 phoneNumber: string;
             } = jwtDecode(token);
+
             initialUser.id = decoded.id;
             initialUser.email = decoded.email;
             initialUser.role = decoded.role;
@@ -55,7 +56,7 @@ function loadInitialUserData(initialUser: UserState) {
             localStorage.setItem("userId", decoded.id);
         }
     } catch (error) {
-        console.log("error: ", error);
+        console.log("❌ Token decode xətası:", error);
     }
 }
 
@@ -80,6 +81,7 @@ const userSlice = createSlice({
         ) => {
             const { id, email, role, fullName, username, profileImage, phoneNumber, token } =
                 action.payload;
+
             state.id = id;
             state.email = email;
             state.role = role;
@@ -90,8 +92,6 @@ const userSlice = createSlice({
             state.token = token;
             state.isAuthenticated = true;
             localStorage.setItem("token", token);
-
-            // ✅ YENİ: userId saxla
             localStorage.setItem("userId", id);
         },
         logoutUser: (state) => {
@@ -104,8 +104,6 @@ const userSlice = createSlice({
             state.token = null;
             state.isAuthenticated = false;
             localStorage.removeItem("token");
-
-            // ✅ YENİ: userId sil
             localStorage.removeItem("userId");
         },
     },

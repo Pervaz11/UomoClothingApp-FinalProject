@@ -1,26 +1,26 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
+import type { RootState } from "../store/store"; // ⚠️ öz store yoluna görə dəyiş
+import { type ReactElement } from "react";
 
-interface ProtectedRouteProps {
-    allowedRoles: string[];
-    redirectTo?: string;
+export interface ProtectedRouteProps {
+    roles: string[]; // İcazə verilən rollar (məs: ["admin", "superadmin"])
+    children?: ReactElement | ReactElement[];
 }
 
-const ProtectedRoute = ({ allowedRoles, redirectTo = "/login" }: ProtectedRouteProps) => {
-    const user = useSelector((state: any) => state.user);
+export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
+    const user = useSelector((state: RootState) => state.user);
 
-    if (!user) {
-        toast.error("Please log in first!");
-        return <Navigate to={redirectTo} replace />;
+    // Əgər login olmayıbsa, login səhifəsinə yönləndir
+    if (!user.isAuthenticated) {
+        return <Navigate to="/login" replace />;
     }
 
-    if (!allowedRoles.includes(user.role)) {
-        toast.error("Access Denied 🚫");
+    // Əgər rolu icazə verilmiş rolların içində deyilsə
+    if (!roles.includes(user.role ?? "")) {
         return <Navigate to="/" replace />;
     }
 
-    return <Outlet />;
+    // Əgər bu route-un içində nested route-lar varsa (Outlet istifadə olunur)
+    return children ? <>{children}</> : <Outlet />;
 };
-
-export default ProtectedRoute;

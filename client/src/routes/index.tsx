@@ -11,7 +11,6 @@ import Shop from "../pages/client/Shop";
 import WishList from "../pages/client/WishList";
 import Login from "../pages/shared/Login";
 import NotFound from "../pages/shared/NotFound";
-import Profile from "../pages/client/Profile";
 import Details from "../pages/client/Details";
 import AddToCart from "../pages/client/AddToCart";
 
@@ -31,7 +30,8 @@ import ResetPassword from "../pages/client/ResetPaswor";
 import PaymentSuccess from "../pages/client/PaymentSuccsess";
 import CourierPage from "../pages/courier/CourierPage";
 
-import ProtectedRoute from "../components/ProtectedRoute";
+import { ProtectedRoute } from "../components/ProtectedRoute";
+import ProfilePage from "../pages/client/Profile";
 
 const ROUTES = [
     // Client 
@@ -48,32 +48,18 @@ const ROUTES = [
             { path: "details/:id", element: <Details /> },
             { path: "details/accessory/:id", element: <AccessoryDetails /> },
             { path: "payment-success", element: <PaymentSuccess /> },
+            { path: "profile", element: <ProfilePage userId={""} token={""} /> },
+            { path: "dashboard", element: <Dashboard /> },
+            { path: "wishlist", element: <WishList /> },
+            { path: "orders", element: <Orders /> },
+            { path: "addresses", element: <Adresses /> },
+            { path: "account", element: <AccountDetails /> },
+            { path: "addToCart", element: <AddToCart /> },
         ],
     },
 
     {
-        element: <ProtectedRoute allowedRoles={["client", "courier", "admin", "superAdmin"]} />,
-        children: [
-            {
-                path: "/",
-                element: <Layout />,
-                children: [
-                    { path: "profil", element: <Profile /> },
-                    { path: "dashboard", element: <Dashboard /> },
-                    { path: "wishlist", element: <WishList /> },
-                    { path: "orders", element: <Orders /> },
-                    { path: "addresses", element: <Adresses /> },
-                    { path: "account", element: <AccountDetails /> },
-                    { path: "addToCart", element: <AddToCart /> },
-                    { path: "courier", element: <CourierPage /> },
-                ],
-            },
-        ],
-    },
-
-    // Admin SuperAdmin
-    {
-        element: <ProtectedRoute allowedRoles={["admin", "superAdmin"]} />,
+        element: <ProtectedRoute roles={["admin", "superadmin"]} />,
         children: [
             {
                 path: "/admin",
@@ -89,10 +75,10 @@ const ROUTES = [
             },
         ],
     },
-
-    // SuperAdmin
     {
-        element: <ProtectedRoute allowedRoles={["superAdmin"]} />,
+        element: <ProtectedRoute roles={["superadmin"]}>
+            <AdminLayout />
+        </ProtectedRoute>,
         children: [
             {
                 path: "/admin/users",
@@ -101,7 +87,19 @@ const ROUTES = [
         ],
     },
 
-    // Common Layout (error və auth routes)
+    {
+        element: <ProtectedRoute roles={["courier"]} />,
+        children: [
+            {
+                path: "/courier",
+                element: <CourierPage />,
+            },
+        ],
+    },
+
+
+
+    // Common Layout (error and auth routes)
     {
         path: "/",
         element: <CommonLayout />,
@@ -109,6 +107,7 @@ const ROUTES = [
             { path: "*", element: <NotFound /> },
             { path: "auth/forgot-password", element: <ForgotPassword /> },
             { path: "auth/reset-password/:token", element: <ResetPassword /> },
+
         ],
     },
 ];

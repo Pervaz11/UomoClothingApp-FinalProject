@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo.webp";
-import { FaUserPlus, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaUserPlus, FaUserCircle, FaSignOutAlt, FaTruck } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { LuShoppingBasket } from "react-icons/lu";
 import NotificationDropdown from "../../components/NotificationDropdown";
@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "../../store/store";
 import { logoutUser } from "../../features/userSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
 const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -84,7 +85,6 @@ const Navbar: React.FC = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-3">
-                {/* ✅ Notification Dropdown düzəldilmiş */}
                 <div className="relative flex items-center">
                     <NotificationDropdown notifications={notifications} />
                 </div>
@@ -113,7 +113,11 @@ const Navbar: React.FC = () => {
                                 className={`w-4 h-4 transition-transform duration-300 ${isProfileDropdownOpen ? "rotate-180" : ""
                                     }`}
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                />
                             </svg>
                         </button>
 
@@ -126,6 +130,7 @@ const Navbar: React.FC = () => {
                                     transition={{ duration: 0.25, ease: "easeInOut" }}
                                     className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 z-50"
                                 >
+                                    {/* Profile hamıda qalır */}
                                     <Link
                                         to="/dashboard"
                                         onClick={() => setIsProfileDropdownOpen(false)}
@@ -134,6 +139,31 @@ const Navbar: React.FC = () => {
                                         <FaUserCircle className="w-5 h-5 text-gray-500" />
                                         Profile
                                     </Link>
+
+                                    {/* Əlavə rola görə hissələr */}
+                                    {(user.role === "admin" || user.role === "superadmin") && (
+                                        <Link
+                                            to="/admin"
+                                            onClick={() => setIsProfileDropdownOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition"
+                                        >
+                                            <MdOutlineAdminPanelSettings className="w-5 h-5 text-gray-500" />
+                                            Admin Panel
+                                        </Link>
+                                    )}
+
+                                    {user.role === "courier" && (
+                                        <Link
+                                            to="/courier"
+                                            onClick={() => setIsProfileDropdownOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition"
+                                        >
+                                            <FaTruck className="w-5 h-5 text-gray-500" />
+                                            Courier Page
+                                        </Link>
+                                    )}
+
+
 
                                     <button
                                         onClick={handleLogout}
@@ -155,6 +185,7 @@ const Navbar: React.FC = () => {
                         Login
                     </Link>
                 )}
+
 
                 <Link to="/addToCart" className="relative rounded-full hover:bg-gray-200 transition p-2">
                     <LuShoppingBasket className="text-3xl text-gray-700" />

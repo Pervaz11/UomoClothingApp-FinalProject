@@ -1,3 +1,4 @@
+// backend/src/controller/userController.js
 import {
     register,
     getAll,
@@ -11,14 +12,19 @@ import { CLIENT_URL } from "../config/config.js";
 import formatMongoData from "../utils/formatMongoData.js";
 import UserModel from "../models/userModel.js";
 import { sendVerificationEmail } from "../utils/mailService.js";
+import {
+    generateAccessToken,
+    generateRefreshToken,
+    verifyRefreshToken
+} from "../utils/jwt.js";
 import jwt from "jsonwebtoken";
 
-// ✅ GET all users
+//  GET ALL USERS
 export async function getAllUsers(_, res, next) {
     try {
         const users = await getAll();
         res.status(200).json({
-            message: "users retrieved successfully!",
+            message: "Users retrieved successfully!",
             data: formatMongoData(users),
         });
     } catch (error) {
@@ -26,13 +32,14 @@ export async function getAllUsers(_, res, next) {
     }
 }
 
-// ✅ REGISTER user
+//  REGISTER USER
 export async function registerUser(req, res, next) {
     try {
         if (req.file && req.file.path) {
             req.body.profileImage = req.file.path;
             req.body.public_id = req.file.filename;
         }
+
         const response = await register(req.body);
         if (!response.success) throw new Error(response.message);
 
@@ -43,10 +50,10 @@ export async function registerUser(req, res, next) {
         );
 
         const verificationLink = `${process.env.SERVER_URL}/auth/verify-email?token=${token}`;
-        sendVerificationEmail(req.body.email, req.body.fullName, verificationLink);
+        await sendVerificationEmail(req.body.email, req.body.fullName, verificationLink);
 
         res.status(201).json({
-            message: "user registered successfully | verify your email",
+            message: "User registered successfully. Please verify your email.",
             data: response.data,
         });
     } catch (error) {
@@ -54,7 +61,7 @@ export async function registerUser(req, res, next) {
     }
 }
 
-// ✅ VERIFY EMAIL
+// /*  VERIFY EMAIL 
 export const verifyEmail = async (req, res, next) => {
     try {
         const { token } = req.query;
@@ -65,7 +72,7 @@ export const verifyEmail = async (req, res, next) => {
     }
 };
 
-// ✅ FORGOT PASSWORD
+/* FORGOT PASSWORD*/
 export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -76,20 +83,22 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// ✅ RESET PASSWORD
+/* 
+   RESET PASSWORD*/
 export const resetPassword = async (req, res, next) => {
     try {
         const { newPassword, token } = req.body;
         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET_KEY);
         const email = decoded.email;
         await resetPass(newPassword, email);
-        res.status(200).json({ message: "password reset successfully!" });
+        res.status(200).json({ message: "Password reset successfully!" });
     } catch (error) {
         next(error);
     }
 };
 
-// ✅ LOGIN (ban yoxlaması əlavə olundu)
+/* 
+   LOGIN (ban yoxlamalı və JWT ilə)   */
 export const login = async (req, res, next) => {
     try {
         const credentials = {
@@ -97,32 +106,31 @@ export const login = async (req, res, next) => {
             username: req.body.username,
             password: req.body.password,
         };
-        const response = await loginService(credentials);
 
-        // 🚫 Ban yoxlaması
+        const response = await loginService(credentials);
         const user = await UserModel.findOne({ email: req.body.email });
+
         if (user?.isBanned) {
             return res.status(403).json({
                 message: "Your account has been banned by admin. You cannot log in.",
             });
         }
 
-        const accessToken = jwt.sign(
-            {
-                id: response.user.id,
-                email: response.user.email,
-                role: response.user.role,
-                fullName: response.user.fullName,
-                username: response.user.username,
-                profileImage:
-                    response.user.profileImage ||
-                    "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg",
-            },
-            process.env.JWT_ACCESS_SECRET_KEY,
-            { expiresIn: "1h" }
-        );
+        const accessToken = generateAccessToken({
+            id: user._id,
+            email: user.email,
+            role: user.role,
+            fullName: user.fullName,
+            username: user.username,
+            profileImage: user.profileImage,
+        });
 
-        res.cookie("refreshToken", response.refreshToken, {
+        const refreshToken = generateRefreshToken({
+            id: user._id,
+            email: user.email,
+        });
+
+        res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: false,
             sameSite: "strict",
@@ -132,7 +140,14 @@ export const login = async (req, res, next) => {
 
         res.status(200).json({
             message: response.message,
-            user: response.user,
+            user: {
+                id: user._id,
+                email: user.email,
+                role: user.role,
+                fullName: user.fullName,
+                username: user.username,
+                profileImage: user.profileImage,
+            },
             token: accessToken,
         });
     } catch (error) {
@@ -140,26 +155,36 @@ export const login = async (req, res, next) => {
     }
 };
 
-// ✅ REFRESH TOKEN
-export const refresh = (req, res) => {
-    const token = req.cookies.refreshToken;
-    if (!token) return res.sendStatus(401);
+/* ===========================
+   ✅ REFRESH TOKEN
+=========================== */
+export const refresh = async (req, res) => {
+    try {
+        const token = req.cookies.refreshToken;
+        if (!token) return res.sendStatus(401);
 
-    jwt.verify(token, process.env.JWT_REFRESH_SECRET_KEY, async (err, decoded) => {
-        if (err) return res.sendStatus(403);
+        const decoded = verifyRefreshToken(token);
+        if (!decoded) return res.sendStatus(403);
+
         const user = await getOne(decoded.id);
         if (!user) return res.sendStatus(403);
 
-        const accessToken = jwt.sign(
-            { email: user.email, id: user._id, role: user.role, fullName: user.fullName },
-            process.env.JWT_ACCESS_SECRET_KEY,
-            { expiresIn: "1h" }
-        );
-        res.json({ accessToken });
-    });
+        const newAccessToken = generateAccessToken({
+            id: user._id,
+            email: user.email,
+            role: user.role,
+            fullName: user.fullName,
+        });
+
+        res.json({ accessToken: newAccessToken });
+    } catch (error) {
+        res.status(500).json({ message: "Token refresh failed" });
+    }
 };
 
-// ✅ UPDATE PROFILE
+/* ===========================
+   ✅ UPDATE PROFILE
+=========================== */
 export const updateProfile = async (req, res, next) => {
     try {
         const userId = req.user?.id || req.params.id;
@@ -185,7 +210,9 @@ export const updateProfile = async (req, res, next) => {
     }
 };
 
-// ✅ UPDATE ROLE
+/* ===========================
+   ✅ UPDATE ROLE
+=========================== */
 export const updateUserRole = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -207,7 +234,7 @@ export const updateUserRole = async (req, res, next) => {
     }
 };
 
-// ✅ DELETE USER
+/* DELETE / BAN / UNBAN / LOGOUT */
 export const deleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -219,7 +246,6 @@ export const deleteUser = async (req, res, next) => {
     }
 };
 
-// 🚫 BAN USER
 export const banUser = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -231,7 +257,6 @@ export const banUser = async (req, res, next) => {
     }
 };
 
-// ✅ UNBAN USER
 export const unbanUser = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -243,7 +268,6 @@ export const unbanUser = async (req, res, next) => {
     }
 };
 
-// ✅ LOGOUT
 export const logout = (_, res) => {
     res.clearCookie("refreshToken", { path: "/auth/refresh" });
     res.sendStatus(204);

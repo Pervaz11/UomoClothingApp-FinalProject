@@ -1,5 +1,7 @@
 import express from "express";
 import uploadMiddleware from "../middlewares/uploadMiddleware.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
+
 import {
     registerUser,
     login,
@@ -30,7 +32,14 @@ router.get("/verify-email", verifyEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.get("/refresh", refresh);
-router.get("/update-profile", updateProfile);
+
+router.put(
+    "/update-profile",
+    authMiddleware, // ✅ burda artıq var
+    uploadMiddleware("users").single("profileImage"),
+    updateProfile
+);
+
 router.post("/logout", logout);
 
 export default router;

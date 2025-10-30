@@ -187,7 +187,7 @@ export const refresh = async (req, res) => {
 =========================== */
 export const updateProfile = async (req, res, next) => {
     try {
-        const userId = req.user?.id || req.params.id;
+        const userId = req.user?.id || req.params.id; // token-dən gəlir
         const updates = { ...req.body };
 
         if (req.file && req.file.path) {
@@ -209,6 +209,7 @@ export const updateProfile = async (req, res, next) => {
         next(error);
     }
 };
+
 
 /* ===========================
    ✅ UPDATE ROLE

@@ -1,4 +1,3 @@
-// backend/src/controller/userController.js
 import {
     register,
     getAll,

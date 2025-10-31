@@ -35,7 +35,7 @@ router.get("/refresh", refresh);
 
 router.put(
     "/update-profile",
-    authMiddleware, // ✅ burda artıq var
+    authMiddleware,
     uploadMiddleware("users").single("profileImage"),
     updateProfile
 );

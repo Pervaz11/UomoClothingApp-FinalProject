@@ -17,6 +17,7 @@ import contactRoutes from "./src/routes/contactRoute.js";
 import eventRouter from "./src/routes/eventRoute.js";
 import paymentRouter, { handleStripeWebhook } from "./src/routes/paymentRoute.js";
 import orderRouter from "./src/routes/ordersRoute.js";
+import wishlistRouter from "./src/routes/WishlistRoute.js";
 import "./src/config/passport.js";
 
 import dotenv from "dotenv";
@@ -86,6 +87,8 @@ app.use("/contact", contactRoutes);
 app.use("/events", eventRouter);
 app.use("/auth", userRouter);
 app.use("/orders", orderRouter);
+app.use("/wishlist", wishlistRouter);
+
 
 // Test route
 app.get("/", (_req, res) => res.send("API is running..."));

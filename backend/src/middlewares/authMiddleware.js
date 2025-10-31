@@ -1,31 +1,21 @@
-import pkg from "jsonwebtoken";
-const { verify } = pkg;
+import jwt from "jsonwebtoken";
 import { JWT_ACCESS_SECRET_KEY } from "../config/config.js";
 
-const authMiddleware = (req, res, next) => {
+export default function authMiddleware(req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: "Token not provided!",
-            statusCode: 401
-        });
+        return res.status(401).json({ message: "Access token is missing" });
     }
 
-    verify(token, JWT_ACCESS_SECRET_KEY, (err, decoded) => {
+    jwt.verify(token, JWT_ACCESS_SECRET_KEY, (err, decoded) => {
         if (err) {
-            return res.status(403).json({
-                success: false,
-                message: "Invalid or expired token!",
-                statusCode: 403
-            });
+            console.log("❌ Token verification failed:", err.message);
+            return res.status(403).json({ message: "Invalid or expired token" });
         }
 
         req.user = decoded;
         next();
     });
-};
-
-export default authMiddleware;
+}

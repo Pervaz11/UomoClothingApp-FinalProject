@@ -1,22 +1,19 @@
-// backend/src/service/userService.js
 import UserModel from "../models/userModel.js";
 import { hash, compare } from "bcrypt";
 import { sendForgotPasswordEmail, sendVerificationEmail } from "../utils/mailService.js";
 import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from "../utils/jwt.js";
 
-// ✅ Register User
+// Register User
 export const register = async (payload) => {
     try {
         const { email, username, password, fullName } = payload;
 
-        // Əgər firstName və lastName boşdursa, fullName-i böl
         if ((!payload.firstName || !payload.lastName) && fullName) {
             const parts = fullName.split(" ");
             payload.firstName = parts[0] || "";
             payload.lastName = parts.slice(1).join(" ") || "";
         }
 
-        // Əgər fullName yoxdursa, firstName və lastName-dən düzəlt
         if (!payload.fullName && (payload.firstName || payload.lastName)) {
             payload.fullName = `${payload.firstName || ""} ${payload.lastName || ""}`.trim();
         }
@@ -29,7 +26,6 @@ export const register = async (payload) => {
             return { success: false, message: "username or email already taken!" };
         }
 
-        // Şifrəni hash-lə
         const saltRounds = 10;
         const hashedPassword = await hash(password, saltRounds);
         payload.password = hashedPassword;
@@ -42,7 +38,7 @@ export const register = async (payload) => {
     }
 };
 
-// ✅ Login User
+// Login User
 export const login = async (credentials) => {
     const { email, password } = credentials;
     if (!email || !password) throw new Error("Email and password are required!");
@@ -77,7 +73,7 @@ export const login = async (credentials) => {
     };
 };
 
-// ✅ Forgot Password
+// Forgot Password
 export const forgotPassword = async (email) => {
     const user = await UserModel.findOne({ email });
     if (!user) throw new Error("email does not exist!");
@@ -88,7 +84,7 @@ export const forgotPassword = async (email) => {
     await sendForgotPasswordEmail(email, resetPasswordLink);
 };
 
-// ✅ Reset Password
+// Reset Password
 export const resetPass = async (newPassword, email) => {
     const user = await UserModel.findOne({ email });
     if (!user) throw new Error("user not found!");
@@ -100,21 +96,21 @@ export const resetPass = async (newPassword, email) => {
     return user;
 };
 
-// ✅ Get All Users
+// Get All Users
 export const getAll = async () => await UserModel.find().select("-password");
 
-// ✅ Get One User by ID
+// Get One User by ID
 export const getOne = async (id) => await UserModel.findById(id).select("-password");
 
-// ✅ Get Users by Email
+// Get Users by Email
 export const getByEmail = async (email) => await UserModel.find({ email }).select("-password");
 
-// ✅ Unlock Account (dummy placeholder)
+// Unlock Account (dummy placeholder)
 export const unlockAcc = async (token) => {
     return { message: "Account unlocked successfully" };
 };
 
-// ✅ Verify Email
+// Verify Email
 export const verifyEmail = async (token) => {
     const decoded = verifyAccessToken(token);
     if (!decoded) throw new Error("Invalid or expired token");

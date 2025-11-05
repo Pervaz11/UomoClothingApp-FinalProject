@@ -97,7 +97,7 @@ export const resetPassword = async (req, res, next) => {
 };
 
 /* 
-   LOGIN (ban yoxlamalı və JWT ilə)   */
+   LOGIN   */
 export const login = async (req, res, next) => {
     try {
         const credentials = {
@@ -154,9 +154,7 @@ export const login = async (req, res, next) => {
     }
 };
 
-/* ===========================
-   ✅ REFRESH TOKEN
-=========================== */
+/*  REFRESH TOKEN */
 export const refresh = async (req, res) => {
     try {
         const token = req.cookies.refreshToken;
@@ -181,12 +179,14 @@ export const refresh = async (req, res) => {
     }
 };
 
-/* ===========================
-   ✅ UPDATE PROFILE
-=========================== */
+/* UPDATE PROFILE */
 export const updateProfile = async (req, res, next) => {
     try {
-        const userId = req.user?.id || req.params.id; // token-dən gəlir
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ message: "Unauthorized: Invalid token" });
+        }
+
+        const userId = req.user.id;
         const updates = { ...req.body };
 
         if (req.file && req.file.path) {
@@ -194,9 +194,7 @@ export const updateProfile = async (req, res, next) => {
             updates.public_id = req.file.filename;
         }
 
-        const user = await UserModel.findByIdAndUpdate(userId, updates, {
-            new: true,
-        }).select("-password");
+        const user = await UserModel.findByIdAndUpdate(userId, updates, { new: true }).select("-password");
 
         if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -205,14 +203,12 @@ export const updateProfile = async (req, res, next) => {
             data: user,
         });
     } catch (error) {
+        console.log("Profile update error:", error);
         next(error);
     }
 };
 
-
-/* ===========================
-   ✅ UPDATE ROLE
-=========================== */
+/* UPDATE ROLE */
 export const updateUserRole = async (req, res, next) => {
     try {
         const { id } = req.params;

@@ -18,6 +18,7 @@ import eventRouter from "./src/routes/eventRoute.js";
 import paymentRouter, { handleStripeWebhook } from "./src/routes/paymentRoute.js";
 import orderRouter from "./src/routes/ordersRoute.js";
 import wishlistRouter from "./src/routes/WishlistRoute.js";
+
 import "./src/config/passport.js";
 
 import dotenv from "dotenv";
@@ -50,8 +51,10 @@ app.use(express.urlencoded({ extended: true }));
 // CORS
 app.use(
     cors({
-        origin: ["http://localhost:5173", "http://localhost:5174"],
-        credentials: true,
+        origin: "http://localhost:5173", // yalnız bu domenə icazə verir
+        credentials: true,               // cookie/token ötürmək üçün
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
     })
 );
 

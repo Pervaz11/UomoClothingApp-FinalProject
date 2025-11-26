@@ -24,11 +24,14 @@ export default function ModernProfile() {
   const fetchUser = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3000/auth/users", {
+
+      const res = await axios.get("http://localhost:3000/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const me = res.data.data[0];
+
+      const me = res.data.data;
       setUser(me);
+
       setForm({
         fullName: me.fullName,
         email: me.email,
@@ -68,6 +71,7 @@ export default function ModernProfile() {
           Authorization: `Bearer ${token}`,
         },
       });
+
       toast.success(res.data.message);
       fetchUser();
     } catch (err) {
@@ -93,7 +97,7 @@ export default function ModernProfile() {
         transition={{ duration: 0.6 }}
         className="max-w-6xl mx-auto rounded-3xl grid grid-cols-12 gap-8"
       >
-        {/* LEFT PANEL */}
+        {/* LEFT */}
         <div className="col-span-12 md:col-span-4 flex flex-col items-center pr-6">
           <div className="relative">
             <img
@@ -121,11 +125,9 @@ export default function ModernProfile() {
               </div>
             </div>
           </div>
-
-
         </div>
 
-        {/* RIGHT PANEL */}
+        {/* RIGHT */}
         <div className="col-span-12 md:col-span-8">
           <h3 className="text-gray-700 font-semibold mb-4">Profile Settings</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -165,7 +167,7 @@ export default function ModernProfile() {
             </div>
 
             <motion.button
-              whileTap={{ scale: 0.50 }}
+              whileTap={{ scale: 0.8 }}
               type="submit"
               disabled={loading}
               className="flex items-center justify-center gap-2 w-full duration-700 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-semibold transition-shadow shadow-md"

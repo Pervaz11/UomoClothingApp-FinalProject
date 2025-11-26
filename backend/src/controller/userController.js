@@ -18,7 +18,7 @@ import {
 } from "../utils/jwt.js";
 import jwt from "jsonwebtoken";
 
-//  GET ALL USERS
+// GET ALL USERS
 export async function getAllUsers(_, res, next) {
     try {
         const users = await getAll();
@@ -31,7 +31,7 @@ export async function getAllUsers(_, res, next) {
     }
 }
 
-//  REGISTER USER
+// REGISTER USER
 export async function registerUser(req, res, next) {
     try {
         if (req.file && req.file.path) {
@@ -60,7 +60,7 @@ export async function registerUser(req, res, next) {
     }
 }
 
-// /*  VERIFY EMAIL 
+// VERIFY EMAIL
 export const verifyEmail = async (req, res, next) => {
     try {
         const { token } = req.query;
@@ -71,7 +71,7 @@ export const verifyEmail = async (req, res, next) => {
     }
 };
 
-/* FORGOT PASSWORD*/
+// FORGOT PASSWORD
 export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -82,8 +82,7 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-/* 
-   RESET PASSWORD*/
+// RESET PASSWORD
 export const resetPassword = async (req, res, next) => {
     try {
         const { newPassword, token } = req.body;
@@ -96,8 +95,7 @@ export const resetPassword = async (req, res, next) => {
     }
 };
 
-/* 
-   LOGIN   */
+// LOGIN
 export const login = async (req, res, next) => {
     try {
         const credentials = {
@@ -122,6 +120,7 @@ export const login = async (req, res, next) => {
             fullName: user.fullName,
             username: user.username,
             profileImage: user.profileImage,
+            phoneNumber: user.phoneNumber
         });
 
         const refreshToken = generateRefreshToken({
@@ -154,7 +153,7 @@ export const login = async (req, res, next) => {
     }
 };
 
-/*  REFRESH TOKEN */
+// REFRESH TOKEN
 export const refresh = async (req, res) => {
     try {
         const token = req.cookies.refreshToken;
@@ -179,7 +178,28 @@ export const refresh = async (req, res) => {
     }
 };
 
-/* UPDATE PROFILE */
+// GET LOGGED-IN USER
+export const getMe = async (req, res) => {
+    try {
+        if (!req.user || !req.user.id)
+            return res.status(401).json({ message: "Unauthorized" });
+
+        const user = await UserModel.findById(req.user.id).select("-password");
+
+        if (!user)
+            return res.status(404).json({ message: "User not found" });
+
+        res.status(200).json({
+            message: "User retrieved successfully",
+            data: user
+        });
+
+    } catch (err) {
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// UPDATE PROFILE
 export const updateProfile = async (req, res, next) => {
     try {
         if (!req.user || !req.user.id) {
@@ -208,7 +228,7 @@ export const updateProfile = async (req, res, next) => {
     }
 };
 
-/* UPDATE ROLE */
+// UPDATE ROLE
 export const updateUserRole = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -230,7 +250,7 @@ export const updateUserRole = async (req, res, next) => {
     }
 };
 
-/* DELETE / BAN / UNBAN / LOGOUT */
+// DELETE / BAN / UNBAN / LOGOUT
 export const deleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;

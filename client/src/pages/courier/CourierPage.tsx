@@ -260,7 +260,7 @@ const CourierPage = () => {
                                     <button
                                         onClick={() => handleInTransit(order._id)}
                                         disabled={updating === order._id}
-                                        className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 text-white font-semibold transition-all duration-200 shadow-sm ${updating === order._id
+                                        className={`flex-1 flex w-full items-center justify-center gap-2 rounded-xl py-2 text-white font-semibold transition-all duration-200 shadow-sm ${updating === order._id
                                                 ? "bg-gray-400 cursor-not-allowed"
                                                 : "bg-blue-800 hover:bg-blue-900"
                                             }`}
@@ -281,7 +281,7 @@ const CourierPage = () => {
                                     <button
                                         onClick={() => handleDelivered(order._id)}
                                         disabled={updating === order._id}
-                                        className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2 text-white font-semibold transition-all duration-200 shadow-sm ${updating === order._id
+                                        className={`flex-1 flex w-full items-center justify-center gap-2 rounded-xl py-2 text-white font-semibold transition-all duration-200 shadow-sm ${updating === order._id
                                                 ? "bg-gray-400 cursor-not-allowed"
                                                 : "bg-gray-800 hover:bg-gray-900"
                                             }`}

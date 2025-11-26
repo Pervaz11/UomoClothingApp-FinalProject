@@ -15,7 +15,8 @@ import {
     updateUserRole,
     deleteUser,
     banUser,
-    unbanUser
+    unbanUser,
+    changePassword
 } from "../controller/userController.js";
 
 import UserModel from "../models/userModel.js";
@@ -55,6 +56,8 @@ router.put(
     uploadMiddleware("users").single("profileImage"),
     updateProfile
 );
+
+router.put("/change-password", authMiddleware, changePassword);
 
 /*  ADMIN OPERATIONS */
 

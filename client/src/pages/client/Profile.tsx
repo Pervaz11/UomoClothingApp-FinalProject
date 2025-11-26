@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
-import { FiCamera, FiEdit } from "react-icons/fi";
+import { FiCamera, FiEdit, FiLock } from "react-icons/fi";
 
 export default function ModernProfile() {
   const [user, setUser] = useState<any>(null);
@@ -13,9 +13,23 @@ export default function ModernProfile() {
     phoneNumber: "",
     profileImage: "",
   });
+
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+
+  // NEW: Change Password fields
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   useEffect(() => {
     fetchUser();
@@ -46,6 +60,11 @@ export default function ModernProfile() {
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // NEW: Password form handler
+  const handlePasswordChange = (e: any) => {
+    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +100,42 @@ export default function ModernProfile() {
     }
   };
 
+  // NEW: Change password submit
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordLoading(true);
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error("New passwords do not match!");
+      setPasswordLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        "http://localhost:3000/auth/change-password",
+        passwordForm,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      toast.success(res.data.message);
+
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Password change failed!");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
   if (!user)
     return (
       <div className="flex justify-center items-center h-screen bg-gradient-to-br from-blue-50 to-white">
@@ -112,6 +167,7 @@ export default function ModernProfile() {
           </div>
           <h2 className="mt-4 text-2xl font-bold text-gray-800">{form.fullName}</h2>
           <p className="text-gray-500">{form.username}</p>
+
           <div className="mt-6 w-full space-y-2">
             <h3 className="text-gray-700 font-semibold">Contact Info</h3>
             <div className="bg-white p-4 rounded-2xl flex flex-col gap-2">
@@ -130,6 +186,8 @@ export default function ModernProfile() {
         {/* RIGHT */}
         <div className="col-span-12 md:col-span-8">
           <h3 className="text-gray-700 font-semibold mb-4">Profile Settings</h3>
+
+          {/* UPDATE PROFILE */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <input
@@ -149,6 +207,7 @@ export default function ModernProfile() {
                 className="p-3 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-200 placeholder-gray-400 shadow-sm transition"
               />
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="email"
@@ -172,10 +231,83 @@ export default function ModernProfile() {
               disabled={loading}
               className="flex items-center justify-center gap-2 w-full duration-700 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-semibold transition-shadow shadow-md"
             >
-              {loading ? "Saving..." : "Save Changes"}
-              <FiEdit />
+              {loading ? "Saving..." : "Save Changes"} <FiEdit />
             </motion.button>
           </form>
+
+          {/* CHANGE PASSWORD SECTION */}
+          <div className="mt-10">
+            <h3 className="text-gray-700 font-semibold mb-3 flex items-center gap-2">
+              <FiLock /> Change Password
+            </h3>
+
+            <form
+              onSubmit={handlePasswordSubmit}
+              className="space-y-4 bg-white p-6 rounded-2xl shadow relative"
+            >
+              {/* SHOW/HIDE PASSWORD STATES */}
+              <div className="relative">
+                <input
+                  type={showCurrent ? "text" : "password"}
+                  name="currentPassword"
+                  value={passwordForm.currentPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="Current Password"
+                  className="w-full p-3 rounded-xl bg-gray-100 focus:ring-2 focus:ring-purple-200 outline-none"
+                />
+                <span
+                  className="absolute right-4 top-3 cursor-pointer text-gray-500"
+                  onClick={() => setShowCurrent(!showCurrent)}
+                >
+                  {showCurrent ? "👁️" : "👁️‍🗨️"}
+                </span>
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showNew ? "text" : "password"}
+                  name="newPassword"
+                  value={passwordForm.newPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="New Password"
+                  className="w-full p-3 rounded-xl bg-gray-100 focus:ring-2 focus:ring-purple-200 outline-none"
+                />
+                <span
+                  className="absolute right-4 top-3 cursor-pointer text-gray-500"
+                  onClick={() => setShowNew(!showNew)}
+                >
+                  {showNew ? "👁️" : "👁️‍🗨️"}
+                </span>
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  name="confirmPassword"
+                  value={passwordForm.confirmPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="Confirm Password"
+                  className="w-full p-3 rounded-xl bg-gray-100 focus:ring-2 focus:ring-purple-200 outline-none"
+                />
+                <span
+                  className="absolute right-4 top-3 cursor-pointer text-gray-500"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                >
+                  {showConfirm ? "👁️" : "👁️‍🗨️"}
+                </span>
+              </div>
+
+              <motion.button
+                whileTap={{ scale: 0.8 }}
+                disabled={passwordLoading}
+                type="submit"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-semibold shadow-md"
+              >
+                {passwordLoading ? "Changing..." : "Change Password"}
+              </motion.button>
+            </form>
+          </div>
+
         </div>
       </motion.div>
     </div>

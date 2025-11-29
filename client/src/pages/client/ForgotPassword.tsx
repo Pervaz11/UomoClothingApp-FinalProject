@@ -4,6 +4,7 @@ import { Mail, ArrowLeft, Send } from "lucide-react";
 import { forgotPassword } from "../../api/userApi";
 import { useSnackbar } from "notistack";
 import { Link } from "react-router-dom";
+import forgotPasswordValidationSchema from "../../validations/forgotPasswordValidation";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -11,11 +12,16 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         try {
+            await forgotPasswordValidationSchema.validate({ email });
+
             const res = await forgotPassword(email);
             enqueueSnackbar(res.message, { variant: "success" });
         } catch (error: any) {
-            enqueueSnackbar(error?.message || "An error occurred.", { variant: "error" });
+            enqueueSnackbar(error?.message || "An error occurred.", {
+                variant: "error",
+            });
         }
     };
 
@@ -27,7 +33,6 @@ const ForgotPassword = () => {
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="bg-white/80 backdrop-blur-xl border border-gray-200 shadow-xl rounded-2xl p-8 w-full max-w-md"
             >
-                {/* Başlıq */}
                 <motion.h2
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -35,11 +40,11 @@ const ForgotPassword = () => {
                 >
                     Forgot Password?
                 </motion.h2>
+
                 <p className="text-center text-gray-600 mb-8 text-sm">
                     Enter your <span className="text-gray-900 font-medium">registered email</span> to reset your password.
                 </p>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="relative">
                         <Mail className="absolute left-3 top-3.5 text-gray-500" size={18} />
@@ -63,7 +68,6 @@ const ForgotPassword = () => {
                     </motion.button>
                 </form>
 
-                {/* Geri keçid */}
                 <div className="mt-8 text-center">
                     <Link
                         to="/login"

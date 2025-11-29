@@ -26,45 +26,42 @@ dotenv.config();
 
 const app = express();
 
-// Rate limiter
+// -------------------------------------------------
+// 1) CORS — EN ÜSTDƏ ❗
+// -------------------------------------------------
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
+
+app.use(helmet());
+
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 100,
 });
-
-// Middleware-lər
-app.use(helmet());
 app.use(limiter);
+
 app.use(cookieParser());
 
-// Webhook üçün — JSON parserdən əvvəl
 app.post(
     "/payment/webhook",
     express.raw({ type: "application/json" }),
     handleStripeWebhook
 );
 
-// Normal JSON parser-lar
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS
-app.use(
-    cors({
-        origin: "http://localhost:5173", // yalnız bu domenə icazə verir
-        credentials: true,               // cookie/token ötürmək üçün
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-    })
-);
-
-// Cache-disable
 app.use((_req, res, next) => {
     res.setHeader("Cache-Control", "no-store");
     next();
 });
 
-// Session (passport)
 app.use(
     session({
         secret: "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",
@@ -74,11 +71,9 @@ app.use(
     })
 );
 
-// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// API routes
 app.use("/payment", paymentRouter);
 app.use("/products", productRouter);
 app.use("/accessory", accessoryRouter);
@@ -92,8 +87,6 @@ app.use("/auth", userRouter);
 app.use("/orders", orderRouter);
 app.use("/wishlist", wishlistRouter);
 
-
-// Test route
 app.get("/", (_req, res) => res.send("API is running..."));
 
 export default app;

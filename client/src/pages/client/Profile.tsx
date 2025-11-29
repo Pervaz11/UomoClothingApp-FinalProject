@@ -19,7 +19,7 @@ export default function ModernProfile() {
   const [showConfirm, setShowConfirm] = useState(false);
 
 
-  // NEW: Change Password fields
+  // Change Password fields
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -62,7 +62,7 @@ export default function ModernProfile() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // NEW: Password form handler
+  // Password form handler
   const handlePasswordChange = (e: any) => {
     setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
   };
@@ -100,7 +100,7 @@ export default function ModernProfile() {
     }
   };
 
-  // NEW: Change password submit
+  // Change password submit
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordLoading(true);
@@ -235,7 +235,7 @@ export default function ModernProfile() {
             </motion.button>
           </form>
 
-          {/* CHANGE PASSWORD SECTION */}
+          {/* change password */}
           <div className="mt-10">
             <h3 className="text-gray-700 font-semibold mb-3 flex items-center gap-2">
               <FiLock /> Change Password
@@ -245,7 +245,6 @@ export default function ModernProfile() {
               onSubmit={handlePasswordSubmit}
               className="space-y-4 bg-white p-6 rounded-2xl shadow relative"
             >
-              {/* SHOW/HIDE PASSWORD STATES */}
               <div className="relative">
                 <input
                   type={showCurrent ? "text" : "password"}

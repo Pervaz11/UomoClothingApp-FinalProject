@@ -23,6 +23,7 @@ type ListCardProps = {
   images: Image[];
   labels?: string[];
   discount?: Discount;
+  isWishlisted?: boolean; // ⭐ Wishlist səhifəsindən gələn flag
 };
 
 const ListCard: React.FC<ListCardProps> = ({
@@ -33,9 +34,12 @@ const ListCard: React.FC<ListCardProps> = ({
   images,
   labels,
   discount,
+  isWishlisted = false,
 }) => {
   const navigate = useNavigate();
-  const [inWishlist, setInWishlist] = useState(false);
+
+  // ⭐ Açılışda birbaşa wishlist statusunu burdan götürür
+  const [inWishlist, setInWishlist] = useState(isWishlisted);
 
   const now = new Date();
   const isDiscountActive =
@@ -50,8 +54,10 @@ const ListCard: React.FC<ListCardProps> = ({
         ? Math.max(0, price - discount.value)
         : price;
 
-  // 🧠 Check if product already in wishlist
+  // ⭐ Normal product listində wishlist statusunu yoxlayır
   useEffect(() => {
+    if (isWishlisted) return; // Wishlist page-dən gəlibsə API çağırma
+
     const checkWishlist = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -64,19 +70,20 @@ const ListCard: React.FC<ListCardProps> = ({
           (item: any) => item.product?._id === id
         );
         setInWishlist(exists);
-      } catch (err) {
+      } catch {
         console.warn("Could not check wishlist");
       }
     };
-    checkWishlist();
-  }, [id]);
 
-  // ❤️ Add/Remove wishlist
+    checkWishlist();
+  }, [id, isWishlisted]);
+
+  // ❤️ Add / Remove Wishlist
   const handleWishlistToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const token = localStorage.getItem("token");
 
+    const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Please log in to use wishlist.");
       navigate("/login");
@@ -113,7 +120,7 @@ const ListCard: React.FC<ListCardProps> = ({
 
   return (
     <div className="relative group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
-      {/* ❤️ Wishlist */}
+      {/* ❤️ Wishlist Icon */}
       <button
         onClick={handleWishlistToggle}
         className="absolute top-2 right-2 z-10 p-1 bg-white rounded-full shadow hover:scale-110 transition"
@@ -134,7 +141,7 @@ const ListCard: React.FC<ListCardProps> = ({
         </div>
       </Link>
 
-      {/* 🔘 View details */}
+      {/* 🔘 View Details */}
       <button
         onClick={handleDetailsClick}
         className="absolute uppercase font-medium bottom-0 left-0 w-full bg-black bg-opacity-90 text-white text-sm py-2 opacity-0 group-hover:opacity-100 transition-all duration-300"
@@ -142,8 +149,8 @@ const ListCard: React.FC<ListCardProps> = ({
         View Details
       </button>
 
-      {/* 🏷️ Labels */}
       <div className="p-3">
+        {/* 🏷 Labels */}
         {labels?.length ? (
           <div className="flex flex-wrap gap-2 mb-2">
             {labels.map((label, idx) => (

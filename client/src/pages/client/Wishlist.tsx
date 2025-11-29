@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import ListCard from "../../components/ListCard"; // eyni komponenti istifadə edirik
+import ListCard from "../../components/ListCard";
 
 const WishlistPage = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -37,20 +37,26 @@ const WishlistPage = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-6">My Wishlist ❤️</h2>
+      <h2 className="text-2xl font-semibold mb-6">My Wishlist</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {items.map((item) => (
-          <ListCard
-            key={item.product._id}
-            id={item.product._id}
-            title={item.product.name}
-            price={item.product.price}
-            stock={item.product.stock}
-            images={item.product.images}
-            discount={item.product.discount}
-            labels={item.product.labels}
-          />
-        ))}
+        {items.map((item) => {
+          if (!item.product) return null;
+
+          return (
+            <ListCard
+              key={item.product._id}
+              id={item.product._id}
+              title={item.product.name}
+              price={item.product.price}
+              stock={item.product.stock}
+              images={item.product.images}
+              discount={item.product.discount}
+              labels={item.product.labels}
+              isWishlisted={true}   // ⭐ ƏLAVƏ ET
+            />
+          );
+        })}
+
       </div>
     </div>
   );

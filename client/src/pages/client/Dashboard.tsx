@@ -5,7 +5,6 @@ import { FaBars, FaTimes } from "react-icons/fa";
 // Lazy load components
 const Profile = lazy(() => import("./Profile"));
 const Orders = lazy(() => import("./Orders"));
-const Addresses = lazy(() => import("./Addresses"));
 const AccountDetails = lazy(() => import("./AccountDetails"));
 const Wishlist = lazy(() => import("./WishList"));
 
@@ -24,7 +23,6 @@ export default function Dashboard() {
       setTabLoading(false);
     }, 500);
 
-    // Close sidebar on small screens after clicking
     setSidebarOpen(false);
   };
 
@@ -36,8 +34,6 @@ export default function Dashboard() {
     switch (activeTab) {
       case "orders":
         return <Orders />;
-      case "addresses":
-        return <Addresses />;
       case "account":
         return <AccountDetails />;
       case "wishlist":
@@ -79,22 +75,6 @@ export default function Dashboard() {
             onClick={() => handleTabClick("orders")}
           >
             ORDERS
-          </button>
-          <button
-            className={`text-left hover:scale-110 duration-500 text-red-600 font-bold hover:text-black transition relative px-4 py-2 dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7 ${
-              activeTab === "addresses" ? "text-red-600 font-bold" : ""
-            }`}
-            onClick={() => handleTabClick("addresses")}
-          >
-            ADDRESSES
-          </button>
-          <button
-            className={`text-left hover:scale-110 duration-500 text-red-600 font-bold hover:text-black transition relative px-4 py-2 dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7 ${
-              activeTab === "account" ? "text-red-600 font-bold" : ""
-            }`}
-            onClick={() => handleTabClick("account")}
-          >
-            ACCOUNT DETAILS
           </button>
           <button
             className={`text-left text-red-600 font-bold hover:text-black transition relative px-4 py-2 hover:scale-110 duration-500 dark:hover:text-black before:absolute before:bottom-0 before:left-4 before:w-0 before:h-[2px] before:bg-black dark:before:bg-black before:transition-all text-sm before:duration-300 hover:before:w-7 ${

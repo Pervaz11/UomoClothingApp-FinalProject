@@ -9,6 +9,7 @@ import {
     FiMenu,
     FiX,
     FiLogOut,
+    FiPhoneMissed,
 } from "react-icons/fi";
 import { MdQuestionMark } from "react-icons/md";
 
@@ -24,6 +25,7 @@ const navItems = [
     { label: "Fag", to: "/admin/fag", icon: <MdQuestionMark /> },
     { section: "Apps" },
     { label: "Calendar", to: "/admin/calendar", icon: <FiCalendar /> },
+    { label: "Contact", to: "/admin/contact ", icon: <FiPhoneMissed /> },
 ];
 
 

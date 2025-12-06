@@ -55,6 +55,10 @@ const ROUTES = [
             { path: "addresses", element: <Adresses /> },
             { path: "account", element: <AccountDetails /> },
             { path: "addToCart", element: <AddToCart /> },
+            {
+                path: "/courier",
+                element: <CourierPage />,
+            },
         ],
     },
 
@@ -90,10 +94,7 @@ const ROUTES = [
     {
         element: <ProtectedRoute roles={["courier"]} />,
         children: [
-            {
-                path: "/courier",
-                element: <CourierPage />,
-            },
+
         ],
     },
 

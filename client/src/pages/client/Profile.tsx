@@ -19,7 +19,6 @@ export default function ModernProfile() {
   const [showConfirm, setShowConfirm] = useState(false);
 
 
-  // Change Password fields
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
